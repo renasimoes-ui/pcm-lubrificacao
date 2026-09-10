@@ -9,7 +9,7 @@
 
     <link rel="manifest" href="/manifest.json">
 
-    <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=8d4RkZikGPXthzbraLZMlj2e_1cEoijHSTatYUCTeqT8-7NSa9npTjL-och0bNWJftUr2mbnPX51B4X35Ds_FQ8CCT9dLIlYVa7EaPAP0B2shvDatL2GhmJr84nZcXpFBkDfAGat7E2QDCzBgNl5nYYM5ObJEve-7t1M9sbdqMdRmUB_265Ah-684UH6U7GKrTEpfVUitDfrTZGpn3h9V5ZU5ij7DCrx5u_P6cGYxL2je-0vSszNeUnnAPrJ5-DlTTYEC1wtykBUFI2CmR8lGZZHP9bSzHAsAKpfKWXf5HKNb5JP98-bptqDiB_cRgs3" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <link
         rel="stylesheet"
@@ -268,7 +268,42 @@
         }
 
         .history-summary-row { cursor: pointer; transition: .15s; }
+
+        /* NAVEGAÇÃO RESPONSIVA */
+        .desktop-nav { display: block; }
+        .mobile-nav { display: none; }
+        .desktop-nav-inner {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .desktop-nav .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        @media (max-width: 767px) {
+            .desktop-nav { display: none !important; }
+            .mobile-nav { display: block !important; }
+        }
+
+        @media (min-width: 768px) {
+            .desktop-nav { display: block !important; }
+            .mobile-nav { display: none !important; }
+        }
         .history-summary-row:hover td { background: #eff6ff; }
+
+        /* Navegação responsiva: visível no PC e no celular, sem depender do Tailwind */
+        .desktop-nav { display: block !important; }
+        .mobile-nav { display: none !important; }
+
+        @media (max-width: 767px) {
+            .desktop-nav { display: none !important; }
+            .mobile-nav { display: block !important; }
+        }
 
         @media (max-width: 640px) {
             .card {
@@ -410,11 +445,11 @@
 
 
     <!-- NAV DESKTOP -->
-    <div class="bg-white border-b border-slate-200 hidden md:block">
+    <div class="desktop-nav bg-white border-b border-slate-200">
 
         <div class="max-w-7xl mx-auto px-4">
 
-            <div class="flex gap-2 py-2">
+            <div class="desktop-nav-inner py-2">
 
                 <button
                     id="navDashboard"
@@ -1090,7 +1125,7 @@
 
 
     <!-- MOBILE NAV -->
-    <div class="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40">
+    <div class="mobile-nav fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-40">
 
         <div class="flex justify-around p-2">
 
