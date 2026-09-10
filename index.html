@@ -318,6 +318,13 @@
                 display: none !important;
             }
         }
+
+        @media print {
+            body > *:not(#app) { display:none !important; }
+            #app > *:not(#printReportTemp) { display:none !important; }
+            #printReportTemp { display:block !important; }
+            #printReportTemp table td, #printReportTemp table th { border-bottom:1px solid #e2e8f0; padding:8px; }
+        }
     </style>
 </head>
 
@@ -453,7 +460,7 @@
 
                 <button
                     id="navDashboard"
-                    class="nav-btn active"
+                    class="nav-btn admin-only hidden active"
                     onclick="showTab('dashboard')"
                 >
                     <i class="fa-solid fa-chart-line mr-1"></i>
@@ -471,7 +478,7 @@
 
                 <button
                     id="navHistory"
-                    class="nav-btn"
+                    class="nav-btn admin-only hidden"
                     onclick="showTab('history')"
                 >
                     <i class="fa-solid fa-clock-rotate-left mr-1"></i>
@@ -848,6 +855,18 @@
         ========================= -->
         <section id="tabPoints" class="hidden">
 
+            <div id="maintenanceWelcome" class="hidden card p-5 mb-5 border-l-4 border-blue-500 bg-blue-50/60">
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <i class="fa-solid fa-hand-wave text-blue-600"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-xl font-black text-slate-900">Bem-vindo, <span id="maintenanceWelcomeName"></span>!</h2>
+                        <p class="text-sm text-slate-500 mt-1">Aqui estão as suas demandas de lubrificação.</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-5">
 
                 <div>
@@ -983,18 +1002,23 @@
         <!-- =========================
              HISTÓRICO
         ========================= -->
-        <section id="tabHistory" class="hidden">
+        <section id="tabHistory" class="hidden admin-only">
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
                 <div>
                     <h2 class="text-2xl font-black text-slate-900">Histórico de lubrificação</h2>
                     <p class="text-sm text-slate-500 mt-1">Registros e execução dos pontos por máquina</p>
                 </div>
-                <button onclick="showTab('dashboard')" class="btn btn-secondary flex items-center gap-2 self-start" title="Voltar para o início">
-                    <i class="fa-solid fa-arrow-left"></i><span>Início</span>
-                </button>
+                <div class="flex flex-wrap gap-2 no-print">
+                    <button onclick="printHistoryReport()" class="btn btn-primary flex items-center gap-2" title="Gerar relatório">
+                        <i class="fa-solid fa-file-lines"></i><span>Relatório</span>
+                    </button>
+                    <button onclick="showTab('dashboard')" class="btn btn-secondary flex items-center gap-2" title="Voltar para o início">
+                        <i class="fa-solid fa-arrow-left"></i><span>Início</span>
+                    </button>
+                </div>
             </div>
 
-            <div class="card p-4 mb-5">
+            <div class="card p-4 mb-5 no-print">
                 <div class="mb-3">
                     <h3 class="font-black text-slate-900">Filtros do histórico</h3>
                     <p class="text-xs text-slate-500 mt-1">Use os filtros para analisar quais pontos de cada máquina foram realizados.</p>
@@ -1131,7 +1155,7 @@
 
             <button
                 id="mobileDashboard"
-                class="mobile-nav-btn active"
+                class="mobile-nav-btn admin-only hidden active"
                 onclick="showTab('dashboard')"
             >
                 <i class="fa-solid fa-chart-line text-base block mb-1"></i>
@@ -1149,7 +1173,7 @@
 
             <button
                 id="mobileHistory"
-                class="mobile-nav-btn"
+                class="mobile-nav-btn admin-only hidden"
                 onclick="showTab('history')"
             >
                 <i class="fa-solid fa-clock-rotate-left text-base block mb-1"></i>
@@ -1853,7 +1877,7 @@
             }
 
 
-            showTab('dashboard');
+            showTab(isAdmin() ? 'dashboard' : 'points');
 
 
         } catch (error) {
@@ -1916,6 +1940,9 @@
             });
 
 
+        const welcome = document.getElementById('maintenanceWelcome');
+        const welcomeName = document.getElementById('maintenanceWelcomeName');
+
         if (!isAdmin()) {
 
             document.getElementById('dashboardSubtitle').textContent =
@@ -1923,6 +1950,9 @@
 
             document.getElementById('pointsSubtitle').textContent =
                 'Pontos atribuídos a você';
+
+            if (welcome) welcome.classList.remove('hidden');
+            if (welcomeName) welcomeName.textContent = currentUser?.name || '';
 
         } else {
 
@@ -4166,20 +4196,17 @@
             );
 
 
-        if (
-            selected &&
-            (
-                tab !== 'employees' ||
-                isAdmin()
-            )
-        ) {
+        const allowed =
+            isAdmin() ||
+            (tab === 'points');
+
+        if (selected && allowed && (tab !== 'employees' && tab !== 'history' || isAdmin())) {
             selected.classList.remove('hidden');
         } else {
-            tab = 'dashboard';
+            tab = isAdmin() ? 'dashboard' : 'points';
 
-            document.getElementById(
-                'tabDashboard'
-            ).classList.remove('hidden');
+            const fallback = document.getElementById(`tab${capitalize(tab)}`);
+            if (fallback) fallback.classList.remove('hidden');
         }
 
 
@@ -4193,6 +4220,56 @@
 
     }
 
+
+    function printHistoryReport() {
+        if (!isAdmin()) {
+            showToast('Apenas o administrador pode gerar relatórios.', 'error');
+            return;
+        }
+
+        const filters = historyFilterValues();
+        const summary = getHistoryMachineSummary(filters);
+        const now = new Date();
+        const periodLabel = document.getElementById('historyPeriodFilter')?.selectedOptions?.[0]?.textContent || 'Todos';
+
+        const rows = summary.map(item => `
+            <tr>
+                <td>${escapeHtml(item.machine)}</td>
+                <td>${escapeHtml(item.code)}</td>
+                <td>${item.total}</td>
+                <td>${item.executed}</td>
+                <td>${item.pending}</td>
+                <td>${item.percent}%</td>
+            </tr>`).join('');
+
+        const total = summary.reduce((s, x) => s + x.total, 0);
+        const executed = summary.reduce((s, x) => s + x.executed, 0);
+        const pending = Math.max(total - executed, 0);
+        const percent = total ? Math.round(executed / total * 100) : 0;
+
+        const report = document.createElement('div');
+        report.id = 'printReportTemp';
+        report.innerHTML = `
+            <div style="font-family:Arial,sans-serif;padding:24px;color:#0f172a">
+                <h1 style="font-size:24px;margin:0 0 4px">Relatório de Lubrificação</h1>
+                <p style="margin:0 0 18px;color:#64748b;font-size:13px">Período: ${escapeHtml(periodLabel)} • Gerado em ${formatDateTime(now.toISOString())}</p>
+                <div style="display:flex;gap:24px;margin-bottom:18px;font-size:14px;font-weight:bold">
+                    <span>Máquinas: ${summary.length}</span>
+                    <span>Pontos: ${total}</span>
+                    <span>Realizados: ${executed}</span>
+                    <span>Não realizados: ${pending}</span>
+                    <span>Execução: ${percent}%</span>
+                </div>
+                <table style="width:100%;border-collapse:collapse;font-size:12px">
+                    <thead><tr><th style="text-align:left;border-bottom:2px solid #cbd5e1;padding:8px">Máquina</th><th style="text-align:left;border-bottom:2px solid #cbd5e1;padding:8px">Código</th><th style="text-align:left;border-bottom:2px solid #cbd5e1;padding:8px">Pontos</th><th style="text-align:left;border-bottom:2px solid #cbd5e1;padding:8px">Realizados</th><th style="text-align:left;border-bottom:2px solid #cbd5e1;padding:8px">Não realizados</th><th style="text-align:left;border-bottom:2px solid #cbd5e1;padding:8px">Execução</th></tr></thead>
+                    <tbody>${rows || '<tr><td colspan="6" style="padding:12px">Nenhuma máquina encontrada.</td></tr>'}</tbody>
+                </table>
+            </div>`;
+
+        document.body.appendChild(report);
+        window.print();
+        setTimeout(() => report.remove(), 500);
+    }
 
     function capitalize(text) {
 
