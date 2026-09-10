@@ -1,32 +1,26 @@
+function base() {
+    return process.env.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1';
+}
+
 function headers() {
+    const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
     return {
         'Content-Type': 'application/json',
-        'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
-        'Authorization':
-            'Bearer ' + process.env.SUPABASE_SERVICE_ROLE_KEY,
+        'apikey': key,
+        'Authorization': 'Bearer ' + key,
         'Prefer': 'return=representation'
     };
 }
 
-function base() {
-    return (
-        process.env.SUPABASE_URL.replace(/\/$/, '') +
-        '/rest/v1'
-    );
-}
-
-async function sb(path, opts = {}) {
-
-    const response = await fetch(
-        base() + path,
-        {
-            ...opts,
-            headers: {
-                ...headers(),
-                ...(opts.headers || {})
-            }
+async function sb(path, options = {}) {
+    const response = await fetch(base() + path, {
+        ...options,
+        headers: {
+            ...headers(),
+            ...(options.headers || {})
         }
-    );
+    });
 
     const text = await response.text();
 
@@ -39,7 +33,6 @@ async function sb(path, opts = {}) {
     }
 
     if (!response.ok) {
-
         throw new Error(
             typeof data === 'string'
                 ? data
@@ -50,44 +43,118 @@ async function sb(path, opts = {}) {
                     'Erro no Supabase.'
                 )
         );
-
     }
 
     return data;
 }
 
 
-/* =========================================================
-   API DE USUÁRIOS
-========================================================= */
+// =====================================================
+// VALIDAÇÃO DOS DADOS DO FUNCIONÁRIO
+// =====================================================
+
+function validateUser(data, requirePin = false) {
+
+    const name = String(data?.name || '').trim();
+
+    const functionName = String(
+        data?.function_name || ''
+    ).trim();
+
+    const role =
+        data?.role === 'admin'
+            ? 'admin'
+            : 'maintenance';
+
+    if (!name) {
+        throw new Error('Nome é obrigatório.');
+    }
+
+    if (!functionName) {
+        throw new Error('Função é obrigatória.');
+    }
+
+    const result = {
+        name,
+        function_name: functionName,
+        role,
+        active: data?.active !== false
+    };
+
+    // =================================================
+    // PIN
+    // =================================================
+
+    const rawPin = data?.pin;
+
+    if (
+        requirePin ||
+        (
+            rawPin !== undefined &&
+            rawPin !== null &&
+            String(rawPin).trim() !== ''
+        )
+    ) {
+
+        const pin = String(rawPin || '').trim();
+
+        if (!/^\d{4}$/.test(pin)) {
+            throw new Error(
+                'O PIN deve ter exatamente 4 números.'
+            );
+        }
+
+        result.pin = pin;
+    }
+
+    return result;
+}
+
+
+// =====================================================
+// API
+// =====================================================
 
 export default async function handler(req, res) {
 
     try {
 
-        /* =====================================================
-           GET
-           - Com PIN = LOGIN
-           - Sem PIN = LISTA DE FUNCIONÁRIOS
-        ===================================================== */
+        // =================================================
+        // VERIFICAÇÃO DAS VARIÁVEIS
+        // =================================================
+
+        if (
+            !process.env.SUPABASE_URL ||
+            !process.env.SUPABASE_SERVICE_ROLE_KEY
+        ) {
+
+            return res.status(500).json({
+                error:
+                    'Variáveis do Supabase não configuradas.'
+            });
+        }
+
+
+        // =================================================
+        // GET
+        // =================================================
 
         if (req.method === 'GET') {
 
-            const pin = req.query.pin;
+            const pin = req.query?.pin;
 
 
-            /* =================================================
-               LOGIN POR PIN
-            ================================================= */
+            // =============================================
+            // LOGIN POR PIN
+            // =============================================
 
             if (pin) {
 
-                const users = await sb(
+                const rows = await sb(
                     `/users?pin=eq.${encodeURIComponent(pin)}&active=eq.true&select=id,name,function_name,role,active`
                 );
 
-
-                if (!users || !users.length) {
+                if (!rows?.length) {
 
                     return res.status(401).json({
                         error: 'PIN inválido.'
@@ -95,444 +162,187 @@ export default async function handler(req, res) {
 
                 }
 
-
-                const user = users[0];
-
+                const user = rows[0];
 
                 return res.status(200).json({
 
-                    id:
-                        user.id,
+                    id: user.id,
 
-                    name:
-                        user.name,
+                    name: user.name,
 
-                    function:
-                        user.function_name,
+                    function: user.function_name,
 
-                    role:
-                        user.role,
+                    role: user.role,
 
-                    active:
-                        user.active
+                    active: user.active
 
                 });
-
             }
 
 
-            /* =================================================
-               LISTAR TODOS OS FUNCIONÁRIOS
-            ================================================= */
+            // =============================================
+            // LISTAR FUNCIONÁRIOS
+            // =============================================
 
-            const users = await sb(
-                '/users?select=id,name,function_name,role,pin,active,created_at&order=name.asc'
+            const rows = await sb(
+                '/users?select=id,name,function_name,role,active,created_at&order=name.asc'
             );
 
-
             return res.status(200).json({
-                users
+
+                users: rows || []
+
             });
 
         }
 
 
-        /* =====================================================
-           POST
-           CADASTRAR FUNCIONÁRIO
-        ===================================================== */
+        // =================================================
+        // POST
+        // CRIAR FUNCIONÁRIO
+        // =================================================
 
         if (req.method === 'POST') {
 
-            const body = req.body || {};
+            const data = validateUser(
+                req.body || {},
+                true
+            );
 
-            const name =
-                String(body.name || '').trim();
+            const rows = await sb(
+                '/users',
+                {
+                    method: 'POST',
+                    body: JSON.stringify(data)
+                }
+            );
 
-            const functionName =
-                String(
-                    body.function_name ||
-                    body.function ||
-                    ''
-                ).trim();
+            return res.status(201).json({
 
-            const pin =
-                String(body.pin || '').trim();
+                user: rows?.[0] || rows
 
-            const role =
-                body.role || 'maintenance';
+            });
 
-            const active =
-                body.active !== false;
+        }
 
 
-            /* =================================================
-               VALIDAÇÕES
-            ================================================= */
+        // =================================================
+        // PUT
+        // EDITAR FUNCIONÁRIO
+        // =================================================
 
-            if (!name) {
+        if (req.method === 'PUT') {
+
+            const id = req.body?.id;
+
+            const incoming =
+                req.body?.data || {};
+
+
+            if (!id) {
 
                 return res.status(400).json({
-                    error: 'Nome do funcionário é obrigatório.'
+
+                    error:
+                        'ID do usuário é obrigatório.'
+
                 });
 
             }
 
 
-            if (!functionName) {
+            // =============================================
+            // BUSCA FUNCIONÁRIO ATUAL
+            // =============================================
 
-                return res.status(400).json({
-                    error: 'Função do funcionário é obrigatória.'
-                });
-
-            }
-
-
-            if (!/^\d{4}$/.test(pin)) {
-
-                return res.status(400).json({
-                    error: 'O PIN deve ter exatamente 4 números.'
-                });
-
-            }
-
-
-            /* =================================================
-               VERIFICAR SE PIN JÁ EXISTE
-            ================================================= */
-
-            const existing = await sb(
-                `/users?pin=eq.${encodeURIComponent(pin)}&select=id`
+            const currentRows = await sb(
+                `/users?id=eq.${encodeURIComponent(id)}&select=*`
             );
 
 
-            if (existing && existing.length) {
+            if (!currentRows?.length) {
 
-                return res.status(409).json({
-                    error: 'Este PIN já está sendo utilizado.'
+                return res.status(404).json({
+
+                    error:
+                        'Usuário não encontrado.'
+
                 });
 
             }
 
 
-            /* =================================================
-               CRIAR USUÁRIO
-            ================================================= */
+            const current = currentRows[0];
 
-            const user = {
 
-                name,
+            // =============================================
+            // JUNTA DADOS NOVOS + DADOS ATUAIS
+            // =============================================
+
+            const merged = {
+
+                name:
+                    incoming.name ??
+                    current.name,
 
                 function_name:
-                    functionName,
+                    incoming.function_name ??
+                    current.function_name,
 
-                role,
+                role:
+                    incoming.role ??
+                    current.role,
 
-                pin,
+                pin:
+                    incoming.pin ??
+                    current.pin,
 
-                active
+                active:
+                    incoming.active ??
+                    current.active
 
             };
 
 
-            const created = await sb(
-                '/users',
+            const data = validateUser(
+                merged,
+                true
+            );
+
+
+            // =============================================
+            // ATUALIZA
+            // =============================================
+
+            const rows = await sb(
+                `/users?id=eq.${encodeURIComponent(id)}`,
                 {
-                    method: 'POST',
-                    body:
-                        JSON.stringify(user)
+                    method: 'PATCH',
+                    body: JSON.stringify(data)
                 }
             );
 
 
-            return res.status(201).json({
-
-                success: true,
-
-                user:
-                    created?.[0] ||
-                    created
-
-            });
-
-        }
-
-
-        /* =====================================================
-           PUT
-           EDITAR / ATIVAR / DESATIVAR FUNCIONÁRIO
-        ===================================================== */
-
-        if (req.method === 'PUT') {
-
-            const body =
-                req.body || {};
-
-            const id =
-                body.id;
-
-            if (!id) {
-
-                return res.status(400).json({
-                    error: 'ID do funcionário é obrigatório.'
-                });
-
-            }
-
-
-            const data =
-                body.data || {};
-
-
-            const update = {};
-
-
-            /* =================================================
-               NOME
-            ================================================= */
-
-            if (
-                data.name !== undefined
-            ) {
-
-                const name =
-                    String(
-                        data.name
-                    ).trim();
-
-
-                if (!name) {
-
-                    return res.status(400).json({
-                        error: 'Nome inválido.'
-                    });
-
-                }
-
-
-                update.name =
-                    name;
-
-            }
-
-
-            /* =================================================
-               FUNÇÃO
-            ================================================= */
-
-            if (
-                data.function_name !== undefined
-            ) {
-
-                const functionName =
-                    String(
-                        data.function_name
-                    ).trim();
-
-
-                if (!functionName) {
-
-                    return res.status(400).json({
-                        error: 'Função inválida.'
-                    });
-
-                }
-
-
-                update.function_name =
-                    functionName;
-
-            }
-
-
-            /* =================================================
-               PIN
-            ================================================= */
-
-            if (
-                data.pin !== undefined
-            ) {
-
-                const pin =
-                    String(
-                        data.pin
-                    ).trim();
-
-
-                if (!/^\d{4}$/.test(pin)) {
-
-                    return res.status(400).json({
-                        error:
-                            'O PIN deve ter exatamente 4 números.'
-                    });
-
-                }
-
-
-                const existing =
-                    await sb(
-                        `/users?pin=eq.${encodeURIComponent(pin)}&id=neq.${encodeURIComponent(id)}&select=id`
-                    );
-
-
-                if (
-                    existing &&
-                    existing.length
-                ) {
-
-                    return res.status(409).json({
-                        error:
-                            'Este PIN já está sendo utilizado.'
-                    });
-
-                }
-
-
-                update.pin =
-                    pin;
-
-            }
-
-
-            /* =================================================
-               CARGO
-            ================================================= */
-
-            if (
-                data.role !== undefined
-            ) {
-
-                update.role =
-                    data.role;
-
-            }
-
-
-            /* =================================================
-               STATUS
-            ================================================= */
-
-            if (
-                data.active !== undefined
-            ) {
-
-                update.active =
-                    Boolean(
-                        data.active
-                    );
-
-            }
-
-
-            /* =================================================
-               NADA PARA ATUALIZAR
-            ================================================= */
-
-            if (
-                !Object.keys(update).length
-            ) {
-
-                return res.status(400).json({
-                    error:
-                        'Nenhuma informação foi enviada para atualização.'
-                });
-
-            }
-
-
-            /* =================================================
-               ATUALIZAR
-            ================================================= */
-
-            const updated =
-                await sb(
-                    `/users?id=eq.${encodeURIComponent(id)}`,
-                    {
-                        method: 'PATCH',
-
-                        body:
-                            JSON.stringify(update)
-                    }
-                );
-
-
             return res.status(200).json({
 
-                success: true,
-
                 user:
-                    updated?.[0] ||
-                    updated
+                    rows?.[0] ||
+                    rows
 
             });
 
         }
 
 
-        /* =====================================================
-           DELETE
-           NÃO APAGA FISICAMENTE.
-           DESATIVA O FUNCIONÁRIO.
-        ===================================================== */
-
-        if (req.method === 'DELETE') {
-
-            const id =
-                new URL(
-                    req.url,
-                    'http://localhost'
-                )
-                    .searchParams
-                    .get('id');
-
-
-            if (!id) {
-
-                return res.status(400).json({
-                    error:
-                        'ID do funcionário é obrigatório.'
-                });
-
-            }
-
-
-            const updated =
-                await sb(
-                    `/users?id=eq.${encodeURIComponent(id)}`,
-                    {
-                        method: 'PATCH',
-
-                        body:
-                            JSON.stringify({
-                                active: false
-                            })
-                    }
-                );
-
-
-            return res.status(200).json({
-
-                success: true,
-
-                message:
-                    'Funcionário desativado.',
-
-                user:
-                    updated?.[0] ||
-                    updated
-
-            });
-
-        }
-
-
-        /* =====================================================
-           MÉTODO NÃO PERMITIDO
-        ===================================================== */
+        // =================================================
+        // MÉTODO NÃO PERMITIDO
+        // =================================================
 
         return res.status(405).json({
+
             error:
                 'Método não permitido.'
+
         });
 
 
@@ -543,12 +353,38 @@ export default async function handler(req, res) {
             error
         );
 
+        const message =
+            error?.message ||
+            'Erro interno.';
+
+
+        // =============================================
+        // PIN DUPLICADO
+        // =============================================
+
+        if (
+            message
+                .toLowerCase()
+                .includes('duplicate') ||
+
+            message
+                .toLowerCase()
+                .includes('unique')
+        ) {
+
+            return res.status(409).json({
+
+                error:
+                    'Este PIN já está cadastrado. Escolha outro PIN.'
+
+            });
+
+        }
+
 
         return res.status(500).json({
 
-            error:
-                error.message ||
-                'Erro interno na API de usuários.'
+            error: message
 
         });
 
