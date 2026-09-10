@@ -254,7 +254,32 @@
 let historyData = [];
 let activeFilter = 'TODOS';
 let currentRole = 'admin';
+let currentUser = null;
 
+async function loginWithPIN(pin) {
+    try {
+        const response = await fetch(`/api/users?pin=${encodeURIComponent(pin)}`);
+
+        if (!response.ok) {
+            throw new Error('PIN inválido');
+        }
+
+        const user = await response.json();
+
+        currentUser = user;
+        currentRole = user.role;
+
+        localStorage.setItem('pcm_current_user', JSON.stringify(user));
+
+        console.log('Usuário conectado:', user.name);
+
+        return true;
+
+    } catch (error) {
+        console.error('Erro no login:', error);
+        return false;
+    }
+}
 async function loadData() {
     try {
         const response = await fetch('/api/items');
