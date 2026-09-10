@@ -276,13 +276,9 @@ async function loadData() {
 }
 
     // Inicialização
-    document.addEventListener('DOMContentLoaded', () => {
-        saveState();
-        updateDashboardStats();
-        renderPoints();
-        renderHistory();
-    });
-
+  document.addEventListener('DOMContentLoaded', () => {
+    loadData();
+});
     function saveState() {
         localStorage.setItem('pcm_points', JSON.stringify(points));
         localStorage.setItem('pcm_history', JSON.stringify(historyData));
