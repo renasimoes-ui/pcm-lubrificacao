@@ -2467,9 +2467,143 @@ function editPoint(
    SALVAR PONTO
 ========================================================= */
 
-function handleSavePoint(
-    e
-) {
+async function handleSavePoint(e) {
+
+    e.preventDefault();
+
+    if (currentRole !== 'admin') {
+        showToast(
+            'Acesso negado',
+            'Somente o administrador pode cadastrar pontos.'
+        );
+        return;
+    }
+
+    const id = document.getElementById('pointId').value;
+
+    const [freqDays, freqLabel] =
+        document.getElementById('formFrequency').value.split('|');
+
+    const responsible =
+        document.getElementById('formResponsible').value;
+
+    if (!responsible) {
+        showToast(
+            'Atenção',
+            'Selecione um responsável para o ponto.'
+        );
+        return;
+    }
+
+    const pointData = {
+
+        machine:
+            document.getElementById('formMachine').value.trim(),
+
+        code:
+            document.getElementById('formCode').value.trim(),
+
+        sector:
+            document.getElementById('formSector').value.trim(),
+
+        point:
+            document.getElementById('formPoint').value.trim(),
+
+        lubricant:
+            document.getElementById('formLubricant').value.trim(),
+
+        quantity:
+            document.getElementById('formQuantity').value.trim(),
+
+        frequency_days:
+            parseInt(freqDays),
+
+        frequency_label:
+            freqLabel,
+
+        next_date:
+            document.getElementById('formNextDate').value,
+
+        responsible:
+            responsible,
+
+        notes:
+            document.getElementById('formNotes').value.trim()
+
+    };
+
+    try {
+
+        let response;
+
+        if (id) {
+
+            response = await fetch('/api/items', {
+
+                method: 'PUT',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    id: id,
+                    data: pointData
+                })
+
+            });
+
+        } else {
+
+            response = await fetch('/api/items', {
+
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+
+                body: JSON.stringify({
+                    type: 'point',
+                    data: pointData
+                })
+
+            });
+
+        }
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                result.error || 'Erro ao salvar ponto.'
+            );
+        }
+
+        closeFormModal();
+
+        await loadData();
+
+        showToast(
+            'Sucesso!',
+            `Ponto salvo e atribuído a ${responsible}.`
+        );
+
+    } catch (error) {
+
+        console.error(
+            'Erro ao salvar ponto:',
+            error
+        );
+
+        showToast(
+            'Erro',
+            error.message || 'Não foi possível salvar o ponto.'
+        );
+
+    }
+
+}
 
     e.preventDefault();
 
