@@ -794,6 +794,7 @@ function userCanSeePoint(pt) {
             .toLowerCase();
 
     return responsible === loggedUser;
+
 }
 
 
@@ -1933,24 +1934,31 @@ function renderPoints() {
 
 
 /* =========================================================
-   LUBRIFICAR
+   LUBRIFICAR — SALVA NO SUPABASE
 ========================================================= */
 
-function handleLubricate(
-    id
-) {
+async function handleLubricate(id) {
 
     const pt =
         points.find(
-            p => String(p.id) === String(id)
+            p =>
+                String(p.id) ===
+                String(id)
         );
 
-    if (!pt)
+    if (!pt) {
+
+        showToast(
+            'Erro',
+            'Ponto de lubrificação não encontrado.'
+        );
+
         return;
 
-    if (
-        !userCanSeePoint(pt)
-    ) {
+    }
+
+
+    if (!userCanSeePoint(pt)) {
 
         showToast(
             'Acesso negado',
@@ -1960,6 +1968,7 @@ function handleLubricate(
         return;
 
     }
+
 
     if (
         !confirm(
@@ -1971,29 +1980,6 @@ function handleLubricate(
 
     }
 
-    const now =
-        new Date();
-
-    const timeZoneNow =
-        now.toISOString();
-
-    const nextDateObj =
-        new Date(
-            now
-        );
-
-    nextDateObj.setDate(
-        nextDateObj.getDate() +
-        Number(
-            pt.frequency_days || 0
-        )
-    );
-
-    const nextDateStr =
-        nextDateObj
-            .toLocaleDateString(
-                'en-CA'
-            );
 
     const responsibleUser =
         currentUser
@@ -2003,56 +1989,95 @@ function handleLubricate(
                 'Administrador'
             );
 
-    pt.last_lubricated_at =
-        timeZoneNow;
 
-    pt.next_date =
-        nextDateStr;
+    try {
 
-    historyData.unshift({
+        showToast(
+            'Processando...',
+            'Registrando a lubrificação no banco de dados.'
+        );
 
-        id:
-            Date.now().toString(),
 
-        point_id:
-            pt.id,
+        const response =
+            await fetch(
+                '/api/lubricate',
+                {
+                    method: 'POST',
 
-        machine:
-            pt.machine,
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
 
-        code:
-            pt.code,
+                    body:
+                        JSON.stringify({
 
-        sector:
-            pt.sector,
+                            id:
+                                pt.id,
 
-        point:
-            pt.point,
+                            responsible:
+                                responsibleUser,
 
-        responsible:
-            responsibleUser,
+                            responsible_id:
+                                currentUser?.id ||
+                                pt.responsible_id ||
+                                null
 
-        performed_at:
-            timeZoneNow,
+                        })
 
-        lubricant:
-            pt.lubricant,
+                    }
+            );
 
-        quantity:
-            pt.quantity
 
-    });
+        const result =
+            await response.json();
 
-    saveState();
 
-    updateDashboardStats();
-    renderPoints();
-    renderHistory();
+        if (!response.ok) {
 
-    showToast(
-        '✅ Lubrificação Registrada!',
-        `Lubrificação de ${pt.code} registrada por ${responsibleUser}.`
-    );
+            throw new Error(
+                result.error ||
+                'Não foi possível registrar a lubrificação.'
+            );
+
+        }
+
+
+        /*
+         * NÃO salvamos manualmente no histórico
+         * antes da confirmação do servidor.
+         *
+         * O Supabase é quem grava:
+         * - última lubrificação
+         * - próxima data
+         * - histórico
+         */
+
+
+        await loadData();
+
+
+        showToast(
+            '✅ Lubrificação Registrada!',
+            `Lubrificação de ${pt.code} registrada por ${responsibleUser}.`
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            'Erro ao registrar lubrificação:',
+            error
+        );
+
+
+        showToast(
+            '❌ Erro',
+            error.message ||
+            'Não foi possível registrar a lubrificação.'
+        );
+
+    }
 
 }
 
@@ -2157,7 +2182,9 @@ function editPoint(
 
     const pt =
         points.find(
-            p => String(p.id) === String(id)
+            p =>
+                String(p.id) ===
+                String(id)
         );
 
     if (!pt)
@@ -2435,7 +2462,7 @@ async function handleSavePoint(e) {
    EXCLUIR
 ========================================================= */
 
-function deletePoint(
+async function deletePoint(
     id
 ) {
 
@@ -2458,23 +2485,49 @@ function deletePoint(
 
     }
 
-    points =
-        points.filter(
-            p =>
-                String(p.id) !==
-                String(id)
+    try {
+
+        const response =
+            await fetch(
+                `/api/items?id=${encodeURIComponent(id)}`,
+                {
+                    method: 'DELETE'
+                }
+            );
+
+        const result =
+            await response.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                'Não foi possível excluir o ponto.'
+            );
+
+        }
+
+        await loadData();
+
+        showToast(
+            'Excluído',
+            'Ponto de lubrificação removido.'
         );
 
-    saveState();
+    } catch (error) {
 
-    updateDashboardStats();
-    renderPoints();
-    renderHistory();
+        console.error(
+            'Erro ao excluir:',
+            error
+        );
 
-    showToast(
-        'Excluído',
-        'Ponto de lubrificação removido.'
-    );
+        showToast(
+            'Erro',
+            error.message ||
+            'Não foi possível excluir o ponto.'
+        );
+
+    }
 
 }
 
