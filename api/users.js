@@ -1,57 +1,61 @@
 export default async function handler(req, res) {
-    const supabaseUrl = process.env.SUPABASE_URL;
-    const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-    if (!supabaseUrl || !supabaseKey) {
-        return res.status(500).json({
-            error: 'Variáveis do Supabase não configuradas'
-        });
-    }
-
-    if (req.method !== 'GET') {
-        return res.status(405).json({
-            error: 'Método não permitido'
-        });
-    }
-
     try {
-        const pin = req.query.pin;
+        const supabaseUrl = process.env.SUPABASE_URL;
+        const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+        if (!supabaseUrl || !supabaseKey) {
+            return res.status(500).json({
+                error: "Variáveis do Supabase não configuradas"
+            });
+        }
+
+        const pin = req.query?.pin;
 
         if (!pin) {
             return res.status(400).json({
-                error: 'PIN não informado'
+                error: "PIN não informado"
             });
         }
 
-        const response = await fetch(
-            `${supabaseUrl}/rest/v1/users?pin=eq.${encodeURIComponent(pin)}&select=id,name,function,role,pin`,
-            {
-                headers: {
-                    apikey: supabaseKey,
-                    Authorization: `Bearer ${supabaseKey}`
-                }
+        const url =
+            `${supabaseUrl}/rest/v1/users` +
+            `?pin=eq.${encodeURIComponent(pin)}` +
+            `&select=id,name,function,role`;
+
+        const response = await fetch(url, {
+            method: "GET",
+            headers: {
+                "apikey": supabaseKey,
+                "Authorization": `Bearer ${supabaseKey}`,
+                "Content-Type": "application/json"
             }
-        );
+        });
+
+        const data = await response.json();
 
         if (!response.ok) {
-            throw new Error('Erro ao consultar usuários');
-        }
+            console.error("Supabase:", data);
 
-        const users = await response.json();
-
-        if (!users.length) {
-            return res.status(401).json({
-                error: 'PIN inválido'
+            return res.status(500).json({
+                error: "Erro ao consultar Supabase",
+                details: data
             });
         }
 
-        return res.status(200).json(users[0]);
+        if (!data || data.length === 0) {
+            return res.status(401).json({
+                error: "PIN inválido"
+            });
+        }
+
+        return res.status(200).json(data[0]);
 
     } catch (error) {
-        console.error(error);
+        console.error("Erro:", error);
 
         return res.status(500).json({
-            error: 'Erro interno do servidor'
+            error: "Erro interno do servidor",
+            details: error.message
         });
     }
 }
