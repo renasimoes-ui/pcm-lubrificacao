@@ -1,9 +1,8 @@
-```javascript
 function headers() {
     return {
         'Content-Type': 'application/json',
         'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
-        'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+        'Authorization': 'Bearer ' + process.env.SUPABASE_SERVICE_ROLE_KEY,
         'Prefer': 'return=representation'
     };
 }
@@ -94,7 +93,7 @@ async function sendEmail(data) {
 
                 headers: {
                     'Authorization':
-                        `Bearer ${apiKey}`,
+                        'Bearer ' + apiKey,
 
                     'Content-Type':
                         'application/json'
@@ -105,20 +104,13 @@ async function sendEmail(data) {
                     from:
                         'PCM • Lubrificação <pcm@abmadeiras.com.br>',
 
-
-                    /* =====================================================
-                       DESTINATÁRIOS
-                       ===================================================== */
-
                     to: [
                         'rena.simoes@abmadeiras.com.br',
                         'ery.soares@abmadeiras.com.br'
                     ],
 
-
                     subject:
-                        `Lubrificação realizada - ${data.code}`,
-
+                        'Lubrificação realizada - ' + data.code,
 
                     html: `
                         <div style="
@@ -134,34 +126,28 @@ async function sendEmail(data) {
                                 PCM • Lubrificação
                             </h2>
 
-
                             <p>
                                 <strong>
                                     Lubrificação realizada com sucesso.
                                 </strong>
                             </p>
 
-
                             <hr>
-
 
                             <p>
                                 <strong>Máquina:</strong>
                                 ${data.machine}
                             </p>
 
-
                             <p>
                                 <strong>Código:</strong>
                                 ${data.code}
                             </p>
 
-
                             <p>
                                 <strong>Setor:</strong>
                                 ${data.sector}
                             </p>
-
 
                             <p>
                                 <strong>
@@ -171,7 +157,6 @@ async function sendEmail(data) {
                                 ${data.point}
                             </p>
 
-
                             <p>
                                 <strong>
                                     Lubrificante:
@@ -179,7 +164,6 @@ async function sendEmail(data) {
 
                                 ${data.lubricant}
                             </p>
-
 
                             <p>
                                 <strong>
@@ -189,7 +173,6 @@ async function sendEmail(data) {
                                 ${data.quantity}
                             </p>
 
-
                             <p>
                                 <strong>
                                     Responsável:
@@ -197,7 +180,6 @@ async function sendEmail(data) {
 
                                 ${data.responsible}
                             </p>
-
 
                             <p>
                                 <strong>
@@ -207,7 +189,6 @@ async function sendEmail(data) {
                                 ${data.performedAt}
                             </p>
 
-
                             <p>
                                 <strong>
                                     Próxima lubrificação:
@@ -216,9 +197,7 @@ async function sendEmail(data) {
                                 ${data.nextDate}
                             </p>
 
-
                             <hr>
-
 
                             <p style="
                                 color: #64748b;
@@ -540,4 +519,3 @@ export default async function handler(req, res) {
         });
     }
 }
-```
