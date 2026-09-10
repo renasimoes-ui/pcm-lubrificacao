@@ -250,10 +250,30 @@
     ];
 
     // Estado da Aplicação
-    let points = JSON.parse(localStorage.getItem('pcm_points')) || defaultPoints;
-    let historyData = JSON.parse(localStorage.getItem('pcm_history')) || [];
-    let activeFilter = 'TODOS';
-    let currentRole = 'admin';
+    let points = [];
+let historyData = [];
+let activeFilter = 'TODOS';
+let currentRole = 'admin';
+
+async function loadData() {
+    try {
+        const response = await fetch('/api/items');
+        if (!response.ok) throw new Error('Erro ao carregar dados');
+
+        const data = await response.json();
+
+        points = data.points || [];
+        historyData = data.history || [];
+
+        localStorage.setItem('pcm_points', JSON.stringify(points));
+        localStorage.setItem('pcm_history', JSON.stringify(historyData));
+
+        renderDashboard();
+        renderHistory();
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+    }
+}
 
     // Inicialização
     document.addEventListener('DOMContentLoaded', () => {
