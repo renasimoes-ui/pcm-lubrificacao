@@ -310,8 +310,7 @@ async function loginWithPIN(pin) {
         const user = await response.json();
 
         currentUser = user;
-        currentRole = user.role;
-
+currentRole = user.role === 'maintenance' ? 'manutencao' : 'admin';
         localStorage.setItem('pcm_current_user', JSON.stringify(user));
 
         console.log('Usuário conectado:', user.name);
