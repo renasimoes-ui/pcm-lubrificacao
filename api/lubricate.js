@@ -1,425 +1,172 @@
-```javascript
-function headers() {
-    return {
-        'Content-Type': 'application/json',
-        'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
-        'Authorization': `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
-        'Prefer': 'return=representation'
-    };
-}
+async function handleLubricate(id) {
 
-function base() {
-    return process.env.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1';
-}
-
-async function sb(path, opts = {}) {
-    const r = await fetch(base() + path, {
-        ...opts,
-        headers: {
-            ...headers(),
-            ...(opts.headers || {})
-        }
-    });
-
-    const text = await r.text();
-
-    let data;
-
-    try {
-        data = text ? JSON.parse(text) : null;
-    } catch {
-        data = text;
-    }
-
-    if (!r.ok) {
-        throw new Error(
-            typeof data === 'string'
-                ? data
-                : (
-                    data?.message ||
-                    data?.hint ||
-                    data?.details ||
-                    'Supabase error'
-                )
-        );
-    }
-
-    return data;
-}
-
-function addDays(date, days) {
-    const d = new Date(date);
-
-    d.setDate(
-        d.getDate() + Number(days || 0)
+    const pt = points.find(
+        p => String(p.id) === String(id)
     );
 
-    return d.toISOString().slice(0, 10);
-}
-
-
-/* =========================================================
-   ENVIO DE E-MAIL PELO RESEND
-   ========================================================= */
-
-async function sendEmail(data) {
-
-    const apiKey = process.env.RESEND_API_KEY;
-
-    if (!apiKey) {
-        throw new Error(
-            'RESEND_API_KEY não configurada no Vercel.'
+    if (!pt) {
+        showToast(
+            'Erro',
+            'Ponto de lubrificação não encontrado.'
         );
+        return;
     }
 
-    const response = await fetch(
-        'https://api.resend.com/emails',
-        {
-            method: 'POST',
+    if (!userCanSeePoint(pt)) {
 
-            headers: {
-                'Authorization': `Bearer ${apiKey}`,
-                'Content-Type': 'application/json'
-            },
-
-            body: JSON.stringify({
-
-                from:
-                    'PCM • Lubrificação <pcm@abmadeiras.com.br>',
-
-                to: [
-                    'rena.simoes@abmaderias.com.br',
-                    'ery.soares@abmadeiras.com.br'
-                ],
-
-                subject:
-                    `Lubrificação realizada - ${data.code}`,
-
-                html: `
-                    <div style="
-                        font-family: Arial, sans-serif;
-                        max-width: 700px;
-                        margin: 0 auto;
-                        padding: 20px;
-                    ">
-
-                        <h2 style="margin-bottom: 5px;">
-                            PCM • Lubrificação
-                        </h2>
-
-                        <p>
-                            <strong>
-                                Lubrificação realizada com sucesso.
-                            </strong>
-                        </p>
-
-                        <hr>
-
-                        <p>
-                            <strong>Máquina:</strong>
-                            ${data.machine}
-                        </p>
-
-                        <p>
-                            <strong>Código:</strong>
-                            ${data.code}
-                        </p>
-
-                        <p>
-                            <strong>Setor:</strong>
-                            ${data.sector}
-                        </p>
-
-                        <p>
-                            <strong>Ponto de lubrificação:</strong>
-                            ${data.point}
-                        </p>
-
-                        <p>
-                            <strong>Lubrificante:</strong>
-                            ${data.lubricant}
-                        </p>
-
-                        <p>
-                            <strong>Quantidade:</strong>
-                            ${data.quantity}
-                        </p>
-
-                        <p>
-                            <strong>Responsável:</strong>
-                            ${data.responsible}
-                        </p>
-
-                        <p>
-                            <strong>Data/hora:</strong>
-                            ${data.performedAt}
-                        </p>
-
-                        <p>
-                            <strong>Próxima lubrificação:</strong>
-                            ${data.nextDate}
-                        </p>
-
-                        <hr>
-
-                        <p style="
-                            color: #64748b;
-                            font-size: 12px;
-                        ">
-                            E-mail automático enviado pelo sistema
-                            PCM • Lubrificação.
-                        </p>
-
-                    </div>
-                `
-            })
-        }
-    );
-
-    const responseText = await response.text();
-
-    let result;
-
-    try {
-        result = responseText
-            ? JSON.parse(responseText)
-            : {};
-    } catch {
-        result = {
-            message: responseText
-        };
-    }
-
-    if (!response.ok) {
-        throw new Error(
-            result?.message ||
-            result?.error ||
-            responseText ||
-            'Erro ao enviar e-mail pelo Resend.'
-        );
-    }
-
-    return result;
-}
-
-
-/* =========================================================
-   API PRINCIPAL
-   ========================================================= */
-
-export default async function handler(req, res) {
-
-    try {
-
-        if (req.method !== 'POST') {
-            return res.status(405).json({
-                error: 'Método não permitido.'
-            });
-        }
-
-        const {
-            id,
-            responsible,
-            responsible_id = null
-        } = req.body || {};
-
-        if (!id) {
-            return res.status(400).json({
-                error: 'ID obrigatório.'
-            });
-        }
-
-        /* =====================================================
-           BUSCA O PONTO
-           ===================================================== */
-
-        const rows = await sb(
-            `/lubrication_points?id=eq.${encodeURIComponent(id)}&select=*`
+        showToast(
+            'Acesso negado',
+            'Este ponto não está atribuído ao usuário logado.'
         );
 
-        const pt = rows?.[0];
+        return;
+    }
 
-        if (!pt) {
-            return res.status(404).json({
-                error: 'Ponto não encontrado.'
-            });
-        }
+    if (!confirm(
+        `Confirmar lubrificação da máquina ${pt.machine} (${pt.code})?`
+    )) {
+        return;
+    }
 
-        /* =====================================================
-           DATA DA LUBRIFICAÇÃO
-           ===================================================== */
-
-        const performedAt =
-            new Date().toISOString();
-
-        /* =====================================================
-           PRÓXIMA DATA
-           ===================================================== */
-
-        const nextDate =
-            addDays(
-                performedAt,
-                pt.frequency_days
+    const responsibleUser =
+        currentUser
+            ? currentUser.name
+            : (
+                pt.responsible ||
+                'Administrador'
             );
 
-        /* =====================================================
-           ATUALIZA O PONTO
-           ===================================================== */
+    try {
 
-        const updated = await sb(
-            `/lubrication_points?id=eq.${encodeURIComponent(id)}`,
+        const response = await fetch(
+            '/api/lubricate',
             {
-                method: 'PATCH',
+                method: 'POST',
+
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
                 body: JSON.stringify({
-                    last_lubricated_at: performedAt,
-                    next_date: nextDate
+                    id: pt.id,
+
+                    responsible:
+                        responsibleUser,
+
+                    responsible_id:
+                        currentUser
+                            ? currentUser.id
+                            : null
                 })
             }
         );
 
-        /* =====================================================
-           REGISTRA NO HISTÓRICO
-           ===================================================== */
-
-        const history = {
-
-            machine: pt.machine,
-
-            code: pt.code,
-
-            sector: pt.sector,
-
-            point: pt.point,
-
-            lubricant: pt.lubricant,
-
-            quantity: pt.quantity,
-
-            responsible_name:
-                responsible ||
-                pt.responsible ||
-                'Não informado',
-
-            responsible_id:
-                responsible_id ||
-                pt.responsible_id ||
-                null,
-
-            performed_at:
-                performedAt
-        };
-
-        const saved = await sb(
-            '/lubrication_history',
-            {
-                method: 'POST',
-
-                body: JSON.stringify(history)
-            }
-        );
-
 
         /* =====================================================
-           ENVIA O E-MAIL
+           LEITURA SEGURA DA RESPOSTA DO SERVIDOR
            ===================================================== */
 
-        let emailResult = null;
-        let emailError = null;
+        const responseText =
+            await response.text();
+
+        let result = null;
 
         try {
 
-            emailResult = await sendEmail({
+            result =
+                responseText
+                    ? JSON.parse(responseText)
+                    : null;
 
-                machine:
-                    pt.machine || 'Não informado',
-
-                code:
-                    pt.code || 'Não informado',
-
-                sector:
-                    pt.sector || 'Não informado',
-
-                point:
-                    pt.point || 'Não informado',
-
-                lubricant:
-                    pt.lubricant || 'Não informado',
-
-                quantity:
-                    pt.quantity || 'Não informado',
-
-                responsible:
-                    responsible ||
-                    pt.responsible ||
-                    'Não informado',
-
-                performedAt:
-                    new Date(performedAt)
-                        .toLocaleString(
-                            'pt-BR',
-                            {
-                                timeZone:
-                                    'America/Sao_Paulo'
-                            }
-                        ),
-
-                nextDate:
-                    new Date(
-                        `${nextDate}T12:00:00`
-                    ).toLocaleDateString(
-                        'pt-BR'
-                    )
-            });
-
-        } catch (emailErr) {
+        } catch (jsonError) {
 
             console.error(
-                'Erro ao enviar e-mail:',
-                emailErr
+                'Resposta não-JSON do servidor:',
+                responseText
             );
 
-            emailError =
-                emailErr.message ||
-                'Erro ao enviar e-mail.';
+            throw new Error(
+                responseText ||
+                'O servidor retornou uma resposta inválida.'
+            );
         }
 
 
         /* =====================================================
-           RETORNO
+           VERIFICA SE A API RETORNOU ERRO
            ===================================================== */
 
-        return res.status(200).json({
+        if (!response.ok) {
 
-            point:
-                updated?.[0] ||
-                updated,
+            throw new Error(
+                result?.error ||
+                result?.message ||
+                result?.details ||
+                'Erro ao registrar a lubrificação.'
+            );
 
-            history:
-                saved?.[0] ||
-                saved,
+        }
 
-            next_date:
-                nextDate,
 
-            email_sent:
-                !!emailResult,
+        /* =====================================================
+           ATUALIZA OS DADOS DO APP
+           ===================================================== */
 
-            email_error:
-                emailError
+        await loadData();
 
-        });
 
-    } catch (e) {
+        /* =====================================================
+           MENSAGEM DE SUCESSO
+           ===================================================== */
 
-        console.error(e);
+        if (result?.email_sent) {
 
-        return res.status(500).json({
+            showToast(
+                '✅ Lubrificação registrada!',
+                `Lubrificação de ${pt.code} registrada por ${responsibleUser}. E-mail enviado com sucesso.`
+            );
 
-            error:
-                e.message ||
-                'Erro interno.'
-        });
+        } else {
+
+            showToast(
+                '✅ Lubrificação registrada!',
+                `Lubrificação de ${pt.code} registrada por ${responsibleUser}.`
+            );
+
+            if (result?.email_error) {
+
+                console.error(
+                    'E-mail não enviado:',
+                    result.email_error
+                );
+
+                setTimeout(() => {
+
+                    showToast(
+                        '⚠️ E-mail não enviado',
+                        result.email_error
+                    );
+
+                }, 1200);
+
+            }
+
+        }
+
+
+    } catch (error) {
+
+        console.error(
+            'Erro ao registrar lubrificação:',
+            error
+        );
+
+        showToast(
+            '❌ Erro',
+            error.message ||
+            'Não foi possível registrar a lubrificação.'
+        );
+
     }
+
 }
-```
