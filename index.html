@@ -1409,26 +1409,36 @@ main.max-w-7xl{max-width:1320px!important;}
 
                 <div>
                     <label class="block text-xs font-bold text-slate-600 mb-1">
-                        Frequência em dias *
+                        Frequência *
                     </label>
-                    <input
-                        id="pointFrequency"
-                        class="input"
-                        type="number"
-                        min="1"
-                        required
-                    >
+                    <select id="pointFrequencyPreset" class="input" required onchange="handleFrequencyPreset()">
+                        <option value="">Selecione a frequência</option>
+                        <option value="7">Semanal — 7 dias</option>
+                        <option value="15">Quinzenal — 15 dias</option>
+                        <option value="30">Mensal — 30 dias</option>
+                        <option value="60">Bimestral — 60 dias</option>
+                        <option value="90">Trimestral — 90 dias</option>
+                        <option value="182">Semestral — 182 dias</option>
+                        <option value="365">Anual — 365 dias</option>
+                        <option value="custom">Personalizada</option>
+                    </select>
                 </div>
 
-                <div>
+                <div id="customFrequencyWrap" class="hidden">
                     <label class="block text-xs font-bold text-slate-600 mb-1">
-                        Frequência
+                        Quantidade de dias *
                     </label>
-                    <input
-                        id="pointFrequencyLabel"
-                        class="input"
-                        placeholder="Ex.: Semanal"
-                    >
+                    <input id="pointFrequencyCustom" class="input" type="number" min="1" placeholder="Ex.: 45" oninput="handleFrequencyPreset()">
+                </div>
+
+                <input type="hidden" id="pointFrequency" value="">
+                <input type="hidden" id="pointFrequencyLabel" value="">
+
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-bold text-slate-600 mb-1">
+                        Observação
+                    </label>
+                    <textarea id="pointObservation" class="input" rows="3" placeholder="Digite alguma observação sobre este ponto de lubrificação..."></textarea>
                 </div>
 
                 <div class="md:col-span-2">
@@ -1739,6 +1749,23 @@ main.max-w-7xl{max-width:1320px!important;}
         return Math.round(
             (target - current) / 86400000
         );
+    }
+
+
+    function getCountdownText(dateValue) {
+
+        const diff = getDaysDifference(dateValue);
+
+        if (diff === null) return 'Sem próxima data';
+
+        if (diff < 0) {
+            const days = Math.abs(diff);
+            return `Atrasada há ${days} ${days === 1 ? 'dia' : 'dias'}`;
+        }
+
+        if (diff === 0) return 'Lubrificar hoje';
+        if (diff === 1) return 'Falta 1 dia';
+        return `Faltam ${diff} dias`;
     }
 
 
@@ -3125,6 +3152,9 @@ main.max-w-7xl{max-width:1320px!important;}
                             <div class="font-bold">
                                 ${formatDate(point.next_date)}
                             </div>
+                            <div class="text-xs font-bold mt-1 ${getDaysDifference(point.next_date) !== null && getDaysDifference(point.next_date) < 0 ? 'text-red-600' : 'text-amber-600'}">
+                                ${getCountdownText(point.next_date)}
+                            </div>
 
                             ${
                                 point.last_lubricated_at
@@ -3157,7 +3187,7 @@ main.max-w-7xl{max-width:1320px!important;}
                                     class="btn btn-success action-btn action-lubricate"
                                     title="Registrar lubrificação"
                                 >
-                                    <i class="fa-solid fa-check"></i><span>Registrar</span>
+                                    <i class="fa-solid fa-check"></i><span>Lubrificado</span>
                                 </button>
 
                                 ${
@@ -3198,6 +3228,26 @@ main.max-w-7xl{max-width:1320px!important;}
     /* =====================================================
        MODAL PONTO
     ===================================================== */
+
+    function handleFrequencyPreset() {
+        const preset = document.getElementById('pointFrequencyPreset');
+        const customWrap = document.getElementById('customFrequencyWrap');
+        const custom = document.getElementById('pointFrequencyCustom');
+        const hiddenDays = document.getElementById('pointFrequency');
+        const hiddenLabel = document.getElementById('pointFrequencyLabel');
+        if (!preset || !hiddenDays || !hiddenLabel) return;
+
+        if (preset.value === 'custom') {
+            customWrap?.classList.remove('hidden');
+            hiddenDays.value = custom?.value || '';
+            hiddenLabel.value = custom?.value ? `${custom.value} dias` : 'Personalizada';
+        } else {
+            customWrap?.classList.add('hidden');
+            hiddenDays.value = preset.value || '';
+            const label = preset.options[preset.selectedIndex]?.textContent || '';
+            hiddenLabel.value = label.split(' — ')[0] || '';
+        }
+    }
 
     function openPointModal(point = null) {
 
@@ -3264,16 +3314,22 @@ main.max-w-7xl{max-width:1320px!important;}
             point?.quantity || '';
 
 
-        document.getElementById(
-            'pointFrequency'
-        ).value =
-            point?.frequency_days || '';
+        const frequencyDays = Number(point?.frequency_days || 0);
+        const frequencyPreset = document.getElementById('pointFrequencyPreset');
+        const customFrequency = document.getElementById('pointFrequencyCustom');
+        const frequencyMap = ['7','15','30','60','90','182','365'];
+        if (frequencyPreset) {
+            frequencyPreset.value = point?.frequency_type && point.frequency_type !== 'custom'
+                ? String(point.frequency_type)
+                : (frequencyMap.includes(String(frequencyDays)) ? String(frequencyDays) : (frequencyDays ? 'custom' : ''));
+        }
+        if (customFrequency) customFrequency.value = frequencyMap.includes(String(frequencyDays)) ? '' : (frequencyDays || '');
+        handleFrequencyPreset();
 
+        document.getElementById('pointFrequency').value = frequencyDays || '';
+        document.getElementById('pointFrequencyLabel').value = point?.frequency_label || '';
 
-        document.getElementById(
-            'pointFrequencyLabel'
-        ).value =
-            point?.frequency_label || '';
+        document.getElementById('pointObservation').value = point?.observation || point?.obs || '';
 
 
         populateResponsibleSelect(
@@ -3334,6 +3390,15 @@ main.max-w-7xl{max-width:1320px!important;}
     }
 
 
+    function calculateNextDate(baseDate, days) {
+        const date = new Date(baseDate || new Date());
+        const amount = Number(days || 0);
+        if (isNaN(date.getTime()) || !amount) return null;
+        date.setDate(date.getDate() + amount);
+        return date.toISOString().slice(0, 10);
+    }
+
+
     async function handleSavePoint(event) {
 
         event.preventDefault();
@@ -3360,6 +3425,8 @@ main.max-w-7xl{max-width:1320px!important;}
                     String(selectedResponsibleId)
             );
 
+
+        handleFrequencyPreset();
 
         const frequencyDays =
             Number(
@@ -3415,9 +3482,27 @@ main.max-w-7xl{max-width:1320px!important;}
             frequency_days:
                 frequencyDays,
 
+            frequency_type:
+                document.getElementById(
+                    'pointFrequencyPreset'
+                ).value || 'custom',
+
             frequency_label:
                 document.getElementById(
                     'pointFrequencyLabel'
+                ).value.trim(),
+
+            next_date:
+                calculateNextDate(
+                    editingPointId
+                        ? (points.find(p => String(p.id) === String(editingPointId))?.last_lubricated_at || new Date().toISOString())
+                        : new Date().toISOString(),
+                    frequencyDays
+                ),
+
+            observation:
+                document.getElementById(
+                    'pointObservation'
                 ).value.trim(),
 
             responsible:
@@ -3656,15 +3741,6 @@ main.max-w-7xl{max-width:1320px!important;}
             'Não informado';
 
 
-        const confirmed =
-            confirm(
-                `Registrar lubrificação?\n\nMáquina: ${point.machine || '-'}\nCódigo: ${point.code || '-'}\nPonto: ${point.point || '-'}\nResponsável: ${responsible}`
-            );
-
-
-        if (!confirmed) return;
-
-
         try {
 
             const response =
@@ -3704,10 +3780,13 @@ main.max-w-7xl{max-width:1320px!important;}
 
             await loadData();
 
-
             showToast(
                 'Lubrificação registrada com sucesso!'
             );
+
+            if (isAdmin()) {
+                showTab('dashboard');
+            }
 
 
         } catch (error) {
