@@ -210,8 +210,6 @@
 >
 
 ```
-<!-- CARDS -->
-
 <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
 
     <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
@@ -491,8 +489,6 @@
         >
 
 
-        <!-- MÁQUINA / CÓDIGO -->
-
         <div class="grid grid-cols-2 gap-2">
 
             <div>
@@ -530,8 +526,6 @@
 
         </div>
 
-
-        <!-- SETOR / PONTO -->
 
         <div class="grid grid-cols-2 gap-2">
 
@@ -571,8 +565,6 @@
         </div>
 
 
-        <!-- LUBRIFICANTE / QUANTIDADE -->
-
         <div class="grid grid-cols-2 gap-2">
 
             <div>
@@ -610,8 +602,6 @@
 
         </div>
 
-
-        <!-- FREQUÊNCIA / PRÓXIMA DATA -->
 
         <div class="grid grid-cols-2 gap-2">
 
@@ -722,8 +712,6 @@
         </div>
 
 
-        <!-- OBSERVAÇÕES -->
-
         <div>
 
             <label class="font-bold text-slate-600">
@@ -739,8 +727,6 @@
 
         </div>
 
-
-        <!-- BOTÕES -->
 
         <div class="flex gap-2 pt-2">
 
@@ -774,68 +760,42 @@
 
 <script>
 
-
-/* =========================================================
-   CONFIGURAÇÕES
-========================================================= */
-
 const defaultPoints = [];
 
-
-/* =========================================================
-   VARIÁVEIS
-========================================================= */
-
 let points = [];
-
 let historyData = [];
-
 let activeFilter = 'TODOS';
-
 let currentRole = 'admin';
-
 let currentUser = null;
 
 
 /* =========================================================
-   USUÁRIO PODE VER O PONTO?
+   USUÁRIO PODE VER O PONTO
 ========================================================= */
 
 function userCanSeePoint(pt) {
-
-    /* ADM VÊ TODOS */
 
     if (currentRole === 'admin') {
         return true;
     }
 
-
-    /* FUNCIONÁRIO PRECISA ESTAR LOGADO */
-
     if (!currentUser || !currentUser.name) {
         return false;
     }
-
 
     const responsible =
         String(pt.responsible || '')
             .trim()
             .toLowerCase();
 
-
     const loggedUser =
         String(currentUser.name || '')
             .trim()
             .toLowerCase();
 
-
     return responsible === loggedUser;
 }
 
-
-/* =========================================================
-   PONTOS VISÍVEIS PARA O USUÁRIO
-========================================================= */
 
 function getVisiblePoints() {
 
@@ -859,33 +819,26 @@ async function loginWithPIN(pin) {
                 `/api/users?pin=${encodeURIComponent(pin)}`
             );
 
-
         if (!response.ok) {
             throw new Error('PIN inválido');
         }
 
-
         const user =
             await response.json();
 
-
         currentUser = user;
-
 
         currentRole =
             user.role === 'maintenance'
                 ? 'manutencao'
                 : 'admin';
 
-
         console.log(
             'Usuário conectado:',
             user.name
         );
 
-
         return true;
-
 
     } catch (error) {
 
@@ -894,17 +847,12 @@ async function loginWithPIN(pin) {
             error
         );
 
-
         return false;
 
     }
 
 }
 
-
-/* =========================================================
-   ENTRAR
-========================================================= */
 
 function submitLogin() {
 
@@ -913,28 +861,23 @@ function submitLogin() {
             'loginPIN'
         ).value;
 
-
     const error =
         document.getElementById(
             'loginError'
         );
-
 
     if (pin.length !== 4) {
 
         error.textContent =
             'Digite um PIN de 4 números';
 
-
         error.classList.remove(
             'hidden'
         );
 
-
         return;
 
     }
-
 
     loginWithPIN(pin).then(
         success => {
@@ -948,11 +891,9 @@ function submitLogin() {
                     .style.display =
                     'none';
 
-
                 error.classList.add(
                     'hidden'
                 );
-
 
                 document
                     .getElementById(
@@ -960,12 +901,10 @@ function submitLogin() {
                     )
                     .value = '';
 
-
                 const nameElement =
                     document.getElementById(
                         'loggedUserName'
                     );
-
 
                 if (
                     nameElement &&
@@ -977,12 +916,10 @@ function submitLogin() {
 
                 }
 
-
                 const adminControls =
                     document.getElementById(
                         'adminControls'
                     );
-
 
                 if (adminControls) {
 
@@ -993,18 +930,14 @@ function submitLogin() {
 
                 }
 
-
                 updateDashboardStats();
-
                 renderPoints();
-
                 renderHistory();
 
             } else {
 
                 error.textContent =
                     'PIN inválido';
-
 
                 error.classList.remove(
                     'hidden'
@@ -1030,7 +963,6 @@ document.addEventListener(
             document.getElementById(
                 'loginPIN'
             );
-
 
         if (pinInput) {
 
@@ -1069,7 +1001,6 @@ async function loadData() {
                 '/api/items'
             );
 
-
         if (!response.ok) {
 
             throw new Error(
@@ -1078,37 +1009,28 @@ async function loadData() {
 
         }
 
-
         const data =
             await response.json();
-
 
         points =
             data.points || [];
 
-
         historyData =
             data.history || [];
-
 
         localStorage.setItem(
             'pcm_points',
             JSON.stringify(points)
         );
 
-
         localStorage.setItem(
             'pcm_history',
             JSON.stringify(historyData)
         );
 
-
         updateDashboardStats();
-
         renderPoints();
-
         renderHistory();
-
 
     } catch (error) {
 
@@ -1116,12 +1038,6 @@ async function loadData() {
             'Erro ao carregar dados:',
             error
         );
-
-
-        /*
-         * Caso a API falhe,
-         * tenta utilizar os dados locais.
-         */
 
         try {
 
@@ -1132,7 +1048,6 @@ async function loadData() {
                     )
                 ) || [];
 
-
             historyData =
                 JSON.parse(
                     localStorage.getItem(
@@ -1140,11 +1055,8 @@ async function loadData() {
                     )
                 ) || [];
 
-
             updateDashboardStats();
-
             renderPoints();
-
             renderHistory();
 
         } catch (localError) {
@@ -1174,7 +1086,6 @@ document.addEventListener(
                 'loginScreen'
             );
 
-
         if (loginScreen) {
 
             loginScreen.style.display =
@@ -1182,17 +1093,13 @@ document.addEventListener(
 
         }
 
-
         currentUser = null;
-
         currentRole = 'admin';
-
 
         const nameElement =
             document.getElementById(
                 'loggedUserName'
             );
-
 
         if (nameElement) {
 
@@ -1201,12 +1108,10 @@ document.addEventListener(
 
         }
 
-
         const adminControls =
             document.getElementById(
                 'adminControls'
             );
-
 
         if (adminControls) {
 
@@ -1214,7 +1119,6 @@ document.addEventListener(
                 'none';
 
         }
-
 
         loadData();
 
@@ -1233,7 +1137,6 @@ function saveState() {
         JSON.stringify(points)
     );
 
-
     localStorage.setItem(
         'pcm_history',
         JSON.stringify(historyData)
@@ -1251,10 +1154,8 @@ function getTodayString() {
     const now =
         new Date();
 
-
     const year =
         now.getFullYear();
-
 
     const month =
         String(
@@ -1264,7 +1165,6 @@ function getTodayString() {
             '0'
         );
 
-
     const day =
         String(
             now.getDate()
@@ -1273,14 +1173,13 @@ function getTodayString() {
             '0'
         );
 
-
     return `${year}-${month}-${day}`;
 
 }
 
 
 /* =========================================================
-   REGRA DE STATUS
+   STATUS
 ========================================================= */
 
 function getItemStatus(
@@ -1302,22 +1201,18 @@ function getItemStatus(
 
     }
 
-
     const todayStr =
         getTodayString();
-
 
     const today =
         new Date(
             `${todayStr}T00:00:00`
         );
 
-
     const nextDate =
         new Date(
             `${nextDateStr}T00:00:00`
         );
-
 
     const diffDays =
         Math.round(
@@ -1332,7 +1227,6 @@ function getItemStatus(
                 24
             )
         );
-
 
     if (diffDays < 0) {
 
@@ -1349,7 +1243,6 @@ function getItemStatus(
 
     }
 
-
     if (diffDays <= 2) {
 
         return {
@@ -1364,7 +1257,6 @@ function getItemStatus(
         };
 
     }
-
 
     return {
 
@@ -1389,19 +1281,13 @@ function updateDashboardStats() {
     const visiblePoints =
         getVisiblePoints();
 
-
     const todayStr =
         getTodayString();
 
-
     let emDia = 0;
-
     let proximas = 0;
-
     let atrasadas = 0;
-
     let pendenciasHoje = 0;
-
 
     visiblePoints.forEach(
         pt => {
@@ -1410,7 +1296,6 @@ function updateDashboardStats() {
                 getItemStatus(
                     pt.next_date
                 );
-
 
             if (
                 status.code ===
@@ -1421,7 +1306,6 @@ function updateDashboardStats() {
 
             }
 
-
             if (
                 status.code ===
                 'PROXIMA'
@@ -1431,7 +1315,6 @@ function updateDashboardStats() {
 
             }
 
-
             if (
                 status.code ===
                 'ATRASADA'
@@ -1440,7 +1323,6 @@ function updateDashboardStats() {
                 atrasadas++;
 
             }
-
 
             if (
                 pt.next_date &&
@@ -1455,14 +1337,12 @@ function updateDashboardStats() {
         }
     );
 
-
     const visibleIds =
         new Set(
             visiblePoints.map(
                 pt => String(pt.id)
             )
         );
-
 
     const hojeRealizadas =
         historyData.filter(
@@ -1508,7 +1388,6 @@ function updateDashboardStats() {
 
                 }
 
-
                 if (
                     !h.performed_at
                 ) {
@@ -1517,12 +1396,10 @@ function updateDashboardStats() {
 
                 }
 
-
                 const date =
                     new Date(
                         h.performed_at
                     );
-
 
                 return (
                     date
@@ -1535,36 +1412,30 @@ function updateDashboardStats() {
             }
         ).length;
 
-
     document.getElementById(
         'statTotal'
     ).innerText =
         visiblePoints.length;
-
 
     document.getElementById(
         'statEmDia'
     ).innerText =
         emDia;
 
-
     document.getElementById(
         'statProximas'
     ).innerText =
         proximas;
-
 
     document.getElementById(
         'statAtrasadas'
     ).innerText =
         atrasadas;
 
-
     document.getElementById(
         'statHoje'
     ).innerText =
         hojeRealizadas;
-
 
     document.getElementById(
         'statPendencias'
@@ -1585,7 +1456,6 @@ function setFilter(
     activeFilter =
         filter;
 
-
     [
         'TODOS',
         'EM_DIA',
@@ -1600,10 +1470,8 @@ function setFilter(
                     `filterBtn${f}`
                 );
 
-
             if (!btn)
                 return;
-
 
             if (
                 f ===
@@ -1623,7 +1491,6 @@ function setFilter(
         }
     );
 
-
     renderPoints();
 
 }
@@ -1640,7 +1507,6 @@ function renderPoints() {
             'searchInput'
         );
 
-
     const search =
         searchElement
             ? searchElement.value
@@ -1648,33 +1514,22 @@ function renderPoints() {
                 .trim()
             : '';
 
-
     const container =
         document.getElementById(
             'pointsList'
         );
 
-
     if (!container)
         return;
-
 
     const todayStr =
         getTodayString();
 
-
     container.innerHTML = '';
-
 
     const filtered =
         points.filter(
             pt => {
-
-                /*
-                 * =================================================
-                 * RESPONSÁVEL
-                 * =================================================
-                 */
 
                 if (
                     !userCanSeePoint(pt)
@@ -1683,13 +1538,6 @@ function renderPoints() {
                     return false;
 
                 }
-
-
-                /*
-                 * =================================================
-                 * PESQUISA
-                 * =================================================
-                 */
 
                 const matchesSearch =
 
@@ -1731,7 +1579,6 @@ function renderPoints() {
                     .toLowerCase()
                     .includes(search);
 
-
                 if (
                     !matchesSearch
                 ) {
@@ -1740,18 +1587,10 @@ function renderPoints() {
 
                 }
 
-
-                /*
-                 * =================================================
-                 * STATUS
-                 * =================================================
-                 */
-
                 const status =
                     getItemStatus(
                         pt.next_date
                     );
-
 
                 if (
                     activeFilter ===
@@ -1765,7 +1604,6 @@ function renderPoints() {
 
                 }
 
-
                 if (
                     activeFilter ===
                     'PROXIMAS'
@@ -1778,7 +1616,6 @@ function renderPoints() {
 
                 }
 
-
                 if (
                     activeFilter ===
                     'ATRASADAS'
@@ -1790,7 +1627,6 @@ function renderPoints() {
                     );
 
                 }
-
 
                 if (
                     activeFilter ===
@@ -1805,12 +1641,10 @@ function renderPoints() {
 
                     }
 
-
                     const date =
                         new Date(
                             pt.last_lubricated_at
                         );
-
 
                     return (
                         date
@@ -1822,12 +1656,10 @@ function renderPoints() {
 
                 }
 
-
                 return true;
 
             }
         );
-
 
     if (
         filtered.length === 0
@@ -1835,7 +1667,6 @@ function renderPoints() {
 
         let message =
             'Nenhum ponto de lubrificação encontrado.';
-
 
         if (
             currentRole !==
@@ -1848,7 +1679,6 @@ function renderPoints() {
 
         }
 
-
         container.innerHTML = `
 
             <div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">
@@ -1859,11 +1689,9 @@ function renderPoints() {
 
         `;
 
-
         return;
 
     }
-
 
     filtered.forEach(
         pt => {
@@ -1872,7 +1700,6 @@ function renderPoints() {
                 getItemStatus(
                     pt.next_date
                 );
-
 
             const lastDate =
                 pt.last_lubricated_at
@@ -1891,7 +1718,6 @@ function renderPoints() {
 
                     : 'Nunca registrado';
 
-
             const nextDateFormatted =
                 pt.next_date
                     ? pt.next_date
@@ -1900,16 +1726,13 @@ function renderPoints() {
                         .join('/')
                     : '-';
 
-
             const card =
                 document.createElement(
                     'div'
                 );
 
-
             card.className =
                 "bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3 relative";
-
 
             card.innerHTML = `
 
@@ -1922,7 +1745,6 @@ function renderPoints() {
                             ${pt.sector || ''}
 
                         </span>
-
 
                         <h3 class="text-base font-black text-slate-800 mt-1">
 
@@ -1938,7 +1760,6 @@ function renderPoints() {
 
                     </div>
 
-
                     <span class="text-[10px] font-bold px-2 py-1 rounded-full border ${status.color}">
 
                         ${status.label}
@@ -1946,7 +1767,6 @@ function renderPoints() {
                     </span>
 
                 </div>
-
 
                 <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 grid grid-cols-2 gap-2 text-xs">
 
@@ -1961,7 +1781,6 @@ function renderPoints() {
                         </p>
 
                     </div>
-
 
                     <div>
 
@@ -1979,7 +1798,6 @@ function renderPoints() {
 
                     </div>
 
-
                     <div>
 
                         <p class="text-slate-400 font-bold uppercase text-[9px]">
@@ -1994,7 +1812,6 @@ function renderPoints() {
 
                     </div>
 
-
                     <div>
 
                         <p class="text-slate-400 font-bold uppercase text-[9px]">
@@ -2008,7 +1825,6 @@ function renderPoints() {
                         </p>
 
                     </div>
-
 
                     <div>
 
@@ -2032,7 +1848,6 @@ function renderPoints() {
 
                 </div>
 
-
                 ${
                     pt.notes
                         ? `
@@ -2049,7 +1864,6 @@ function renderPoints() {
                         : ''
                 }
 
-
                 <button
 
                     onclick="handleLubricate('${pt.id}')"
@@ -2063,7 +1877,6 @@ function renderPoints() {
                     ✓ LUBRIFICADO
 
                 </button>
-
 
                 ${
                     currentRole ===
@@ -2087,7 +1900,6 @@ function renderPoints() {
 
                                 </button>
 
-
                                 <button
 
                                     onclick="deletePoint('${pt.id}')"
@@ -2110,7 +1922,6 @@ function renderPoints() {
 
             `;
 
-
             container.appendChild(
                 card
             );
@@ -2131,13 +1942,11 @@ function handleLubricate(
 
     const pt =
         points.find(
-            p => p.id === id
+            p => String(p.id) === String(id)
         );
-
 
     if (!pt)
         return;
-
 
     if (
         !userCanSeePoint(pt)
@@ -2152,7 +1961,6 @@ function handleLubricate(
 
     }
 
-
     if (
         !confirm(
             `Confirmar lubrificação da máquina ${pt.machine} (${pt.code})?`
@@ -2163,20 +1971,16 @@ function handleLubricate(
 
     }
 
-
     const now =
         new Date();
 
-
     const timeZoneNow =
         now.toISOString();
-
 
     const nextDateObj =
         new Date(
             now
         );
-
 
     nextDateObj.setDate(
         nextDateObj.getDate() +
@@ -2185,13 +1989,11 @@ function handleLubricate(
         )
     );
 
-
     const nextDateStr =
         nextDateObj
             .toLocaleDateString(
                 'en-CA'
             );
-
 
     const responsibleUser =
         currentUser
@@ -2201,14 +2003,11 @@ function handleLubricate(
                 'Administrador'
             );
 
-
     pt.last_lubricated_at =
         timeZoneNow;
 
-
     pt.next_date =
         nextDateStr;
-
 
     historyData.unshift({
 
@@ -2244,16 +2043,11 @@ function handleLubricate(
 
     });
 
-
     saveState();
 
-
     updateDashboardStats();
-
     renderPoints();
-
     renderHistory();
-
 
     showToast(
         '✅ Lubrificação Registrada!',
@@ -2273,20 +2067,16 @@ function openFormModal() {
         'pointId'
     ).value = '';
 
-
     document.getElementById(
         'pointForm'
     ).reset();
-
 
     document.getElementById(
         'modalTitle'
     ).innerText =
         'Cadastrar Ponto';
 
-
     calculateFormNextDate();
-
 
     document.getElementById(
         'formModal'
@@ -2319,30 +2109,24 @@ function calculateFormNextDate() {
             'formFrequency'
         );
 
-
     if (!frequency)
         return;
 
-
     const freqVal =
         frequency.value;
-
 
     const days =
         parseInt(
             freqVal.split('|')[0]
         );
 
-
     const target =
         new Date();
-
 
     target.setDate(
         target.getDate() +
         days
     );
-
 
     document.getElementById(
         'formNextDate'
@@ -2371,88 +2155,73 @@ function editPoint(
 
     }
 
-
     const pt =
         points.find(
-            p => p.id === id
+            p => String(p.id) === String(id)
         );
-
 
     if (!pt)
         return;
-
 
     document.getElementById(
         'pointId'
     ).value =
         pt.id;
 
-
     document.getElementById(
         'formMachine'
     ).value =
         pt.machine || '';
-
 
     document.getElementById(
         'formCode'
     ).value =
         pt.code || '';
 
-
     document.getElementById(
         'formSector'
     ).value =
         pt.sector || '';
-
 
     document.getElementById(
         'formPoint'
     ).value =
         pt.point || '';
 
-
     document.getElementById(
         'formLubricant'
     ).value =
         pt.lubricant || '';
-
 
     document.getElementById(
         'formQuantity'
     ).value =
         pt.quantity || '';
 
-
     document.getElementById(
         'formFrequency'
     ).value =
         `${pt.frequency_days}|${pt.frequency_label}`;
-
 
     document.getElementById(
         'formNextDate'
     ).value =
         pt.next_date || '';
 
-
     document.getElementById(
         'formResponsible'
     ).value =
         pt.responsible || '';
-
 
     document.getElementById(
         'formNotes'
     ).value =
         pt.notes || '';
 
-
     document.getElementById(
         'modalTitle'
     ).innerText =
         'Editar Ponto';
-
 
     document.getElementById(
         'formModal'
@@ -2472,63 +2241,100 @@ async function handleSavePoint(e) {
     e.preventDefault();
 
     if (currentRole !== 'admin') {
+
         showToast(
             'Acesso negado',
             'Somente o administrador pode cadastrar pontos.'
         );
+
         return;
+
     }
 
-    const id = document.getElementById('pointId').value;
+    const id =
+        document.getElementById(
+            'pointId'
+        ).value;
 
-    const [freqDays, freqLabel] =
-        document.getElementById('formFrequency').value.split('|');
+    const [
+        freqDays,
+        freqLabel
+    ] =
+        document
+            .getElementById(
+                'formFrequency'
+            )
+            .value
+            .split('|');
 
     const responsible =
-        document.getElementById('formResponsible').value;
+        document.getElementById(
+            'formResponsible'
+        ).value;
 
     if (!responsible) {
+
         showToast(
             'Atenção',
             'Selecione um responsável para o ponto.'
         );
+
         return;
+
     }
 
     const pointData = {
 
         machine:
-            document.getElementById('formMachine').value.trim(),
+            document.getElementById(
+                'formMachine'
+            ).value.trim(),
 
         code:
-            document.getElementById('formCode').value.trim(),
+            document.getElementById(
+                'formCode'
+            ).value.trim(),
 
         sector:
-            document.getElementById('formSector').value.trim(),
+            document.getElementById(
+                'formSector'
+            ).value.trim(),
 
         point:
-            document.getElementById('formPoint').value.trim(),
+            document.getElementById(
+                'formPoint'
+            ).value.trim(),
 
         lubricant:
-            document.getElementById('formLubricant').value.trim(),
+            document.getElementById(
+                'formLubricant'
+            ).value.trim(),
 
         quantity:
-            document.getElementById('formQuantity').value.trim(),
+            document.getElementById(
+                'formQuantity'
+            ).value.trim(),
 
         frequency_days:
-            parseInt(freqDays),
+            parseInt(
+                freqDays
+            ),
 
         frequency_label:
             freqLabel,
 
         next_date:
-            document.getElementById('formNextDate').value,
+            document.getElementById(
+                'formNextDate'
+            ).value,
 
         responsible:
             responsible,
 
         notes:
-            document.getElementById('formNotes').value.trim()
+            document.getElementById(
+                'formNotes'
+            ).value.trim()
 
     };
 
@@ -2538,46 +2344,64 @@ async function handleSavePoint(e) {
 
         if (id) {
 
-            response = await fetch('/api/items', {
+            response =
+                await fetch(
+                    '/api/items',
+                    {
+                        method: 'PUT',
 
-                method: 'PUT',
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                        body:
+                            JSON.stringify({
+                                id:
+                                    id,
 
-                body: JSON.stringify({
-                    id: id,
-                    data: pointData
-                })
-
-            });
+                                data:
+                                    pointData
+                            })
+                    }
+                );
 
         } else {
 
-            response = await fetch('/api/items', {
+            response =
+                await fetch(
+                    '/api/items',
+                    {
+                        method: 'POST',
 
-                method: 'POST',
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                        body:
+                            JSON.stringify({
+                                type:
+                                    'point',
 
-                body: JSON.stringify({
-                    type: 'point',
-                    data: pointData
-                })
-
-            });
+                                data:
+                                    pointData
+                            })
+                    }
+                );
 
         }
 
-        const result = await response.json();
+        const result =
+            await response.json();
 
         if (!response.ok) {
+
             throw new Error(
-                result.error || 'Erro ao salvar ponto.'
+                result.error ||
+                'Erro ao salvar ponto.'
             );
+
         }
 
         closeFormModal();
@@ -2598,228 +2422,11 @@ async function handleSavePoint(e) {
 
         showToast(
             'Erro',
-            error.message || 'Não foi possível salvar o ponto.'
+            error.message ||
+            'Não foi possível salvar o ponto.'
         );
 
     }
-
-}
-
-    e.preventDefault();
-
-
-    if (
-        currentRole !==
-        'admin'
-    ) {
-
-        showToast(
-            'Acesso negado',
-            'Somente o administrador pode cadastrar pontos.'
-        );
-
-        return;
-
-    }
-
-
-    const id =
-        document.getElementById(
-            'pointId'
-        ).value;
-
-
-    const [
-        freqDays,
-        freqLabel
-    ] =
-        document
-            .getElementById(
-                'formFrequency'
-            )
-            .value
-            .split('|');
-
-
-    const responsible =
-        document.getElementById(
-            'formResponsible'
-        ).value;
-
-
-    if (!responsible) {
-
-        showToast(
-            'Atenção',
-            'Selecione um responsável para o ponto.'
-        );
-
-        return;
-
-    }
-
-
-    if (id) {
-
-        const pt =
-            points.find(
-                p => p.id === id
-            );
-
-
-        if (pt) {
-
-            pt.machine =
-                document.getElementById(
-                    'formMachine'
-                ).value.trim();
-
-
-            pt.code =
-                document.getElementById(
-                    'formCode'
-                ).value.trim();
-
-
-            pt.sector =
-                document.getElementById(
-                    'formSector'
-                ).value.trim();
-
-
-            pt.point =
-                document.getElementById(
-                    'formPoint'
-                ).value.trim();
-
-
-            pt.lubricant =
-                document.getElementById(
-                    'formLubricant'
-                ).value.trim();
-
-
-            pt.quantity =
-                document.getElementById(
-                    'formQuantity'
-                ).value.trim();
-
-
-            pt.frequency_days =
-                parseInt(
-                    freqDays
-                );
-
-
-            pt.frequency_label =
-                freqLabel;
-
-
-            pt.next_date =
-                document.getElementById(
-                    'formNextDate'
-                ).value;
-
-
-            pt.responsible =
-                responsible;
-
-
-            pt.notes =
-                document.getElementById(
-                    'formNotes'
-                ).value.trim();
-
-        }
-
-    } else {
-
-        const newPoint = {
-
-            id:
-                Date.now().toString(),
-
-            machine:
-                document.getElementById(
-                    'formMachine'
-                ).value.trim(),
-
-            code:
-                document.getElementById(
-                    'formCode'
-                ).value.trim(),
-
-            sector:
-                document.getElementById(
-                    'formSector'
-                ).value.trim(),
-
-            point:
-                document.getElementById(
-                    'formPoint'
-                ).value.trim(),
-
-            lubricant:
-                document.getElementById(
-                    'formLubricant'
-                ).value.trim(),
-
-            quantity:
-                document.getElementById(
-                    'formQuantity'
-                ).value.trim(),
-
-            frequency_days:
-                parseInt(
-                    freqDays
-                ),
-
-            frequency_label:
-                freqLabel,
-
-            last_lubricated_at:
-                null,
-
-            next_date:
-                document.getElementById(
-                    'formNextDate'
-                ).value,
-
-            responsible:
-                responsible,
-
-            notes:
-                document.getElementById(
-                    'formNotes'
-                ).value.trim()
-
-        };
-
-
-        points.push(
-            newPoint
-        );
-
-    }
-
-
-    saveState();
-
-
-    closeFormModal();
-
-
-    updateDashboardStats();
-
-    renderPoints();
-
-    renderHistory();
-
-
-    showToast(
-        'Sucesso!',
-        `Ponto salvo e atribuído a ${responsible}.`
-    );
 
 }
 
@@ -2841,7 +2448,6 @@ function deletePoint(
 
     }
 
-
     if (
         !confirm(
             'Deseja realmente excluir este ponto de lubrificação?'
@@ -2852,22 +2458,18 @@ function deletePoint(
 
     }
 
-
     points =
         points.filter(
-            p => p.id !== id
+            p =>
+                String(p.id) !==
+                String(id)
         );
-
 
     saveState();
 
-
     updateDashboardStats();
-
     renderPoints();
-
     renderHistory();
-
 
     showToast(
         'Excluído',
@@ -2888,7 +2490,6 @@ function renderHistory() {
             'historySearchInput'
         );
 
-
     const search =
         searchElement
             ? searchElement.value
@@ -2896,27 +2497,19 @@ function renderHistory() {
                 .trim()
             : '';
 
-
     const container =
         document.getElementById(
             'historyList'
         );
 
-
     if (!container)
         return;
 
-
     container.innerHTML = '';
-
 
     const filtered =
         historyData.filter(
             h => {
-
-                /*
-                 * FUNCIONÁRIO VÊ SOMENTE O PRÓPRIO HISTÓRICO
-                 */
 
                 if (
                     currentRole !==
@@ -2930,14 +2523,12 @@ function renderHistory() {
                         .trim()
                         .toLowerCase();
 
-
                     const loggedUser =
                         String(
                             currentUser?.name || ''
                         )
                         .trim()
                         .toLowerCase();
-
 
                     if (
                         responsible !==
@@ -2949,7 +2540,6 @@ function renderHistory() {
                     }
 
                 }
-
 
                 const matchesSearch =
 
@@ -2983,12 +2573,10 @@ function renderHistory() {
                     .toLowerCase()
                     .includes(search);
 
-
                 return matchesSearch;
 
             }
         );
-
 
     if (
         filtered.length === 0
@@ -3004,11 +2592,9 @@ function renderHistory() {
 
         `;
 
-
         return;
 
     }
-
 
     filtered.forEach(
         h => {
@@ -3022,16 +2608,13 @@ function renderHistory() {
                     )
                     : '-';
 
-
             const card =
                 document.createElement(
                     'div'
                 );
 
-
             card.className =
                 "bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-1 text-xs";
-
 
             card.innerHTML = `
 
@@ -3044,7 +2627,6 @@ function renderHistory() {
 
                     </span>
 
-
                     <span class="text-emerald-600 font-mono">
 
                         ${dateStr}
@@ -3052,7 +2634,6 @@ function renderHistory() {
                     </span>
 
                 </div>
-
 
                 <p class="text-slate-600">
 
@@ -3065,7 +2646,6 @@ function renderHistory() {
 
                 </p>
 
-
                 <p class="text-slate-600">
 
                     <strong>
@@ -3076,7 +2656,6 @@ function renderHistory() {
                     (${h.quantity || ''})
 
                 </p>
-
 
                 <p class="text-slate-500 font-semibold">
 
@@ -3089,7 +2668,6 @@ function renderHistory() {
                 </p>
 
             `;
-
 
             container.appendChild(
                 card
@@ -3114,24 +2692,20 @@ function switchTab(
             'dashboardTab'
         );
 
-
     const histTab =
         document.getElementById(
             'historyTab'
         );
-
 
     const btnDash =
         document.getElementById(
             'tabBtnDashboard'
         );
 
-
     const btnHist =
         document.getElementById(
             'tabBtnHistory'
         );
-
 
     if (
         tab ===
@@ -3142,15 +2716,12 @@ function switchTab(
             'hidden'
         );
 
-
         histTab.classList.add(
             'hidden'
         );
 
-
         btnDash.className =
             "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
-
 
         btnHist.className =
             "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
@@ -3161,15 +2732,12 @@ function switchTab(
             'hidden'
         );
 
-
         histTab.classList.remove(
             'hidden'
         );
 
-
         btnHist.className =
             "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
-
 
         btnDash.className =
             "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
@@ -3193,24 +2761,20 @@ function showToast(
             'toast'
         );
 
-
     document.getElementById(
         'toastTitle'
     ).innerText =
         title;
-
 
     document.getElementById(
         'toastMessage'
     ).innerText =
         message;
 
-
     toast.classList.remove(
         'hidden',
         'translate-x-full'
     );
-
 
     setTimeout(
         () => {
@@ -3218,7 +2782,6 @@ function showToast(
             toast.classList.add(
                 'translate-x-full'
             );
-
 
             setTimeout(
                 () => {
@@ -3288,5 +2851,4 @@ if (
 </script>
 
 </body>
-
 </html>
