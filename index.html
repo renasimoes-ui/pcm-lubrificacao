@@ -1,38 +1,53 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
+
     <meta charset="UTF-8">
 
-```
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    >
 
-<title>PCM • Controle de Lubrificação</title>
+    <title>PCM • Controle de Lubrificação</title>
 
-<script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
-<link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
->
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
 
-<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
 
-<meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#0f172a">
 
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="PCM Lubrificação">
-```
+    <meta
+        name="mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-capable"
+        content="yes"
+    >
+
+    <meta
+        name="apple-mobile-web-app-status-bar-style"
+        content="default"
+    >
+
+    <meta
+        name="apple-mobile-web-app-title"
+        content="PCM Lubrificação"
+    >
 
 </head>
 
-<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans select-none">
+
+<body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans">
+
 
 <!-- =========================================================
      LOGIN
@@ -43,59 +58,66 @@
     class="fixed inset-0 bg-slate-900 z-[9999] flex items-center justify-center p-4"
 >
 
-```
-<div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
 
-    <div class="text-center mb-6">
+        <div class="text-center mb-6">
 
-        <div
-            class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3"
-        >
-            <i class="fa-solid fa-oil-can text-2xl"></i>
+            <div
+                class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3"
+            >
+                <i class="fa-solid fa-oil-can text-2xl"></i>
+            </div>
+
+            <h2 class="text-xl font-black text-slate-800">
+                PCM • Lubrificação
+            </h2>
+
+            <p class="text-sm text-slate-500 mt-1">
+                Acesso da Manutenção
+            </p>
+
         </div>
 
-        <h2 class="text-xl font-black text-slate-800">
-            PCM • Lubrificação
-        </h2>
 
-        <p class="text-sm text-slate-500 mt-1">
-            Acesso da Manutenção
+        <label class="block text-sm font-bold text-slate-700 mb-2">
+            Digite seu PIN
+        </label>
+
+
+        <input
+            id="loginPIN"
+            type="password"
+            inputmode="numeric"
+            maxlength="4"
+            placeholder="••••"
+            class="w-full text-center text-2xl tracking-[0.5em] font-black border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+        >
+
+
+        <button
+            onclick="submitLogin()"
+            class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl"
+        >
+
+            <i class="fa-solid fa-right-to-bracket mr-2"></i>
+
+            Entrar
+
+        </button>
+
+
+        <p
+            id="loginError"
+            class="text-red-500 text-sm text-center font-bold mt-3 hidden"
+        >
+            PIN inválido
         </p>
 
     </div>
 
-    <label class="block text-sm font-bold text-slate-700 mb-2">
-        Digite seu PIN
-    </label>
-
-    <input
-        id="loginPIN"
-        type="password"
-        inputmode="numeric"
-        maxlength="4"
-        placeholder="••••"
-        class="w-full text-center text-2xl tracking-[0.5em] font-black border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-    >
-
-    <button
-        onclick="submitLogin()"
-        class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl"
-    >
-        <i class="fa-solid fa-right-to-bracket mr-2"></i>
-        Entrar
-    </button>
-
-    <p
-        id="loginError"
-        class="text-red-500 text-sm text-center font-bold mt-3 hidden"
-    >
-        PIN inválido
-    </p>
-
 </div>
-```
 
-</div>
+
 
 <!-- =========================================================
      TOAST
@@ -103,26 +125,32 @@
 
 <div
     id="toast"
-    class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300 max-w-sm bg-slate-900 text-white p-4 rounded-xl shadow-2xl border-l-4 border-emerald-500 flex items-start gap-3 hidden"
+    class="fixed top-4 right-4 z-[10000] transform translate-x-full transition-transform duration-300 max-w-sm bg-slate-900 text-white p-4 rounded-xl shadow-2xl border-l-4 border-emerald-500 flex items-start gap-3 hidden"
 >
 
-```
-<i class="fa-solid fa-circle-check text-emerald-400 text-xl mt-0.5"></i>
+    <i class="fa-solid fa-circle-check text-emerald-400 text-xl mt-0.5"></i>
 
-<div>
+    <div>
 
-    <h4 id="toastTitle" class="font-bold text-sm">
-        Sucesso!
-    </h4>
+        <h4
+            id="toastTitle"
+            class="font-bold text-sm"
+        >
+            Sucesso!
+        </h4>
 
-    <p id="toastMessage" class="text-xs text-slate-300 mt-0.5">
-        Operação realizada com sucesso.
-    </p>
+        <p
+            id="toastMessage"
+            class="text-xs text-slate-300 mt-0.5"
+        >
+            Operação realizada com sucesso.
+        </p>
+
+    </div>
 
 </div>
-```
 
-</div>
+
 
 <!-- =========================================================
      HEADER
@@ -130,75 +158,98 @@
 
 <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
 
-```
-<div
-    class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center"
->
+    <div
+        class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center gap-2"
+    >
 
-    <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2">
 
-        <i class="fa-solid fa-oil-can text-blue-400 text-xl"></i>
+            <i class="fa-solid fa-oil-can text-blue-400 text-xl"></i>
 
-        <div>
+            <div>
 
-            <h1 class="font-black text-base tracking-tight leading-none">
-                PCM • Lubrificação
-            </h1>
+                <h1 class="font-black text-base tracking-tight leading-none">
+                    PCM • Lubrificação
+                </h1>
 
-            <span class="text-[10px] text-slate-400">
-                Controle Industrial
-            </span>
+                <span class="text-[10px] text-slate-400">
+                    Controle Industrial
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="flex items-center gap-2">
+
+            <div
+                class="flex items-center gap-1 bg-slate-800 p-1 rounded-lg text-xs"
+            >
+
+                <span class="text-[10px] text-slate-400 pl-1">
+                    Usuário:
+                </span>
+
+                <span
+                    id="loggedUserName"
+                    class="text-blue-400 font-bold px-2"
+                >
+                    Não identificado
+                </span>
+
+            </div>
+
+
+            <button
+                onclick="logout()"
+                title="Sair"
+                class="bg-red-600 hover:bg-red-700 text-white w-8 h-8 rounded-lg"
+            >
+
+                <i class="fa-solid fa-right-from-bracket"></i>
+
+            </button>
 
         </div>
 
     </div>
 
-    <div
-        class="flex items-center gap-2 bg-slate-800 p-1 rounded-lg text-xs"
-    >
 
-        <span class="text-[10px] text-slate-400 pl-1">
-            Usuário:
-        </span>
+    <!-- NAVEGAÇÃO -->
 
-        <span
-            id="loggedUserName"
-            class="text-blue-400 font-bold px-2"
+    <nav class="flex border-t border-slate-800 bg-slate-950/50">
+
+        <button
+            onclick="switchTab('dashboard')"
+            id="tabBtnDashboard"
+            class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500"
         >
-            Não identificado
-        </span>
 
-    </div>
+            <i class="fa-solid fa-chart-pie mr-1"></i>
 
-</div>
+            Dashboard
+
+        </button>
 
 
-<!-- NAVEGAÇÃO -->
+        <button
+            onclick="switchTab('history')"
+            id="tabBtnHistory"
+            class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent"
+        >
 
-<nav class="flex border-t border-slate-800 bg-slate-950/50">
+            <i class="fa-solid fa-clock-rotate-left mr-1"></i>
 
-    <button
-        onclick="switchTab('dashboard')"
-        id="tabBtnDashboard"
-        class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500"
-    >
-        <i class="fa-solid fa-chart-pie mr-1"></i>
-        Dashboard
-    </button>
+            Histórico
 
-    <button
-        onclick="switchTab('history')"
-        id="tabBtnHistory"
-        class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent"
-    >
-        <i class="fa-solid fa-clock-rotate-left mr-1"></i>
-        Histórico
-    </button>
+        </button>
 
-</nav>
-```
+    </nav>
 
 </header>
+
+
 
 <!-- =========================================================
      DASHBOARD
@@ -209,205 +260,237 @@
     class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-4"
 >
 
-```
-<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
 
-    <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+    <!-- ESTATÍSTICAS -->
 
-        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-            Total de Pontos
-        </p>
-
-        <p
-            id="statTotal"
-            class="text-2xl font-black text-slate-800 mt-0.5"
-        >
-            0
-        </p>
-
-    </div>
+    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
 
 
-    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-emerald-500 border-y border-r border-slate-200">
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
 
-        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-            🟢 Em Dia
-        </p>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                Total de Pontos
+            </p>
 
-        <p
-            id="statEmDia"
-            class="text-2xl font-black text-emerald-600 mt-0.5"
-        >
-            0
-        </p>
+            <p
+                id="statTotal"
+                class="text-2xl font-black text-slate-800 mt-0.5"
+            >
+                0
+            </p>
 
-    </div>
-
-
-    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-amber-500 border-y border-r border-slate-200">
-
-        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-            🟡 Próximas
-        </p>
-
-        <p
-            id="statProximas"
-            class="text-2xl font-black text-amber-600 mt-0.5"
-        >
-            0
-        </p>
-
-    </div>
+        </div>
 
 
-    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-red-500 border-y border-r border-slate-200">
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-emerald-500 border-y border-r border-slate-200">
 
-        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-            🔴 Atrasadas
-        </p>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                🟢 Em Dia
+            </p>
 
-        <p
-            id="statAtrasadas"
-            class="text-2xl font-black text-red-600 mt-0.5"
-        >
-            0
-        </p>
+            <p
+                id="statEmDia"
+                class="text-2xl font-black text-emerald-600 mt-0.5"
+            >
+                0
+            </p>
 
-    </div>
-
-
-    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-blue-500 border-y border-r border-slate-200">
-
-        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-            Realizadas Hoje
-        </p>
-
-        <p
-            id="statHoje"
-            class="text-2xl font-black text-blue-600 mt-0.5"
-        >
-            0
-        </p>
-
-    </div>
+        </div>
 
 
-    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-purple-500 border-y border-r border-slate-200">
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-amber-500 border-y border-r border-slate-200">
 
-        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
-            Pendências Hoje
-        </p>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                🟡 Próximas
+            </p>
 
-        <p
-            id="statPendencias"
-            class="text-2xl font-black text-purple-600 mt-0.5"
-        >
-            0
-        </p>
+            <p
+                id="statProximas"
+                class="text-2xl font-black text-amber-600 mt-0.5"
+            >
+                0
+            </p>
 
-    </div>
-
-</div>
+        </div>
 
 
-<!-- PESQUISA -->
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-red-500 border-y border-r border-slate-200">
 
-<div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-3">
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                🔴 Atrasadas
+            </p>
 
-    <div class="relative">
+            <p
+                id="statAtrasadas"
+                class="text-2xl font-black text-red-600 mt-0.5"
+            >
+                0
+            </p>
 
-        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+        </div>
 
-        <input
-            type="text"
-            id="searchInput"
-            oninput="renderPoints()"
-            placeholder="Pesquisar máquina, código, setor, ponto..."
-            class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
+
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-blue-500 border-y border-r border-slate-200">
+
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                Realizadas Hoje
+            </p>
+
+            <p
+                id="statHoje"
+                class="text-2xl font-black text-blue-600 mt-0.5"
+            >
+                0
+            </p>
+
+        </div>
+
+
+        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-purple-500 border-y border-r border-slate-200">
+
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+                Pendências Hoje
+            </p>
+
+            <p
+                id="statPendencias"
+                class="text-2xl font-black text-purple-600 mt-0.5"
+            >
+                0
+            </p>
+
+        </div>
 
     </div>
 
 
-    <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
 
-        <button
-            onclick="setFilter('TODOS')"
-            id="filterBtnTODOS"
-            class="px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap"
-        >
-            Todos
-        </button>
+    <!-- PESQUISA -->
 
-        <button
-            onclick="setFilter('EM_DIA')"
-            id="filterBtnEM_DIA"
-            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
-        >
-            🟢 Em dia
-        </button>
+    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-3">
 
-        <button
-            onclick="setFilter('PROXIMAS')"
-            id="filterBtnPROXIMAS"
-            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
-        >
-            🟡 Próximas
-        </button>
+        <div class="relative">
 
-        <button
-            onclick="setFilter('ATRASADAS')"
-            id="filterBtnATRASADAS"
-            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
-        >
-            🔴 Atrasadas
-        </button>
+            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
 
-        <button
-            onclick="setFilter('HOJE')"
-            id="filterBtnHOJE"
-            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
-        >
-            Realizadas Hoje
-        </button>
+            <input
+                type="text"
+                id="searchInput"
+                oninput="renderPoints()"
+                placeholder="Pesquisar máquina, código, setor, ponto..."
+                class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+
+        </div>
+
+
+        <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs">
+
+
+            <button
+                onclick="setFilter('TODOS')"
+                id="filterBtnTODOS"
+                class="px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap"
+            >
+                Todos
+            </button>
+
+
+            <button
+                onclick="setFilter('EM_DIA')"
+                id="filterBtnEM_DIA"
+                class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+            >
+                🟢 Em dia
+            </button>
+
+
+            <button
+                onclick="setFilter('PROXIMAS')"
+                id="filterBtnPROXIMAS"
+                class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+            >
+                🟡 Próximas
+            </button>
+
+
+            <button
+                onclick="setFilter('ATRASADAS')"
+                id="filterBtnATRASADAS"
+                class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+            >
+                🔴 Atrasadas
+            </button>
+
+
+            <button
+                onclick="setFilter('HOJE')"
+                id="filterBtnHOJE"
+                class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+            >
+                Realizadas Hoje
+            </button>
+
+        </div>
 
     </div>
 
-</div>
 
 
-<!-- CONTROLES ADMIN -->
+    <!-- CONTROLES ADMIN -->
 
-<div
-    id="adminControls"
-    class="flex justify-between items-center"
-    style="display:none;"
->
-
-    <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs">
-        Pontos Cadastrados
-    </h2>
-
-    <button
-        onclick="openFormModal()"
-        class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1 transition-all"
+    <div
+        id="adminControls"
+        class="hidden flex-wrap justify-between items-center gap-2"
     >
-        <i class="fa-solid fa-plus"></i>
-        Novo Ponto
-    </button>
 
-</div>
+        <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs">
+            Administração
+        </h2>
 
 
-<!-- LISTA -->
+        <div class="flex gap-2">
 
-<div
-    id="pointsList"
-    class="space-y-3"
-></div>
-```
+
+            <button
+                onclick="openEmployeeModal()"
+                class="bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1"
+            >
+
+                <i class="fa-solid fa-users"></i>
+
+                Funcionários
+
+            </button>
+
+
+            <button
+                onclick="openFormModal()"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1"
+            >
+
+                <i class="fa-solid fa-plus"></i>
+
+                Novo Ponto
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <!-- LISTA DE PONTOS -->
+
+    <div
+        id="pointsList"
+        class="space-y-3"
+    ></div>
 
 </main>
+
+
 
 <!-- =========================================================
      HISTÓRICO
@@ -418,34 +501,72 @@
     class="hidden flex-1 max-w-4xl w-full mx-auto p-4 space-y-4"
 >
 
-```
-<div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-2">
 
-    <h2 class="font-black text-slate-800 text-sm uppercase">
-        Pesquisar Histórico
-    </h2>
+    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-3">
 
-    <input
-        type="text"
-        id="historySearchInput"
-        oninput="renderHistory()"
-        placeholder="Filtrar por máquina, código, setor ou responsável..."
-        class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
-    >
-
-</div>
+        <h2 class="font-black text-slate-800 text-sm uppercase">
+            Pesquisar Histórico
+        </h2>
 
 
-<div
-    id="historyList"
-    class="space-y-3"
-></div>
-```
+        <input
+            type="text"
+            id="historySearchInput"
+            oninput="renderHistory()"
+            placeholder="Máquina, código, setor ou responsável..."
+            class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+        />
+
+
+        <div
+            id="historyAdminFilters"
+            class="hidden grid grid-cols-1 md:grid-cols-3 gap-2"
+        >
+
+            <select
+                id="historyResponsibleFilter"
+                onchange="renderHistory()"
+                class="p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+            >
+
+                <option value="">
+                    Todos os responsáveis
+                </option>
+
+            </select>
+
+
+            <input
+                type="date"
+                id="historyStartDate"
+                onchange="renderHistory()"
+                class="p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+            />
+
+
+            <input
+                type="date"
+                id="historyEndDate"
+                onchange="renderHistory()"
+                class="p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+            />
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="historyList"
+        class="space-y-3"
+    ></div>
 
 </main>
 
+
+
 <!-- =========================================================
-     MODAL CADASTRO / EDIÇÃO
+     MODAL PONTO
 ========================================================= -->
 
 <div
@@ -453,201 +574,250 @@
     class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 hidden"
 >
 
-```
-<div
-    class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto"
->
-
-    <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
-
-        <h3
-            id="modalTitle"
-            class="font-black text-slate-800 text-base"
-        >
-            Cadastrar Ponto
-        </h3>
-
-        <button
-            onclick="closeFormModal()"
-            class="text-slate-400 text-lg hover:text-slate-600"
-        >
-            <i class="fa-solid fa-xmark"></i>
-        </button>
-
-    </div>
-
-
-    <form
-        id="pointForm"
-        onsubmit="handleSavePoint(event)"
-        class="space-y-3 text-xs"
+    <div
+        class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto"
     >
 
-        <input
-            type="hidden"
-            id="pointId"
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+
+            <h3
+                id="modalTitle"
+                class="font-black text-slate-800 text-base"
+            >
+                Cadastrar Ponto
+            </h3>
+
+
+            <button
+                onclick="closeFormModal()"
+                class="text-slate-400 text-lg hover:text-slate-600"
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+        <form
+            id="pointForm"
+            onsubmit="handleSavePoint(event)"
+            class="space-y-3 text-xs"
         >
 
-
-        <div class="grid grid-cols-2 gap-2">
-
-            <div>
-
-                <label class="font-bold text-slate-600">
-                    Máquina *
-                </label>
-
-                <input
-                    type="text"
-                    id="formMachine"
-                    required
-                    placeholder="Ex: Prensa Hidráulica"
-                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-
-            </div>
+            <input
+                type="hidden"
+                id="pointId"
+            />
 
 
-            <div>
-
-                <label class="font-bold text-slate-600">
-                    Código *
-                </label>
-
-                <input
-                    type="text"
-                    id="formCode"
-                    required
-                    placeholder="Ex: PR-01"
-                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-
-            </div>
-
-        </div>
+            <div class="grid grid-cols-2 gap-2">
 
 
-        <div class="grid grid-cols-2 gap-2">
+                <div>
 
-            <div>
+                    <label class="font-bold text-slate-600">
+                        Máquina *
+                    </label>
 
-                <label class="font-bold text-slate-600">
-                    Setor *
-                </label>
+                    <input
+                        type="text"
+                        id="formMachine"
+                        required
+                        placeholder="Ex: Prensa Hidráulica"
+                        class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
 
-                <input
-                    type="text"
-                    id="formSector"
-                    required
-                    placeholder="Ex: Estamparia"
-                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-                >
+                </div>
+
+
+                <div>
+
+                    <label class="font-bold text-slate-600">
+                        Código *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="formCode"
+                        required
+                        placeholder="Ex: PR-01"
+                        class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+
+                </div>
 
             </div>
 
 
-            <div>
-
-                <label class="font-bold text-slate-600">
-                    Ponto de Lubrificação *
-                </label>
-
-                <input
-                    type="text"
-                    id="formPoint"
-                    required
-                    placeholder="Ex: Mancal Principal"
-                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-
-            </div>
-
-        </div>
+            <div class="grid grid-cols-2 gap-2">
 
 
-        <div class="grid grid-cols-2 gap-2">
+                <div>
 
-            <div>
+                    <label class="font-bold text-slate-600">
+                        Setor *
+                    </label>
 
-                <label class="font-bold text-slate-600">
-                    Lubrificante *
-                </label>
+                    <input
+                        type="text"
+                        id="formSector"
+                        required
+                        placeholder="Ex: Estamparia"
+                        class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
 
-                <input
-                    type="text"
-                    id="formLubricant"
-                    required
-                    placeholder="Ex: Graxa EP-2"
-                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-
-            </div>
+                </div>
 
 
-            <div>
+                <div>
 
-                <label class="font-bold text-slate-600">
-                    Quantidade *
-                </label>
+                    <label class="font-bold text-slate-600">
+                        Ponto de Lubrificação *
+                    </label>
 
-                <input
-                    type="text"
-                    id="formQuantity"
-                    required
-                    placeholder="Ex: 50g, 2L"
-                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-                >
+                    <input
+                        type="text"
+                        id="formPoint"
+                        required
+                        placeholder="Ex: Mancal Principal"
+                        class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+
+                </div>
 
             </div>
 
-        </div>
+
+            <div class="grid grid-cols-2 gap-2">
 
 
-        <div class="grid grid-cols-2 gap-2">
+                <div>
+
+                    <label class="font-bold text-slate-600">
+                        Lubrificante *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="formLubricant"
+                        required
+                        placeholder="Ex: Graxa EP-2"
+                        class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+
+                </div>
+
+
+                <div>
+
+                    <label class="font-bold text-slate-600">
+                        Quantidade *
+                    </label>
+
+                    <input
+                        type="text"
+                        id="formQuantity"
+                        required
+                        placeholder="Ex: 50g, 2L"
+                        class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-cols-2 gap-2">
+
+
+                <div>
+
+                    <label class="font-bold text-slate-600">
+                        Frequência *
+                    </label>
+
+                    <select
+                        id="formFrequency"
+                        onchange="calculateFormNextDate()"
+                        required
+                        class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                    >
+
+                        <option value="1|Diário">
+                            Diário
+                        </option>
+
+                        <option value="7|Semanal">
+                            Semanal
+                        </option>
+
+                        <option value="15|Quinzenal">
+                            Quinzenal
+                        </option>
+
+                        <option value="30|Mensal">
+                            Mensal
+                        </option>
+
+                        <option value="60|Bimestral">
+                            Bimestral
+                        </option>
+
+                        <option value="90|Trimestral">
+                            Trimestral
+                        </option>
+
+                        <option value="180|Semestral">
+                            Semestral
+                        </option>
+
+                        <option value="365|Anual">
+                            Anual
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div>
+
+                    <label class="font-bold text-slate-600">
+                        Próxima Lubrificação *
+                    </label>
+
+                    <input
+                        type="date"
+                        id="formNextDate"
+                        required
+                        class="w-full p-2.5 border rounded-lg mt-1 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
+                    />
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESPONSÁVEL -->
 
             <div>
 
                 <label class="font-bold text-slate-600">
-                    Frequência *
+                    Responsável Padrão *
                 </label>
+
 
                 <select
-                    id="formFrequency"
-                    onchange="calculateFormNextDate()"
+                    id="formResponsible"
                     required
                     class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
                 >
 
-                    <option value="1|Diário">
-                        Diário
-                    </option>
-
-                    <option value="7|Semanal">
-                        Semanal
-                    </option>
-
-                    <option value="15|Quinzenal">
-                        Quinzenal
-                    </option>
-
-                    <option value="30|Mensal">
-                        Mensal
-                    </option>
-
-                    <option value="60|Bimestral">
-                        Bimestral
-                    </option>
-
-                    <option value="90|Trimestral">
-                        Trimestral
-                    </option>
-
-                    <option value="180|Semestral">
-                        Semestral
-                    </option>
-
-                    <option value="365|Anual">
-                        Anual
+                    <option value="">
+                        Carregando funcionários...
                     </option>
 
                 </select>
@@ -658,101 +828,223 @@
             <div>
 
                 <label class="font-bold text-slate-600">
-                    Próxima Lubrificação *
+                    Observações
+                </label>
+
+
+                <textarea
+                    id="formNotes"
+                    rows="2"
+                    placeholder="Observações técnicas..."
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                ></textarea>
+
+            </div>
+
+
+            <div class="flex gap-2 pt-2">
+
+
+                <button
+                    type="button"
+                    onclick="closeFormModal()"
+                    class="flex-1 bg-slate-200 hover:bg-slate-300 font-bold py-3 rounded-xl"
+                >
+                    Cancelar
+                </button>
+
+
+                <button
+                    type="submit"
+                    class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow"
+                >
+                    Salvar Ponto
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     MODAL FUNCIONÁRIOS
+========================================================= -->
+
+<div
+    id="employeeModal"
+    class="fixed inset-0 z-[60] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 hidden"
+>
+
+    <div
+        class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto"
+    >
+
+
+        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+
+            <div>
+
+                <h3 class="font-black text-slate-800 text-base">
+                    Funcionários
+                </h3>
+
+                <p class="text-[10px] text-slate-400">
+                    Gerenciar usuários da manutenção
+                </p>
+
+            </div>
+
+
+            <button
+                onclick="closeEmployeeModal()"
+                class="text-slate-400 text-lg"
+            >
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+
+
+        <!-- FORM FUNCIONÁRIO -->
+
+        <form
+            onsubmit="handleSaveEmployee(event)"
+            class="bg-slate-50 border border-slate-200 rounded-xl p-3 space-y-3 mb-4"
+        >
+
+            <input
+                type="hidden"
+                id="employeeId"
+            />
+
+
+            <div>
+
+                <label class="text-xs font-bold text-slate-600">
+                    Nome *
                 </label>
 
                 <input
-                    type="date"
-                    id="formNextDate"
+                    id="employeeName"
+                    type="text"
                     required
-                    class="w-full p-2.5 border rounded-lg mt-1 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
+                    placeholder="Ex: Rafael"
+                    class="w-full p-2.5 border rounded-lg mt-1 bg-white"
+                />
+
+            </div>
+
+
+            <div>
+
+                <label class="text-xs font-bold text-slate-600">
+                    Função *
+                </label>
+
+                <input
+                    id="employeeFunction"
+                    type="text"
+                    required
+                    placeholder="Ex: Mecânico"
+                    class="w-full p-2.5 border rounded-lg mt-1 bg-white"
+                />
+
+            </div>
+
+
+            <div>
+
+                <label class="text-xs font-bold text-slate-600">
+                    PIN *
+                </label>
+
+                <input
+                    id="employeePin"
+                    type="password"
+                    inputmode="numeric"
+                    maxlength="4"
+                    pattern="[0-9]{4}"
+                    required
+                    placeholder="4 números"
+                    class="w-full p-2.5 border rounded-lg mt-1 bg-white text-center tracking-[0.4em] font-black"
+                />
+
+            </div>
+
+
+            <div class="flex gap-2">
+
+                <button
+                    type="button"
+                    onclick="clearEmployeeForm()"
+                    class="flex-1 bg-slate-200 hover:bg-slate-300 font-bold py-2.5 rounded-lg text-xs"
                 >
+                    Limpar
+                </button>
+
+
+                <button
+                    type="submit"
+                    id="employeeSaveButton"
+                    class="flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded-lg text-xs"
+                >
+                    <i class="fa-solid fa-user-plus mr-1"></i>
+                    Adicionar
+                </button>
+
+            </div>
+
+        </form>
+
+
+
+        <!-- LISTA -->
+
+        <div>
+
+            <div class="flex justify-between items-center mb-2">
+
+                <h4 class="text-xs font-black uppercase text-slate-500">
+                    Usuários cadastrados
+                </h4>
+
+                <button
+                    onclick="loadUsers()"
+                    class="text-xs text-blue-600 font-bold"
+                >
+                    <i class="fa-solid fa-rotate"></i>
+                    Atualizar
+                </button>
+
+            </div>
+
+
+            <div
+                id="employeeList"
+                class="space-y-2"
+            >
+
+                <div class="text-center text-slate-400 text-xs p-5">
+                    Carregando...
+                </div>
 
             </div>
 
         </div>
 
-
-        <!-- RESPONSÁVEL -->
-
-        <div>
-
-            <label class="font-bold text-slate-600">
-                Responsável Padrão *
-            </label>
-
-            <select
-                id="formResponsible"
-                required
-                class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-            >
-
-                <option value="">
-                    Selecione o responsável
-                </option>
-
-                <option value="Rafael">
-                    Rafael
-                </option>
-
-                <option value="Vilmar">
-                    Vilmar
-                </option>
-
-                <option value="Leonardo">
-                    Leonardo
-                </option>
-
-                <option value="Danilo">
-                    Danilo
-                </option>
-
-            </select>
-
-        </div>
-
-
-        <div>
-
-            <label class="font-bold text-slate-600">
-                Observações
-            </label>
-
-            <textarea
-                id="formNotes"
-                rows="2"
-                placeholder="Observações técnicas..."
-                class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
-            ></textarea>
-
-        </div>
-
-
-        <div class="flex gap-2 pt-2">
-
-            <button
-                type="button"
-                onclick="closeFormModal()"
-                class="flex-1 bg-slate-200 hover:bg-slate-300 font-bold py-3 rounded-xl transition-all"
-            >
-                Cancelar
-            </button>
-
-            <button
-                type="submit"
-                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition-all"
-            >
-                Salvar Ponto
-            </button>
-
-        </div>
-
-    </form>
+    </div>
 
 </div>
-```
 
-</div>
+
 
 <!-- =========================================================
      SCRIPT PRINCIPAL
@@ -760,40 +1052,88 @@
 
 <script>
 
-const defaultPoints = [];
-
 let points = [];
+
 let historyData = [];
+
+let usersData = [];
+
 let activeFilter = 'TODOS';
-let currentRole = 'admin';
+
+let currentRole = null;
+
 let currentUser = null;
 
 
 /* =========================================================
-   USUÁRIO PODE VER O PONTO
+   UTILITÁRIOS
 ========================================================= */
+
+function escapeHtml(value) {
+
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+
+}
+
+
+function getTodayString() {
+
+    const now = new Date();
+
+    const year = now.getFullYear();
+
+    const month =
+        String(now.getMonth() + 1)
+            .padStart(2, '0');
+
+    const day =
+        String(now.getDate())
+            .padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+
+}
+
+
+/* =========================================================
+   PERMISSÕES
+========================================================= */
+
+function isAdmin() {
+
+    return currentRole === 'admin';
+
+}
+
 
 function userCanSeePoint(pt) {
 
-    if (currentRole === 'admin') {
+    if (isAdmin()) {
+
         return true;
+
     }
 
-    if (!currentUser || !currentUser.name) {
+    if (!currentUser?.name) {
+
         return false;
+
     }
 
-    const responsible =
+    return (
         String(pt.responsible || '')
             .trim()
-            .toLowerCase();
-
-    const loggedUser =
+            .toLowerCase()
+        ===
         String(currentUser.name || '')
             .trim()
-            .toLowerCase();
-
-    return responsible === loggedUser;
+            .toLowerCase()
+    );
 
 }
 
@@ -820,26 +1160,48 @@ async function loginWithPIN(pin) {
                 `/api/users?pin=${encodeURIComponent(pin)}`
             );
 
-        if (!response.ok) {
-            throw new Error('PIN inválido');
+
+        const text =
+            await response.text();
+
+
+        let data;
+
+        try {
+
+            data =
+                text
+                    ? JSON.parse(text)
+                    : {};
+
+        } catch {
+
+            data = {};
+
         }
 
-        const user =
-            await response.json();
 
-        currentUser = user;
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                'PIN inválido'
+            );
+
+        }
+
+
+        currentUser = data;
+
 
         currentRole =
-            user.role === 'maintenance'
+            data.role === 'maintenance'
                 ? 'manutencao'
                 : 'admin';
 
-        console.log(
-            'Usuário conectado:',
-            user.name
-        );
 
         return true;
+
 
     } catch (error) {
 
@@ -855,22 +1217,28 @@ async function loginWithPIN(pin) {
 }
 
 
-function submitLogin() {
+async function submitLogin() {
 
-    const pin =
+    const input =
         document.getElementById(
             'loginPIN'
-        ).value;
+        );
+
 
     const error =
         document.getElementById(
             'loginError'
         );
 
-    if (pin.length !== 4) {
+
+    const pin =
+        input.value.trim();
+
+
+    if (!/^\d{4}$/.test(pin)) {
 
         error.textContent =
-            'Digite um PIN de 4 números';
+            'Digite um PIN de 4 números.';
 
         error.classList.remove(
             'hidden'
@@ -880,117 +1248,161 @@ function submitLogin() {
 
     }
 
-    loginWithPIN(pin).then(
-        success => {
 
-            if (success) {
+    input.disabled = true;
 
-                document
-                    .getElementById(
-                        'loginScreen'
-                    )
-                    .style.display =
-                    'none';
 
-                error.classList.add(
-                    'hidden'
-                );
+    const success =
+        await loginWithPIN(pin);
 
-                document
-                    .getElementById(
-                        'loginPIN'
-                    )
-                    .value = '';
 
-                const nameElement =
-                    document.getElementById(
-                        'loggedUserName'
-                    );
+    input.disabled = false;
 
-                if (
-                    nameElement &&
-                    currentUser
-                ) {
 
-                    nameElement.textContent =
-                        currentUser.name;
+    if (!success) {
 
-                }
+        error.textContent =
+            'PIN inválido ou usuário desativado.';
 
-                const adminControls =
-                    document.getElementById(
-                        'adminControls'
-                    );
+        error.classList.remove(
+            'hidden'
+        );
 
-                if (adminControls) {
+        input.value = '';
 
-                    adminControls.style.display =
-                        currentRole === 'admin'
-                            ? 'flex'
-                            : 'none';
+        input.focus();
 
-                }
+        return;
 
-                updateDashboardStats();
-                renderPoints();
-                renderHistory();
+    }
 
-            } else {
 
-                error.textContent =
-                    'PIN inválido';
+    error.classList.add(
+        'hidden'
+    );
 
-                error.classList.remove(
-                    'hidden'
-                );
 
-            }
+    input.value = '';
 
-        }
+
+    document.getElementById(
+        'loginScreen'
+    ).style.display = 'none';
+
+
+    document.getElementById(
+        'loggedUserName'
+    ).textContent =
+        currentUser.name;
+
+
+    updateAdminInterface();
+
+
+    await loadData();
+
+
+    if (isAdmin()) {
+
+        await loadUsers();
+
+    }
+
+
+    showToast(
+        'Login realizado',
+        `Bem-vindo, ${currentUser.name}.`
     );
 
 }
 
 
+function logout() {
+
+    currentUser = null;
+
+    currentRole = null;
+
+    points = [];
+
+    historyData = [];
+
+    usersData = [];
+
+
+    document.getElementById(
+        'loggedUserName'
+    ).textContent =
+        'Não identificado';
+
+
+    document.getElementById(
+        'loginPIN'
+    ).value = '';
+
+
+    document.getElementById(
+        'loginScreen'
+    ).style.display =
+        'flex';
+
+
+    updateAdminInterface();
+
+    renderPoints();
+
+    renderHistory();
+
+}
+
+
 /* =========================================================
-   ENTER NO TECLADO
+   INTERFACE ADMIN
 ========================================================= */
 
-document.addEventListener(
-    'DOMContentLoaded',
-    () => {
+function updateAdminInterface() {
 
-        const pinInput =
-            document.getElementById(
-                'loginPIN'
-            );
+    const controls =
+        document.getElementById(
+            'adminControls'
+        );
 
-        if (pinInput) {
 
-            pinInput.addEventListener(
-                'keydown',
-                event => {
+    const historyFilters =
+        document.getElementById(
+            'historyAdminFilters'
+        );
 
-                    if (
-                        event.key ===
-                        'Enter'
-                    ) {
 
-                        submitLogin();
+    if (isAdmin()) {
 
-                    }
+        controls.classList.remove(
+            'hidden'
+        );
 
-                }
-            );
 
-        }
+        historyFilters.classList.remove(
+            'hidden'
+        );
+
+    } else {
+
+        controls.classList.add(
+            'hidden'
+        );
+
+
+        historyFilters.classList.add(
+            'hidden'
+        );
 
     }
-);
+
+}
 
 
 /* =========================================================
-   CARREGAR DADOS
+   CARREGAR PONTOS
 ========================================================= */
 
 async function loadData() {
@@ -1002,36 +1414,55 @@ async function loadData() {
                 '/api/items'
             );
 
+
+        const text =
+            await response.text();
+
+
+        let data;
+
+        try {
+
+            data =
+                text
+                    ? JSON.parse(text)
+                    : {};
+
+        } catch {
+
+            data = {};
+
+        }
+
+
         if (!response.ok) {
 
             throw new Error(
-                'Erro ao carregar dados'
+                data.error ||
+                'Erro ao carregar dados.'
             );
 
         }
 
-        const data =
-            await response.json();
 
         points =
-            data.points || [];
+            Array.isArray(data.points)
+                ? data.points
+                : [];
+
 
         historyData =
-            data.history || [];
+            Array.isArray(data.history)
+                ? data.history
+                : [];
 
-        localStorage.setItem(
-            'pcm_points',
-            JSON.stringify(points)
-        );
-
-        localStorage.setItem(
-            'pcm_history',
-            JSON.stringify(historyData)
-        );
 
         updateDashboardStats();
+
         renderPoints();
+
         renderHistory();
+
 
     } catch (error) {
 
@@ -1040,34 +1471,94 @@ async function loadData() {
             error
         );
 
+
+        showToast(
+            'Erro',
+            'Não foi possível carregar os dados.'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   CARREGAR FUNCIONÁRIOS
+========================================================= */
+
+async function loadUsers() {
+
+    if (!isAdmin()) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/users'
+            );
+
+
+        const text =
+            await response.text();
+
+
+        let data;
+
         try {
 
-            points =
-                JSON.parse(
-                    localStorage.getItem(
-                        'pcm_points'
-                    )
-                ) || [];
+            data =
+                text
+                    ? JSON.parse(text)
+                    : {};
 
-            historyData =
-                JSON.parse(
-                    localStorage.getItem(
-                        'pcm_history'
-                    )
-                ) || [];
+        } catch {
 
-            updateDashboardStats();
-            renderPoints();
-            renderHistory();
+            data = {};
 
-        } catch (localError) {
+        }
 
-            console.error(
-                'Erro ao carregar dados locais:',
-                localError
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                'Erro ao carregar funcionários.'
             );
 
         }
+
+
+        usersData =
+            Array.isArray(data.users)
+                ? data.users
+                : [];
+
+
+        renderEmployees();
+
+        populateResponsibleSelect();
+
+        populateHistoryResponsible();
+
+
+    } catch (error) {
+
+        console.error(
+            'Erro ao carregar usuários:',
+            error
+        );
+
+
+        showToast(
+            'Erro',
+            error.message ||
+            'Não foi possível carregar os funcionários.'
+        );
 
     }
 
@@ -1075,106 +1566,149 @@ async function loadData() {
 
 
 /* =========================================================
-   INICIALIZAÇÃO
+   RESPONSÁVEL PADRÃO
 ========================================================= */
 
-document.addEventListener(
-    'DOMContentLoaded',
-    () => {
+function populateResponsibleSelect(
+    selected = ''
+) {
 
-        const loginScreen =
-            document.getElementById(
-                'loginScreen'
+    const select =
+        document.getElementById(
+            'formResponsible'
+        );
+
+
+    if (!select)
+        return;
+
+
+    const maintenanceUsers =
+        usersData.filter(
+            user =>
+                user.active &&
+                user.role === 'maintenance'
+        );
+
+
+    select.innerHTML = '';
+
+
+    const first =
+        document.createElement(
+            'option'
+        );
+
+
+    first.value = '';
+
+    first.textContent =
+        'Selecione o responsável';
+
+
+    select.appendChild(first);
+
+
+    maintenanceUsers.forEach(
+        user => {
+
+            const option =
+                document.createElement(
+                    'option'
+                );
+
+
+            option.value =
+                user.name;
+
+
+            option.textContent =
+                `${user.name} — ${user.function_name || ''}`;
+
+
+            if (
+                String(user.name)
+                ===
+                String(selected)
+            ) {
+
+                option.selected =
+                    true;
+
+            }
+
+
+            select.appendChild(
+                option
             );
 
-        if (loginScreen) {
-
-            loginScreen.style.display =
-                'flex';
-
         }
+    );
 
-        currentUser = null;
-        currentRole = 'admin';
 
-        const nameElement =
-            document.getElementById(
-                'loggedUserName'
-            );
+    if (
+        !maintenanceUsers.length
+    ) {
 
-        if (nameElement) {
-
-            nameElement.textContent =
-                'Não identificado';
-
-        }
-
-        const adminControls =
-            document.getElementById(
-                'adminControls'
-            );
-
-        if (adminControls) {
-
-            adminControls.style.display =
-                'none';
-
-        }
-
-        loadData();
+        select.innerHTML =
+            '<option value="">Nenhum funcionário ativo cadastrado</option>';
 
     }
-);
-
-
-/* =========================================================
-   SALVAR ESTADO LOCAL
-========================================================= */
-
-function saveState() {
-
-    localStorage.setItem(
-        'pcm_points',
-        JSON.stringify(points)
-    );
-
-    localStorage.setItem(
-        'pcm_history',
-        JSON.stringify(historyData)
-    );
 
 }
 
 
 /* =========================================================
-   DATA LOCAL
+   HISTÓRICO — RESPONSÁVEIS
 ========================================================= */
 
-function getTodayString() {
+function populateHistoryResponsible() {
 
-    const now =
-        new Date();
-
-    const year =
-        now.getFullYear();
-
-    const month =
-        String(
-            now.getMonth() + 1
-        ).padStart(
-            2,
-            '0'
+    const select =
+        document.getElementById(
+            'historyResponsibleFilter'
         );
 
-    const day =
-        String(
-            now.getDate()
-        ).padStart(
-            2,
-            '0'
-        );
 
-    return `${year}-${month}-${day}`;
+    if (!select)
+        return;
+
+
+    const current =
+        select.value;
+
+
+    select.innerHTML =
+        '<option value="">Todos os responsáveis</option>';
+
+
+    usersData.forEach(
+        user => {
+
+            const option =
+                document.createElement(
+                    'option'
+                );
+
+
+            option.value =
+                user.name;
+
+
+            option.textContent =
+                user.name;
+
+
+            select.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    select.value =
+        current;
 
 }
 
@@ -1202,18 +1736,18 @@ function getItemStatus(
 
     }
 
-    const todayStr =
-        getTodayString();
 
     const today =
         new Date(
-            `${todayStr}T00:00:00`
+            `${getTodayString()}T00:00:00`
         );
+
 
     const nextDate =
         new Date(
             `${nextDateStr}T00:00:00`
         );
+
 
     const diffDays =
         Math.round(
@@ -1228,6 +1762,7 @@ function getItemStatus(
                 24
             )
         );
+
 
     if (diffDays < 0) {
 
@@ -1244,7 +1779,10 @@ function getItemStatus(
 
     }
 
-    if (diffDays <= 2) {
+
+    /* ATÉ 3 DIAS */
+
+    if (diffDays <= 3) {
 
         return {
 
@@ -1258,6 +1796,7 @@ function getItemStatus(
         };
 
     }
+
 
     return {
 
@@ -1282,13 +1821,19 @@ function updateDashboardStats() {
     const visiblePoints =
         getVisiblePoints();
 
+
     const todayStr =
         getTodayString();
 
+
     let emDia = 0;
+
     let proximas = 0;
+
     let atrasadas = 0;
+
     let pendenciasHoje = 0;
+
 
     visiblePoints.forEach(
         pt => {
@@ -1298,37 +1843,37 @@ function updateDashboardStats() {
                     pt.next_date
                 );
 
+
             if (
-                status.code ===
-                'EM_DIA'
+                status.code === 'EM_DIA'
             ) {
 
                 emDia++;
 
             }
 
+
             if (
-                status.code ===
-                'PROXIMA'
+                status.code === 'PROXIMA'
             ) {
 
                 proximas++;
 
             }
 
+
             if (
-                status.code ===
-                'ATRASADA'
+                status.code === 'ATRASADA'
             ) {
 
                 atrasadas++;
 
             }
 
+
             if (
                 pt.next_date &&
-                pt.next_date <=
-                todayStr
+                pt.next_date <= todayStr
             ) {
 
                 pendenciasHoje++;
@@ -1338,49 +1883,27 @@ function updateDashboardStats() {
         }
     );
 
-    const visibleIds =
-        new Set(
-            visiblePoints.map(
-                pt => String(pt.id)
-            )
-        );
 
     const hojeRealizadas =
         historyData.filter(
             h => {
 
-                if (
-                    currentRole !==
-                    'admin'
-                ) {
+                const responsible =
+                    h.responsible_name ||
+                    h.responsible ||
+                    '';
+
+
+                if (!isAdmin()) {
 
                     if (
-                        String(
-                            h.responsible || ''
-                        )
-                        .trim()
-                        .toLowerCase()
+                        String(responsible)
+                            .trim()
+                            .toLowerCase()
                         !==
-                        String(
-                            currentUser?.name || ''
-                        )
-                        .trim()
-                        .toLowerCase()
-                    ) {
-
-                        return false;
-
-                    }
-
-                } else {
-
-                    if (
-                        h.point_id &&
-                        !visibleIds.has(
-                            String(
-                                h.point_id
-                            )
-                        )
+                        String(currentUser?.name || '')
+                            .trim()
+                            .toLowerCase()
                     ) {
 
                         return false;
@@ -1389,54 +1912,61 @@ function updateDashboardStats() {
 
                 }
 
-                if (
-                    !h.performed_at
-                ) {
+
+                if (!h.performed_at) {
 
                     return false;
 
                 }
+
 
                 const date =
                     new Date(
                         h.performed_at
                     );
 
+
                 return (
-                    date
-                        .toLocaleDateString(
-                            'en-CA'
-                        ) ===
+                    date.toLocaleDateString(
+                        'en-CA'
+                    )
+                    ===
                     todayStr
                 );
 
             }
         ).length;
 
+
     document.getElementById(
         'statTotal'
     ).innerText =
         visiblePoints.length;
+
 
     document.getElementById(
         'statEmDia'
     ).innerText =
         emDia;
 
+
     document.getElementById(
         'statProximas'
     ).innerText =
         proximas;
+
 
     document.getElementById(
         'statAtrasadas'
     ).innerText =
         atrasadas;
 
+
     document.getElementById(
         'statHoje'
     ).innerText =
         hojeRealizadas;
+
 
     document.getElementById(
         'statPendencias'
@@ -1457,6 +1987,7 @@ function setFilter(
     activeFilter =
         filter;
 
+
     [
         'TODOS',
         'EM_DIA',
@@ -1471,26 +2002,28 @@ function setFilter(
                     `filterBtn${f}`
                 );
 
+
             if (!btn)
                 return;
 
+
             if (
-                f ===
-                filter
+                f === filter
             ) {
 
                 btn.className =
-                    "px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap";
+                    'px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap';
 
             } else {
 
                 btn.className =
-                    "px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap";
+                    'px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap';
 
             }
 
         }
     );
+
 
     renderPoints();
 
@@ -1498,201 +2031,178 @@ function setFilter(
 
 
 /* =========================================================
-   RENDERIZAR PONTOS
+   RENDER PONTOS
 ========================================================= */
 
 function renderPoints() {
-
-    const searchElement =
-        document.getElementById(
-            'searchInput'
-        );
-
-    const search =
-        searchElement
-            ? searchElement.value
-                .toLowerCase()
-                .trim()
-            : '';
 
     const container =
         document.getElementById(
             'pointsList'
         );
 
+
     if (!container)
         return;
+
+
+    const search =
+        document.getElementById(
+            'searchInput'
+        )?.value
+            .toLowerCase()
+            .trim()
+        || '';
+
 
     const todayStr =
         getTodayString();
 
-    container.innerHTML = '';
 
     const filtered =
-        points.filter(
-            pt => {
+        getVisiblePoints()
+            .filter(
+                pt => {
 
-                if (
-                    !userCanSeePoint(pt)
-                ) {
+                    const text = [
 
-                    return false;
+                        pt.machine,
 
-                }
+                        pt.code,
 
-                const matchesSearch =
+                        pt.sector,
 
-                    String(
-                        pt.machine || ''
-                    )
-                    .toLowerCase()
-                    .includes(search)
+                        pt.point,
 
-                    ||
+                        pt.lubricant,
 
-                    String(
-                        pt.code || ''
-                    )
-                    .toLowerCase()
-                    .includes(search)
+                        pt.responsible
 
-                    ||
+                    ]
+                        .join(' ')
+                        .toLowerCase();
 
-                    String(
-                        pt.sector || ''
-                    )
-                    .toLowerCase()
-                    .includes(search)
-
-                    ||
-
-                    String(
-                        pt.point || ''
-                    )
-                    .toLowerCase()
-                    .includes(search)
-
-                    ||
-
-                    String(
-                        pt.responsible || ''
-                    )
-                    .toLowerCase()
-                    .includes(search);
-
-                if (
-                    !matchesSearch
-                ) {
-
-                    return false;
-
-                }
-
-                const status =
-                    getItemStatus(
-                        pt.next_date
-                    );
-
-                if (
-                    activeFilter ===
-                    'EM_DIA'
-                ) {
-
-                    return (
-                        status.code ===
-                        'EM_DIA'
-                    );
-
-                }
-
-                if (
-                    activeFilter ===
-                    'PROXIMAS'
-                ) {
-
-                    return (
-                        status.code ===
-                        'PROXIMA'
-                    );
-
-                }
-
-                if (
-                    activeFilter ===
-                    'ATRASADAS'
-                ) {
-
-                    return (
-                        status.code ===
-                        'ATRASADA'
-                    );
-
-                }
-
-                if (
-                    activeFilter ===
-                    'HOJE'
-                ) {
 
                     if (
-                        !pt.last_lubricated_at
+                        !text.includes(search)
                     ) {
 
                         return false;
 
                     }
 
-                    const date =
-                        new Date(
-                            pt.last_lubricated_at
+
+                    const status =
+                        getItemStatus(
+                            pt.next_date
                         );
 
-                    return (
-                        date
-                            .toLocaleDateString(
-                                'en-CA'
-                            ) ===
-                        todayStr
-                    );
+
+                    if (
+                        activeFilter ===
+                        'EM_DIA'
+                    ) {
+
+                        return (
+                            status.code ===
+                            'EM_DIA'
+                        );
+
+                    }
+
+
+                    if (
+                        activeFilter ===
+                        'PROXIMAS'
+                    ) {
+
+                        return (
+                            status.code ===
+                            'PROXIMA'
+                        );
+
+                    }
+
+
+                    if (
+                        activeFilter ===
+                        'ATRASADAS'
+                    ) {
+
+                        return (
+                            status.code ===
+                            'ATRASADA'
+                        );
+
+                    }
+
+
+                    if (
+                        activeFilter ===
+                        'HOJE'
+                    ) {
+
+                        if (
+                            !pt.last_lubricated_at
+                        ) {
+
+                            return false;
+
+                        }
+
+
+                        return (
+                            new Date(
+                                pt.last_lubricated_at
+                            )
+                                .toLocaleDateString(
+                                    'en-CA'
+                                )
+                            ===
+                            todayStr
+                        );
+
+                    }
+
+
+                    return true;
 
                 }
+            );
 
-                return true;
 
-            }
-        );
+    container.innerHTML = '';
+
 
     if (
         filtered.length === 0
     ) {
 
-        let message =
-            'Nenhum ponto de lubrificação encontrado.';
+        const message =
+            isAdmin()
+                ? 'Nenhum ponto de lubrificação encontrado.'
+                : `Nenhum ponto está atribuído a ${currentUser?.name || 'você'}.`;
 
-        if (
-            currentRole !==
-            'admin' &&
-            currentUser
-        ) {
-
-            message =
-                `Nenhum ponto de lubrificação está atribuído a ${currentUser.name}.`;
-
-        }
 
         container.innerHTML = `
 
             <div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">
 
-                ${message}
+                <i class="fa-solid fa-oil-can text-3xl mb-3"></i>
+
+                <p>
+                    ${escapeHtml(message)}
+                </p>
 
             </div>
 
         `;
 
+
         return;
 
     }
+
 
     filtered.forEach(
         pt => {
@@ -1702,6 +2212,7 @@ function renderPoints() {
                     pt.next_date
                 );
 
+
             const lastDate =
                 pt.last_lubricated_at
 
@@ -1710,16 +2221,15 @@ function renderPoints() {
                     ).toLocaleString(
                         'pt-BR',
                         {
-                            dateStyle:
-                                'short',
-                            timeStyle:
-                                'short'
+                            dateStyle: 'short',
+                            timeStyle: 'short'
                         }
                     )
 
                     : 'Nunca registrado';
 
-            const nextDateFormatted =
+
+            const nextDate =
                 pt.next_date
                     ? pt.next_date
                         .split('-')
@@ -1727,33 +2237,36 @@ function renderPoints() {
                         .join('/')
                     : '-';
 
+
             const card =
                 document.createElement(
                     'div'
                 );
 
+
             card.className =
-                "bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3 relative";
+                'bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3';
+
 
             card.innerHTML = `
 
-                <div class="flex justify-between items-start">
+                <div class="flex justify-between items-start gap-2">
 
                     <div>
 
                         <span class="text-[10px] font-black uppercase bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
 
-                            ${pt.sector || ''}
+                            ${escapeHtml(pt.sector || '')}
 
                         </span>
 
                         <h3 class="text-base font-black text-slate-800 mt-1">
 
-                            ${pt.machine || ''}
+                            ${escapeHtml(pt.machine || '')}
 
                             <span class="text-xs text-slate-400 font-mono font-normal">
 
-                                (${pt.code || ''})
+                                (${escapeHtml(pt.code || '')})
 
                             </span>
 
@@ -1761,7 +2274,8 @@ function renderPoints() {
 
                     </div>
 
-                    <span class="text-[10px] font-bold px-2 py-1 rounded-full border ${status.color}">
+
+                    <span class="text-[10px] font-bold px-2 py-1 rounded-full border ${status.color} whitespace-nowrap">
 
                         ${status.label}
 
@@ -1769,7 +2283,9 @@ function renderPoints() {
 
                 </div>
 
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 grid grid-cols-2 gap-2 text-xs">
+
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 grid grid-cols-2 gap-3 text-xs">
+
 
                     <div>
 
@@ -1778,10 +2294,11 @@ function renderPoints() {
                         </p>
 
                         <p class="font-bold text-slate-700">
-                            ${pt.point || ''}
+                            ${escapeHtml(pt.point || '')}
                         </p>
 
                     </div>
+
 
                     <div>
 
@@ -1790,14 +2307,12 @@ function renderPoints() {
                         </p>
 
                         <p class="font-bold text-slate-700">
-
-                            ${pt.lubricant || ''}
-
-                            (${pt.quantity || ''})
-
+                            ${escapeHtml(pt.lubricant || '')}
+                            (${escapeHtml(pt.quantity || '')})
                         </p>
 
                     </div>
+
 
                     <div>
 
@@ -1806,12 +2321,11 @@ function renderPoints() {
                         </p>
 
                         <p class="font-bold text-blue-600">
-
-                            ${pt.responsible || 'Não definido'}
-
+                            ${escapeHtml(pt.responsible || 'Não definido')}
                         </p>
 
                     </div>
+
 
                     <div>
 
@@ -1820,12 +2334,11 @@ function renderPoints() {
                         </p>
 
                         <p class="font-bold text-slate-700">
-
-                            ${lastDate}
-
+                            ${escapeHtml(lastDate)}
                         </p>
 
                     </div>
+
 
                     <div>
 
@@ -1834,20 +2347,17 @@ function renderPoints() {
                         </p>
 
                         <p class="font-bold text-blue-600">
-
-                            ${nextDateFormatted}
+                            ${escapeHtml(nextDate)}
 
                             <span class="text-[9px] text-slate-400">
-
-                                (${pt.frequency_label || ''})
-
+                                (${escapeHtml(pt.frequency_label || '')})
                             </span>
-
                         </p>
 
                     </div>
 
                 </div>
+
 
                 ${
                     pt.notes
@@ -1857,7 +2367,7 @@ function renderPoints() {
 
                                 <i class="fa-solid fa-circle-info text-amber-500 mr-1"></i>
 
-                                ${pt.notes}
+                                ${escapeHtml(pt.notes)}
 
                             </p>
 
@@ -1865,34 +2375,29 @@ function renderPoints() {
                         : ''
                 }
 
+
                 <button
-
-                    onclick="handleLubricate('${pt.id}')"
-
-                    class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-black py-3.5 rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all"
-
+                    onclick="handleLubricate('${escapeHtml(pt.id)}')"
+                    class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-black py-3.5 rounded-xl text-sm shadow-md flex items-center justify-center gap-2"
                 >
 
-                    <i class="fa-solid fa-check text-base"></i>
+                    <i class="fa-solid fa-check"></i>
 
                     ✓ LUBRIFICADO
 
                 </button>
 
+
                 ${
-                    currentRole ===
-                    'admin'
+                    isAdmin()
 
                         ? `
 
-                            <div class="flex justify-end gap-3 pt-1 border-t border-slate-100">
+                            <div class="flex justify-end gap-4 pt-2 border-t border-slate-100">
 
                                 <button
-
-                                    onclick="editPoint('${pt.id}')"
-
+                                    onclick="editPoint('${escapeHtml(pt.id)}')"
                                     class="text-xs font-bold text-slate-500 hover:text-blue-600"
-
                                 >
 
                                     <i class="fa-solid fa-pen"></i>
@@ -1901,12 +2406,10 @@ function renderPoints() {
 
                                 </button>
 
+
                                 <button
-
-                                    onclick="deletePoint('${pt.id}')"
-
+                                    onclick="deletePoint('${escapeHtml(pt.id)}')"
                                     class="text-xs font-bold text-slate-500 hover:text-red-600"
-
                                 >
 
                                     <i class="fa-solid fa-trash"></i>
@@ -1923,6 +2426,7 @@ function renderPoints() {
 
             `;
 
+
             container.appendChild(
                 card
             );
@@ -1934,7 +2438,7 @@ function renderPoints() {
 
 
 /* =========================================================
-   LUBRIFICAR — SALVA NO SUPABASE
+   LUBRIFICAR
 ========================================================= */
 
 async function handleLubricate(id) {
@@ -1946,11 +2450,12 @@ async function handleLubricate(id) {
                 String(id)
         );
 
+
     if (!pt) {
 
         showToast(
             'Erro',
-            'Ponto de lubrificação não encontrado.'
+            'Ponto não encontrado.'
         );
 
         return;
@@ -1962,7 +2467,7 @@ async function handleLubricate(id) {
 
         showToast(
             'Acesso negado',
-            'Este ponto não está atribuído ao usuário logado.'
+            'Este ponto não pertence ao usuário logado.'
         );
 
         return;
@@ -1982,19 +2487,16 @@ async function handleLubricate(id) {
 
 
     const responsibleUser =
-        currentUser
-            ? currentUser.name
-            : (
-                pt.responsible ||
-                'Administrador'
-            );
+        currentUser?.name ||
+        pt.responsible ||
+        'Administrador';
 
 
     try {
 
         showToast(
             'Processando...',
-            'Registrando a lubrificação no banco de dados.'
+            'Registrando a lubrificação.'
         );
 
 
@@ -2025,33 +2527,39 @@ async function handleLubricate(id) {
 
                         })
 
-                    }
+                }
             );
 
 
-        const result =
-            await response.json();
+        const text =
+            await response.text();
+
+
+        let result;
+
+        try {
+
+            result =
+                text
+                    ? JSON.parse(text)
+                    : {};
+
+        } catch {
+
+            result = {};
+
+        }
 
 
         if (!response.ok) {
 
             throw new Error(
                 result.error ||
+                text ||
                 'Não foi possível registrar a lubrificação.'
             );
 
         }
-
-
-        /*
-         * NÃO salvamos manualmente no histórico
-         * antes da confirmação do servidor.
-         *
-         * O Supabase é quem grava:
-         * - última lubrificação
-         * - próxima data
-         * - histórico
-         */
 
 
         await loadData();
@@ -2059,7 +2567,7 @@ async function handleLubricate(id) {
 
         showToast(
             '✅ Lubrificação Registrada!',
-            `Lubrificação de ${pt.code} registrada por ${responsibleUser}.`
+            `${pt.code} registrada por ${responsibleUser}.`
         );
 
 
@@ -2083,25 +2591,39 @@ async function handleLubricate(id) {
 
 
 /* =========================================================
-   MODAL
+   MODAL PONTO
 ========================================================= */
 
 function openFormModal() {
+
+    if (!isAdmin()) {
+
+        return;
+
+    }
+
 
     document.getElementById(
         'pointId'
     ).value = '';
 
+
     document.getElementById(
         'pointForm'
     ).reset();
+
 
     document.getElementById(
         'modalTitle'
     ).innerText =
         'Cadastrar Ponto';
 
+
+    populateResponsibleSelect();
+
+
     calculateFormNextDate();
+
 
     document.getElementById(
         'formModal'
@@ -2123,10 +2645,6 @@ function closeFormModal() {
 }
 
 
-/* =========================================================
-   PRÓXIMA DATA
-========================================================= */
-
 function calculateFormNextDate() {
 
     const frequency =
@@ -2134,24 +2652,27 @@ function calculateFormNextDate() {
             'formFrequency'
         );
 
+
     if (!frequency)
         return;
 
-    const freqVal =
-        frequency.value;
 
     const days =
         parseInt(
-            freqVal.split('|')[0]
+            frequency.value
+                .split('|')[0]
         );
+
 
     const target =
         new Date();
+
 
     target.setDate(
         target.getDate() +
         days
     );
+
 
     document.getElementById(
         'formNextDate'
@@ -2167,18 +2688,11 @@ function calculateFormNextDate() {
    EDITAR PONTO
 ========================================================= */
 
-function editPoint(
-    id
-) {
+function editPoint(id) {
 
-    if (
-        currentRole !==
-        'admin'
-    ) {
-
+    if (!isAdmin())
         return;
 
-    }
 
     const pt =
         points.find(
@@ -2187,68 +2701,81 @@ function editPoint(
                 String(id)
         );
 
+
     if (!pt)
         return;
+
 
     document.getElementById(
         'pointId'
     ).value =
         pt.id;
 
+
     document.getElementById(
         'formMachine'
     ).value =
         pt.machine || '';
+
 
     document.getElementById(
         'formCode'
     ).value =
         pt.code || '';
 
+
     document.getElementById(
         'formSector'
     ).value =
         pt.sector || '';
+
 
     document.getElementById(
         'formPoint'
     ).value =
         pt.point || '';
 
+
     document.getElementById(
         'formLubricant'
     ).value =
         pt.lubricant || '';
+
 
     document.getElementById(
         'formQuantity'
     ).value =
         pt.quantity || '';
 
+
     document.getElementById(
         'formFrequency'
     ).value =
         `${pt.frequency_days}|${pt.frequency_label}`;
+
 
     document.getElementById(
         'formNextDate'
     ).value =
         pt.next_date || '';
 
-    document.getElementById(
-        'formResponsible'
-    ).value =
-        pt.responsible || '';
+
+    populateResponsibleSelect(
+        pt.responsible || ''
+    );
+
 
     document.getElementById(
         'formNotes'
     ).value =
         pt.notes || '';
 
+
     document.getElementById(
         'modalTitle'
     ).innerText =
         'Editar Ponto';
+
 
     document.getElementById(
         'formModal'
@@ -2267,7 +2794,8 @@ async function handleSavePoint(e) {
 
     e.preventDefault();
 
-    if (currentRole !== 'admin') {
+
+    if (!isAdmin()) {
 
         showToast(
             'Acesso negado',
@@ -2278,37 +2806,41 @@ async function handleSavePoint(e) {
 
     }
 
+
     const id =
         document.getElementById(
             'pointId'
         ).value;
 
+
     const [
         freqDays,
         freqLabel
     ] =
-        document
-            .getElementById(
-                'formFrequency'
-            )
+        document.getElementById(
+            'formFrequency'
+        )
             .value
             .split('|');
+
 
     const responsible =
         document.getElementById(
             'formResponsible'
         ).value;
 
+
     if (!responsible) {
 
         showToast(
             'Atenção',
-            'Selecione um responsável para o ponto.'
+            'Selecione um responsável.'
         );
 
         return;
 
     }
+
 
     const pointData = {
 
@@ -2343,9 +2875,7 @@ async function handleSavePoint(e) {
             ).value.trim(),
 
         frequency_days:
-            parseInt(
-                freqDays
-            ),
+            parseInt(freqDays),
 
         frequency_label:
             freqLabel,
@@ -2365,9 +2895,11 @@ async function handleSavePoint(e) {
 
     };
 
+
     try {
 
         let response;
+
 
         if (id) {
 
@@ -2384,12 +2916,14 @@ async function handleSavePoint(e) {
 
                         body:
                             JSON.stringify({
-                                id:
-                                    id,
+
+                                id,
 
                                 data:
                                     pointData
+
                             })
+
                     }
                 );
 
@@ -2408,37 +2942,63 @@ async function handleSavePoint(e) {
 
                         body:
                             JSON.stringify({
+
                                 type:
                                     'point',
 
                                 data:
                                     pointData
+
                             })
+
                     }
                 );
 
         }
 
-        const result =
-            await response.json();
+
+        const text =
+            await response.text();
+
+
+        let result;
+
+        try {
+
+            result =
+                text
+                    ? JSON.parse(text)
+                    : {};
+
+        } catch {
+
+            result = {};
+
+        }
+
 
         if (!response.ok) {
 
             throw new Error(
                 result.error ||
+                text ||
                 'Erro ao salvar ponto.'
             );
 
         }
 
+
         closeFormModal();
 
+
         await loadData();
+
 
         showToast(
             'Sucesso!',
             `Ponto salvo e atribuído a ${responsible}.`
         );
+
 
     } catch (error) {
 
@@ -2446,6 +3006,7 @@ async function handleSavePoint(e) {
             'Erro ao salvar ponto:',
             error
         );
+
 
         showToast(
             'Erro',
@@ -2459,21 +3020,14 @@ async function handleSavePoint(e) {
 
 
 /* =========================================================
-   EXCLUIR
+   EXCLUIR PONTO
 ========================================================= */
 
-async function deletePoint(
-    id
-) {
+async function deletePoint(id) {
 
-    if (
-        currentRole !==
-        'admin'
-    ) {
-
+    if (!isAdmin())
         return;
 
-    }
 
     if (
         !confirm(
@@ -2485,6 +3039,7 @@ async function deletePoint(
 
     }
 
+
     try {
 
         const response =
@@ -2495,31 +3050,48 @@ async function deletePoint(
                 }
             );
 
-        const result =
-            await response.json();
+
+        const text =
+            await response.text();
+
+
+        let result;
+
+        try {
+
+            result =
+                text
+                    ? JSON.parse(text)
+                    : {};
+
+        } catch {
+
+            result = {};
+
+        }
+
 
         if (!response.ok) {
 
             throw new Error(
                 result.error ||
+                text ||
                 'Não foi possível excluir o ponto.'
             );
 
         }
 
+
         await loadData();
+
 
         showToast(
             'Excluído',
             'Ponto de lubrificação removido.'
         );
 
-    } catch (error) {
 
-        console.error(
-            'Erro ao excluir:',
-            error
-        );
+    } catch (error) {
 
         showToast(
             'Erro',
@@ -2533,113 +3105,297 @@ async function deletePoint(
 
 
 /* =========================================================
-   HISTÓRICO
+   MODAL FUNCIONÁRIOS
 ========================================================= */
 
-function renderHistory() {
+async function openEmployeeModal() {
 
-    const searchElement =
+    if (!isAdmin())
+        return;
+
+
+    clearEmployeeForm();
+
+
+    document.getElementById(
+        'employeeModal'
+    ).classList.remove(
+        'hidden'
+    );
+
+
+    await loadUsers();
+
+}
+
+
+function closeEmployeeModal() {
+
+    document.getElementById(
+        'employeeModal'
+    ).classList.add(
+        'hidden'
+    );
+
+}
+
+
+function clearEmployeeForm() {
+
+    document.getElementById(
+        'employeeId'
+    ).value = '';
+
+
+    document.getElementById(
+        'employeeName'
+    ).value = '';
+
+
+    document.getElementById(
+        'employeeFunction'
+    ).value = '';
+
+
+    document.getElementById(
+        'employeePin'
+    ).value = '';
+
+
+    document.getElementById(
+        'employeeSaveButton'
+    ).innerHTML =
+        '<i class="fa-solid fa-user-plus mr-1"></i> Adicionar';
+
+}
+
+
+/* =========================================================
+   SALVAR FUNCIONÁRIO
+========================================================= */
+
+async function handleSaveEmployee(e) {
+
+    e.preventDefault();
+
+
+    if (!isAdmin())
+        return;
+
+
+    const id =
         document.getElementById(
-            'historySearchInput'
+            'employeeId'
+        ).value;
+
+
+    const name =
+        document.getElementById(
+            'employeeName'
+        ).value.trim();
+
+
+    const functionName =
+        document.getElementById(
+            'employeeFunction'
+        ).value.trim();
+
+
+    const pin =
+        document.getElementById(
+            'employeePin'
+        ).value.trim();
+
+
+    if (!name || !functionName) {
+
+        showToast(
+            'Atenção',
+            'Preencha nome e função.'
         );
 
-    const search =
-        searchElement
-            ? searchElement.value
-                .toLowerCase()
-                .trim()
-            : '';
+        return;
+
+    }
+
+
+    if (!/^\d{4}$/.test(pin)) {
+
+        showToast(
+            'Atenção',
+            'O PIN deve ter exatamente 4 números.'
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        let response;
+
+
+        if (id) {
+
+            response =
+                await fetch(
+                    '/api/users',
+                    {
+                        method: 'PUT',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                id,
+
+                                data: {
+
+                                    name,
+
+                                    function_name:
+                                        functionName,
+
+                                    pin
+
+                                }
+
+                            })
+
+                    }
+                );
+
+        } else {
+
+            response =
+                await fetch(
+                    '/api/users',
+                    {
+                        method: 'POST',
+
+                        headers: {
+                            'Content-Type':
+                                'application/json'
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                name,
+
+                                function_name:
+                                    functionName,
+
+                                role:
+                                    'maintenance',
+
+                                pin,
+
+                                active:
+                                    true
+
+                            })
+
+                    }
+                );
+
+        }
+
+
+        const text =
+            await response.text();
+
+
+        let result;
+
+        try {
+
+            result =
+                text
+                    ? JSON.parse(text)
+                    : {};
+
+        } catch {
+
+            result = {};
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                text ||
+                'Erro ao salvar funcionário.'
+            );
+
+        }
+
+
+        clearEmployeeForm();
+
+
+        await loadUsers();
+
+
+        showToast(
+            'Sucesso!',
+            id
+                ? 'Funcionário atualizado.'
+                : 'Funcionário cadastrado.'
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            error
+        );
+
+
+        showToast(
+            'Erro',
+            error.message ||
+            'Não foi possível salvar o funcionário.'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   LISTAR FUNCIONÁRIOS
+========================================================= */
+
+function renderEmployees() {
 
     const container =
         document.getElementById(
-            'historyList'
+            'employeeList'
         );
+
 
     if (!container)
         return;
 
+
     container.innerHTML = '';
 
-    const filtered =
-        historyData.filter(
-            h => {
 
-                if (
-                    currentRole !==
-                    'admin'
-                ) {
-
-                    const responsible =
-                        String(
-                            h.responsible || ''
-                        )
-                        .trim()
-                        .toLowerCase();
-
-                    const loggedUser =
-                        String(
-                            currentUser?.name || ''
-                        )
-                        .trim()
-                        .toLowerCase();
-
-                    if (
-                        responsible !==
-                        loggedUser
-                    ) {
-
-                        return false;
-
-                    }
-
-                }
-
-                const matchesSearch =
-
-                    String(
-                        h.machine || ''
-                    )
-                    .toLowerCase()
-                    .includes(search)
-
-                    ||
-
-                    String(
-                        h.code || ''
-                    )
-                    .toLowerCase()
-                    .includes(search)
-
-                    ||
-
-                    String(
-                        h.sector || ''
-                    )
-                    .toLowerCase()
-                    .includes(search)
-
-                    ||
-
-                    String(
-                        h.responsible || ''
-                    )
-                    .toLowerCase()
-                    .includes(search);
-
-                return matchesSearch;
-
-            }
-        );
-
-    if (
-        filtered.length === 0
-    ) {
+    if (!usersData.length) {
 
         container.innerHTML = `
 
-            <div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">
+            <div class="text-center text-slate-400 text-xs p-5">
 
-                Nenhum registro de histórico encontrado.
+                Nenhum funcionário cadastrado.
 
             </div>
 
@@ -2649,8 +3405,501 @@ function renderHistory() {
 
     }
 
+
+    usersData.forEach(
+        user => {
+
+            const active =
+                user.active === true;
+
+
+            const isAdminUser =
+                user.role === 'admin';
+
+
+            const div =
+                document.createElement(
+                    'div'
+                );
+
+
+            div.className =
+                'border border-slate-200 rounded-xl p-3 bg-white';
+
+
+            div.innerHTML = `
+
+                <div class="flex justify-between items-start gap-2">
+
+                    <div>
+
+                        <p class="font-black text-sm text-slate-800">
+
+                            ${escapeHtml(user.name)}
+
+                        </p>
+
+                        <p class="text-xs text-slate-500">
+
+                            ${escapeHtml(user.function_name || '')}
+
+                        </p>
+
+                        <p class="text-[10px] text-slate-400 mt-1">
+
+                            ${isAdminUser ? 'Administrador' : 'Manutenção'}
+
+                        </p>
+
+                    </div>
+
+
+                    <span class="text-[10px] font-bold px-2 py-1 rounded-full border ${
+                        active
+                            ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+                            : 'bg-red-100 text-red-700 border-red-200'
+                    }">
+
+                        ${
+                            active
+                                ? 'ATIVO'
+                                : 'DESATIVADO'
+                        }
+
+                    </span>
+
+                </div>
+
+
+                <div class="flex gap-2 mt-3 pt-2 border-t border-slate-100">
+
+                    <button
+                        onclick="editEmployee('${escapeHtml(user.id)}')"
+                        class="flex-1 text-xs font-bold text-blue-600 bg-blue-50 py-2 rounded-lg"
+                    >
+
+                        <i class="fa-solid fa-pen"></i>
+
+                        Editar
+
+                    </button>
+
+
+                    ${
+                        isAdminUser
+
+                            ? ''
+
+                            : `
+
+                                <button
+                                    onclick="toggleEmployee('${escapeHtml(user.id)}', ${active})"
+                                    class="flex-1 text-xs font-bold ${
+                                        active
+                                            ? 'text-red-600 bg-red-50'
+                                            : 'text-emerald-600 bg-emerald-50'
+                                    } py-2 rounded-lg"
+                                >
+
+                                    <i class="fa-solid ${
+                                        active
+                                            ? 'fa-user-slash'
+                                            : 'fa-user-check'
+                                    }"></i>
+
+                                    ${
+                                        active
+                                            ? 'Desativar'
+                                            : 'Ativar'
+                                    }
+
+                                </button>
+
+                            `
+                    }
+
+                </div>
+
+            `;
+
+
+            container.appendChild(
+                div
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   EDITAR FUNCIONÁRIO
+========================================================= */
+
+function editEmployee(id) {
+
+    const user =
+        usersData.find(
+            u =>
+                String(u.id) ===
+                String(id)
+        );
+
+
+    if (!user)
+        return;
+
+
+    document.getElementById(
+        'employeeId'
+    ).value =
+        user.id;
+
+
+    document.getElementById(
+        'employeeName'
+    ).value =
+        user.name || '';
+
+
+    document.getElementById(
+        'employeeFunction'
+    ).value =
+        user.function_name || '';
+
+
+    document.getElementById(
+        'employeePin'
+    ).value =
+        user.pin || '';
+
+
+    document.getElementById(
+        'employeeSaveButton'
+    ).innerHTML =
+        '<i class="fa-solid fa-floppy-disk mr-1"></i> Salvar alteração';
+
+
+    document.getElementById(
+        'employeeName'
+    ).focus();
+
+}
+
+
+/* =========================================================
+   ATIVAR / DESATIVAR
+========================================================= */
+
+async function toggleEmployee(
+    id,
+    currentlyActive
+) {
+
+    const user =
+        usersData.find(
+            u =>
+                String(u.id) ===
+                String(id)
+        );
+
+
+    if (!user)
+        return;
+
+
+    const action =
+        currentlyActive
+            ? 'desativar'
+            : 'ativar';
+
+
+    if (
+        !confirm(
+            `Deseja ${action} o funcionário ${user.name}?`
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                '/api/users',
+                {
+                    method: 'PUT',
+
+                    headers: {
+                        'Content-Type':
+                            'application/json'
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            id,
+
+                            data: {
+
+                                active:
+                                    !currentlyActive
+
+                            }
+
+                        })
+
+                }
+            );
+
+
+        const text =
+            await response.text();
+
+
+        let result;
+
+        try {
+
+            result =
+                text
+                    ? JSON.parse(text)
+                    : {};
+
+        } catch {
+
+            result = {};
+
+        }
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                result.error ||
+                text ||
+                'Erro ao alterar funcionário.'
+            );
+
+        }
+
+
+        await loadUsers();
+
+
+        showToast(
+            'Sucesso',
+            `Funcionário ${action}do.`
+        );
+
+
+    } catch (error) {
+
+        showToast(
+            'Erro',
+            error.message ||
+            'Não foi possível alterar o funcionário.'
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   HISTÓRICO
+========================================================= */
+
+function renderHistory() {
+
+    const container =
+        document.getElementById(
+            'historyList'
+        );
+
+
+    if (!container)
+        return;
+
+
+    const search =
+        document.getElementById(
+            'historySearchInput'
+        )?.value
+            .toLowerCase()
+            .trim()
+        || '';
+
+
+    const responsibleFilter =
+        document.getElementById(
+            'historyResponsibleFilter'
+        )?.value
+        || '';
+
+
+    const startDate =
+        document.getElementById(
+            'historyStartDate'
+        )?.value
+        || '';
+
+
+    const endDate =
+        document.getElementById(
+            'historyEndDate'
+        )?.value
+        || '';
+
+
+    const filtered =
+        historyData.filter(
+            h => {
+
+                const responsible =
+                    h.responsible_name ||
+                    h.responsible ||
+                    '';
+
+
+                if (!isAdmin()) {
+
+                    if (
+                        String(responsible)
+                            .trim()
+                            .toLowerCase()
+                        !==
+                        String(currentUser?.name || '')
+                            .trim()
+                            .toLowerCase()
+                    ) {
+
+                        return false;
+
+                    }
+
+                }
+
+
+                if (
+                    responsibleFilter &&
+                    responsible !==
+                    responsibleFilter
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (!h.performed_at) {
+
+                    return false;
+
+                }
+
+
+                const date =
+                    new Date(
+                        h.performed_at
+                    );
+
+
+                const dateOnly =
+                    date.toLocaleDateString(
+                        'en-CA'
+                    );
+
+
+                if (
+                    startDate &&
+                    dateOnly <
+                    startDate
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (
+                    endDate &&
+                    dateOnly >
+                    endDate
+                ) {
+
+                    return false;
+
+                }
+
+
+                const searchText = [
+
+                    h.machine,
+
+                    h.code,
+
+                    h.sector,
+
+                    h.point,
+
+                    h.lubricant,
+
+                    h.quantity,
+
+                    responsible
+
+                ]
+                    .join(' ')
+                    .toLowerCase();
+
+
+                return searchText.includes(
+                    search
+                );
+
+            }
+        );
+
+
+    container.innerHTML = '';
+
+
+    if (
+        filtered.length === 0
+    ) {
+
+        container.innerHTML = `
+
+            <div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">
+
+                <i class="fa-solid fa-clock-rotate-left text-3xl mb-3"></i>
+
+                <p>
+                    Nenhum registro de histórico encontrado.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
     filtered.forEach(
         h => {
+
+            const responsible =
+                h.responsible_name ||
+                h.responsible ||
+                'Não informado';
+
 
             const dateStr =
                 h.performed_at
@@ -2661,32 +3910,38 @@ function renderHistory() {
                     )
                     : '-';
 
+
             const card =
                 document.createElement(
                     'div'
                 );
 
+
             card.className =
-                "bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-1 text-xs";
+                'bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-2 text-xs';
+
 
             card.innerHTML = `
 
-                <div class="flex justify-between items-center font-bold text-slate-800">
+                <div class="flex justify-between items-start gap-2 font-bold text-slate-800">
 
                     <span>
 
-                        ${h.machine || ''}
-                        (${h.code || ''})
+                        ${escapeHtml(h.machine || '')}
+
+                        (${escapeHtml(h.code || '')})
 
                     </span>
 
-                    <span class="text-emerald-600 font-mono">
 
-                        ${dateStr}
+                    <span class="text-emerald-600 font-mono text-[10px] text-right">
+
+                        ${escapeHtml(dateStr)}
 
                     </span>
 
                 </div>
+
 
                 <p class="text-slate-600">
 
@@ -2694,10 +3949,14 @@ function renderHistory() {
                         Setor / Ponto:
                     </strong>
 
-                    ${h.sector || ''} -
-                    ${h.point || ''}
+                    ${escapeHtml(h.sector || '')}
+
+                    -
+
+                    ${escapeHtml(h.point || '')}
 
                 </p>
+
 
                 <p class="text-slate-600">
 
@@ -2705,10 +3964,12 @@ function renderHistory() {
                         Lubrificante:
                     </strong>
 
-                    ${h.lubricant || ''}
-                    (${h.quantity || ''})
+                    ${escapeHtml(h.lubricant || '')}
+
+                    (${escapeHtml(h.quantity || '')})
 
                 </p>
+
 
                 <p class="text-slate-500 font-semibold">
 
@@ -2716,11 +3977,16 @@ function renderHistory() {
                         Responsável:
                     </strong>
 
-                    ${h.responsible || ''}
+                    <span class="text-blue-600">
+
+                        ${escapeHtml(responsible)}
+
+                    </span>
 
                 </p>
 
             `;
+
 
             container.appendChild(
                 card
@@ -2736,33 +4002,34 @@ function renderHistory() {
    ABAS
 ========================================================= */
 
-function switchTab(
-    tab
-) {
+function switchTab(tab) {
 
     const dashTab =
         document.getElementById(
             'dashboardTab'
         );
 
+
     const histTab =
         document.getElementById(
             'historyTab'
         );
+
 
     const btnDash =
         document.getElementById(
             'tabBtnDashboard'
         );
 
+
     const btnHist =
         document.getElementById(
             'tabBtnHistory'
         );
 
+
     if (
-        tab ===
-        'dashboard'
+        tab === 'dashboard'
     ) {
 
         dashTab.classList.remove(
@@ -2773,11 +4040,13 @@ function switchTab(
             'hidden'
         );
 
+
         btnDash.className =
-            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
+            'flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500';
+
 
         btnHist.className =
-            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
+            'flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent';
 
     } else {
 
@@ -2789,11 +4058,13 @@ function switchTab(
             'hidden'
         );
 
+
         btnHist.className =
-            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
+            'flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500';
+
 
         btnDash.className =
-            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
+            'flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent';
 
     }
 
@@ -2814,20 +4085,24 @@ function showToast(
             'toast'
         );
 
+
     document.getElementById(
         'toastTitle'
     ).innerText =
         title;
+
 
     document.getElementById(
         'toastMessage'
     ).innerText =
         message;
 
+
     toast.classList.remove(
         'hidden',
         'translate-x-full'
     );
+
 
     setTimeout(
         () => {
@@ -2835,6 +4110,7 @@ function showToast(
             toast.classList.add(
                 'translate-x-full'
             );
+
 
             setTimeout(
                 () => {
@@ -2853,7 +4129,71 @@ function showToast(
 
 }
 
+
+/* =========================================================
+   ENTER NO LOGIN
+========================================================= */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+
+        const pinInput =
+            document.getElementById(
+                'loginPIN'
+            );
+
+
+        if (pinInput) {
+
+            pinInput.focus();
+
+
+            pinInput.addEventListener(
+                'keydown',
+                event => {
+
+                    if (
+                        event.key === 'Enter'
+                    ) {
+
+                        submitLogin();
+
+                    }
+
+                }
+            );
+
+        }
+
+
+        const loginScreen =
+            document.getElementById(
+                'loginScreen'
+            );
+
+
+        loginScreen.style.display =
+            'flex';
+
+
+        currentUser = null;
+
+        currentRole = null;
+
+
+        updateAdminInterface();
+
+        renderPoints();
+
+        renderHistory();
+
+    }
+);
+
 </script>
+
+
 
 <!-- =========================================================
      SERVICE WORKER
@@ -2862,34 +4202,31 @@ function showToast(
 <script>
 
 if (
-    "serviceWorker"
-    in navigator
+    'serviceWorker' in navigator
 ) {
 
     window.addEventListener(
-        "load",
+        'load',
         () => {
 
             navigator.serviceWorker
                 .register(
-                    "./service-worker.js"
+                    './service-worker.js'
                 )
-
                 .then(
                     () => {
 
                         console.log(
-                            "PCM Lubrificação: aplicativo pronto."
+                            'PCM Lubrificação: aplicativo pronto.'
                         );
 
                     }
                 )
-
                 .catch(
                     error => {
 
                         console.error(
-                            "Erro ao ativar o aplicativo:",
+                            'Erro no Service Worker:',
                             error
                         );
 
@@ -2902,6 +4239,7 @@ if (
 }
 
 </script>
+
 
 </body>
 </html>
