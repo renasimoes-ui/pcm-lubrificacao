@@ -9,7 +9,7 @@
 
     <link rel="manifest" href="/manifest.json">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=8d4RkZikGPXthzbraLZMlj2e_1cEoijHSTatYUCTeqT8-7NSa9npTjL-och0bNWJftUr2mbnPX51B4X35Ds_FQ8CCT9dLIlYVa7EaPAP0B2shvDatL2GhmJr84nZcXpFBkDfAGat7E2QDCzBgNl5nYYM5ObJEve-7t1M9sbdqMdRmUB_265Ah-684UH6U7GKrTEpfVUitDfrTZGpn3h9V5ZU5ij7DCrx5u_P6cGYxL2je-0vSszNeUnnAPrJ5-DlTTYEC1wtykBUFI2CmR8lGZZHP9bSzHAsAKpfKWXf5HKNb5JP98-bptqDiB_cRgs3" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
 
     <link
         rel="stylesheet"
@@ -266,6 +266,9 @@
             text-align: center;
             color: #94a3b8;
         }
+
+        .history-summary-row { cursor: pointer; transition: .15s; }
+        .history-summary-row:hover td { background: #eff6ff; }
 
         @media (max-width: 640px) {
             .card {
@@ -946,114 +949,84 @@
              HISTÓRICO
         ========================= -->
         <section id="tabHistory" class="hidden">
-
-            <div class="mb-5">
-
-                <h2 class="text-2xl font-black text-slate-900">
-                    Histórico de lubrificação
-                </h2>
-
-                <p class="text-sm text-slate-500 mt-1">
-                    Registros das lubrificações realizadas
-                </p>
-
-            </div>
-
-
-            <!-- FILTROS -->
-            <div class="card p-4 mb-5">
-
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-
-                    <div class="md:col-span-2">
-
-                        <label class="block text-xs font-bold text-slate-600 mb-1">
-                            Buscar
-                        </label>
-
-                        <input
-                            id="historySearch"
-                            class="input"
-                            placeholder="Máquina, código, responsável..."
-                            oninput="renderHistory()"
-                        >
-
-                    </div>
-
-
-                    <div class="admin-only hidden">
-
-                        <label class="block text-xs font-bold text-slate-600 mb-1">
-                            Responsável
-                        </label>
-
-                        <select
-                            id="historyResponsibleFilter"
-                            class="input"
-                            onchange="renderHistory()"
-                        >
-                            <option value="all">Todos</option>
-                        </select>
-
-                    </div>
-
-
-                    <div>
-
-                        <label class="block text-xs font-bold text-slate-600 mb-1">
-                            Período
-                        </label>
-
-                        <select
-                            id="historyPeriodFilter"
-                            class="input"
-                            onchange="renderHistory()"
-                        >
-                            <option value="all">Todos</option>
-                            <option value="today">Hoje</option>
-                            <option value="7">Últimos 7 dias</option>
-                            <option value="30">Últimos 30 dias</option>
-                        </select>
-
-                    </div>
-
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-5">
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900">Histórico de lubrificação</h2>
+                    <p class="text-sm text-slate-500 mt-1">Registros e execução dos pontos por máquina</p>
                 </div>
-
+                <button onclick="showTab('dashboard')" class="btn btn-secondary flex items-center gap-2 self-start" title="Voltar para o início">
+                    <i class="fa-solid fa-arrow-left"></i><span>Início</span>
+                </button>
             </div>
 
+            <div class="card p-4 mb-5">
+                <div class="mb-3">
+                    <h3 class="font-black text-slate-900">Filtros do histórico</h3>
+                    <p class="text-xs text-slate-500 mt-1">Use os filtros para analisar quais pontos de cada máquina foram realizados.</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3">
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Buscar</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400"></i>
+                            <input id="historySearch" class="input pl-9" placeholder="Máquina, código, ponto..." oninput="renderHistory()">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Período</label>
+                        <select id="historyPeriodFilter" class="input" onchange="renderHistory()">
+                            <option value="all">Todos</option><option value="today">Hoje</option><option value="7">Últimos 7 dias</option><option value="30">Últimos 30 dias</option><option value="90">Últimos 90 dias</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Máquina</label>
+                        <select id="historyMachineFilter" class="input" onchange="renderHistory()"><option value="all">Todas</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Setor</label>
+                        <select id="historySectorFilter" class="input" onchange="renderHistory()"><option value="all">Todos</option></select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Lubrificante</label>
+                        <select id="historyLubricantFilter" class="input" onchange="renderHistory()"><option value="all">Todos</option></select>
+                    </div>
+                    <div class="admin-only hidden">
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Responsável</label>
+                        <select id="historyResponsibleFilter" class="input" onchange="renderHistory()"><option value="all">Todos</option></select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-5">
+                <div class="p-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div>
+                        <h3 class="font-black text-slate-900">Resumo por máquina</h3>
+                        <p class="text-xs text-slate-500 mt-1">Clique em uma máquina para ver ponto por ponto o que foi realizado no período selecionado.</p>
+                    </div>
+                    <div id="historySummaryInfo" class="text-xs font-bold text-slate-500"></div>
+                </div>
+                <div class="table-wrap">
+                    <table>
+                        <thead><tr><th>Máquina</th><th>Código</th><th>Pontos cadastrados</th><th>Realizados</th><th>Não realizados</th><th>Execução</th></tr></thead>
+                        <tbody id="historySummaryBody"></tbody>
+                    </table>
+                </div>
+                <div id="historySummaryEmpty" class="empty-state hidden"><i class="fa-solid fa-chart-column text-3xl mb-3"></i><p class="font-bold">Nenhuma máquina encontrada.</p></div>
+            </div>
 
             <div class="card">
-
+                <div class="p-5 border-b border-slate-100">
+                    <h3 class="font-black text-slate-900">Registros realizados</h3>
+                    <p class="text-xs text-slate-500 mt-1">Detalhamento das lubrificações registradas.</p>
+                </div>
                 <div class="table-wrap">
-
                     <table>
-
-                        <thead>
-                            <tr>
-                                <th>Data/Hora</th>
-                                <th>Máquina</th>
-                                <th>Código</th>
-                                <th>Setor</th>
-                                <th>Ponto</th>
-                                <th>Lubrificante</th>
-                                <th>Quantidade</th>
-                                <th>Responsável</th>
-                            </tr>
-                        </thead>
-
+                        <thead><tr><th>Data/Hora</th><th>Máquina</th><th>Código</th><th>Setor</th><th>Ponto</th><th>Lubrificante</th><th>Quantidade</th><th>Responsável</th></tr></thead>
                         <tbody id="historyTableBody"></tbody>
-
                     </table>
-
                 </div>
-
-                <div id="historyEmpty" class="empty-state hidden">
-                    <i class="fa-solid fa-clock-rotate-left text-3xl mb-3"></i>
-                    <p class="font-bold">Nenhum registro encontrado.</p>
-                </div>
-
+                <div id="historyEmpty" class="empty-state hidden"><i class="fa-solid fa-clock-rotate-left text-3xl mb-3"></i><p class="font-bold">Nenhum registro encontrado.</p></div>
             </div>
-
         </section>
 
 
@@ -1312,6 +1285,20 @@
 
         </form>
 
+    </div>
+</div>
+
+
+<!-- =========================
+     MODAL DETALHES DA MÁQUINA
+========================= -->
+<div id="historyMachineModal" class="hidden fixed inset-0 z-50 modal-bg flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[92vh] overflow-y-auto">
+        <div class="p-5 border-b border-slate-200 flex items-center justify-between gap-3">
+            <div><h3 id="historyMachineModalTitle" class="text-xl font-black text-slate-900">Máquina</h3><p id="historyMachineModalSubtitle" class="text-xs text-slate-500 mt-1"></p></div>
+            <button onclick="closeHistoryMachineModal()" class="w-9 h-9 rounded-lg bg-slate-100 hover:bg-slate-200" title="Fechar"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div id="historyMachineModalContent" class="p-5"></div>
     </div>
 </div>
 
@@ -1944,6 +1931,7 @@
 
 
             updateSectorFilter();
+            updateHistoryFilters();
             updateHistoryResponsibleFilter();
 
             updateDashboardStats();
@@ -1989,6 +1977,7 @@
 
 
             populateResponsibleSelect();
+            updateHistoryFilters();
             updateHistoryResponsibleFilter();
             renderEmployees();
             renderDashboardExtras();
@@ -3509,215 +3498,169 @@
        HISTÓRICO
     ===================================================== */
 
-    function renderHistory() {
-
-        const tbody =
-            document.getElementById(
-                'historyTableBody'
-            );
-
-        const empty =
-            document.getElementById(
-                'historyEmpty'
-            );
-
-        if (!tbody || !empty) return;
-
-
-        const search =
-            String(
-                document.getElementById(
-                    'historySearch'
-                )?.value || ''
-            )
-            .trim()
-            .toLowerCase();
-
-
-        const responsibleFilter =
-            document.getElementById(
-                'historyResponsibleFilter'
-            )?.value || 'all';
-
-
-        const periodFilter =
-            document.getElementById(
-                'historyPeriodFilter'
-            )?.value || 'all';
-
-
-        const now =
-            new Date();
-
-
-        let filtered =
-            visibleHistory()
-                .filter(item => {
-
-                    const responsible =
-                        item.responsible_name ||
-                        item.responsible ||
-                        '';
-
-
-                    const haystack = [
-                        item.machine,
-                        item.code,
-                        item.sector,
-                        item.point,
-                        item.lubricant,
-                        item.quantity,
-                        responsible
-                    ]
-                    .join(' ')
-                    .toLowerCase();
-
-
-                    if (
-                        search &&
-                        !haystack.includes(search)
-                    ) {
-                        return false;
-                    }
-
-
-                    if (
-                        responsibleFilter !== 'all' &&
-                        responsible !== responsibleFilter
-                    ) {
-                        return false;
-                    }
-
-
-                    if (
-                        periodFilter !== 'all'
-                    ) {
-
-                        if (!item.performed_at) {
-                            return false;
-                        }
-
-
-                        const performed =
-                            new Date(
-                                item.performed_at
-                            );
-
-
-                        if (periodFilter === 'today') {
-
-                            if (
-                                performed.toLocaleDateString('pt-BR') !==
-                                now.toLocaleDateString('pt-BR')
-                            ) {
-                                return false;
-                            }
-
-                        } else {
-
-                            const days =
-                                Number(
-                                    periodFilter
-                                );
-
-
-                            const limit =
-                                new Date(
-                                    now.getTime() -
-                                    days * 86400000
-                                );
-
-
-                            if (performed < limit) {
-                                return false;
-                            }
-
-                        }
-
-                    }
-
-
-                    return true;
-
-                });
-
-
-        filtered.sort((a, b) =>
-            new Date(b.performed_at || 0) -
-            new Date(a.performed_at || 0)
-        );
-
-
-        if (!filtered.length) {
-
-            tbody.innerHTML = '';
-
-            empty.classList.remove('hidden');
-
-            return;
-        }
-
-
-        empty.classList.add('hidden');
-
-
-        tbody.innerHTML =
-            filtered.map(item => {
-
-                const responsible =
-                    item.responsible_name ||
-                    item.responsible ||
-                    'Não informado';
-
-
-                return `
-                    <tr>
-
-                        <td>
-                            <div class="font-bold">
-                                ${formatDateTime(item.performed_at)}
-                            </div>
-                        </td>
-
-                        <td>
-                            ${escapeHtml(item.machine || '-')}
-                        </td>
-
-                        <td>
-                            <span class="font-bold">
-                                ${escapeHtml(item.code || '-')}
-                            </span>
-                        </td>
-
-                        <td>
-                            ${escapeHtml(item.sector || '-')}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(item.point || '-')}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(item.lubricant || '-')}
-                        </td>
-
-                        <td>
-                            ${escapeHtml(item.quantity || '-')}
-                        </td>
-
-                        <td>
-                            <span class="font-semibold">
-                                ${escapeHtml(responsible)}
-                            </span>
-                        </td>
-
-                    </tr>
-                `;
-
-            })
-            .join('');
-
+    function pointKey(point) {
+        if (point?.id) return `id:${point.id}`;
+        return `fallback:${point?.machine || ''}|${point?.code || ''}|${point?.sector || ''}|${point?.point || ''}`.toLowerCase();
     }
+
+    function historyPointKey(item) {
+        if (item?.point_id) return `id:${item.point_id}`;
+        return `fallback:${item?.machine || ''}|${item?.code || ''}|${item?.sector || ''}|${item?.point || ''}`.toLowerCase();
+    }
+
+    function historyPeriodMatches(item, periodFilter, now = new Date()) {
+        if (periodFilter === 'all') return true;
+        if (!item?.performed_at) return false;
+        const performed = new Date(item.performed_at);
+        if (isNaN(performed.getTime())) return false;
+        if (periodFilter === 'today') return performed.toLocaleDateString('pt-BR') === now.toLocaleDateString('pt-BR');
+        const days = Number(periodFilter);
+        if (!days) return true;
+        return performed >= new Date(now.getTime() - days * 86400000);
+    }
+
+    function historyFilterValues() {
+        return {
+            search: String(document.getElementById('historySearch')?.value || '').trim().toLowerCase(),
+            period: document.getElementById('historyPeriodFilter')?.value || 'all',
+            machine: document.getElementById('historyMachineFilter')?.value || 'all',
+            sector: document.getElementById('historySectorFilter')?.value || 'all',
+            lubricant: document.getElementById('historyLubricantFilter')?.value || 'all',
+            responsible: document.getElementById('historyResponsibleFilter')?.value || 'all'
+        };
+    }
+
+    function historyItemMatchesFilters(item, filters, now = new Date()) {
+        const responsible = item?.responsible_name || item?.responsible || '';
+        const haystack = [item?.machine,item?.code,item?.sector,item?.point,item?.lubricant,item?.quantity,responsible].join(' ').toLowerCase();
+        if (filters.search && !haystack.includes(filters.search)) return false;
+        if (filters.machine !== 'all' && String(item?.machine || '') !== filters.machine) return false;
+        if (filters.sector !== 'all' && String(item?.sector || '') !== filters.sector) return false;
+        if (filters.lubricant !== 'all' && String(item?.lubricant || '') !== filters.lubricant) return false;
+        if (filters.responsible !== 'all' && responsible !== filters.responsible) return false;
+        return historyPeriodMatches(item, filters.period, now);
+    }
+
+    function visibleHistoryForFilters(filters) {
+        const now = new Date();
+        return visibleHistory().filter(item => historyItemMatchesFilters(item, filters, now));
+    }
+
+    function updateHistoryFilters() {
+        const machineSelect = document.getElementById('historyMachineFilter');
+        const sectorSelect = document.getElementById('historySectorFilter');
+        const lubricantSelect = document.getElementById('historyLubricantFilter');
+        if (!machineSelect || !sectorSelect || !lubricantSelect) return;
+
+        const previous = { machine: machineSelect.value || 'all', sector: sectorSelect.value || 'all', lubricant: lubricantSelect.value || 'all' };
+        const vp = visiblePoints(), vh = visibleHistory();
+        const values = key => Array.from(new Set([...vp.map(p => String(p[key] || '').trim()), ...vh.map(h => String(h[key] || '').trim())].filter(Boolean))).sort((a,b) => a.localeCompare(b,'pt-BR'));
+        const machines = values('machine'), sectors = values('sector'), lubricants = values('lubricant');
+
+        const fill = (select, list, allLabel) => {
+            select.innerHTML = `<option value="all">${allLabel}</option>`;
+            list.forEach(value => { const option=document.createElement('option'); option.value=value; option.textContent=value; select.appendChild(option); });
+        };
+        fill(machineSelect, machines, 'Todas'); fill(sectorSelect, sectors, 'Todos'); fill(lubricantSelect, lubricants, 'Todos');
+        if (machines.includes(previous.machine)) machineSelect.value=previous.machine;
+        if (sectors.includes(previous.sector)) sectorSelect.value=previous.sector;
+        if (lubricants.includes(previous.lubricant)) lubricantSelect.value=previous.lubricant;
+    }
+
+    function getHistoryMachineSummary(filters) {
+        const visiblePts = visiblePoints(), visibleHist = visibleHistory(), now = new Date();
+        const groups = new Map();
+        visiblePts.forEach(point => {
+            const machine=String(point.machine || '').trim() || 'Sem máquina';
+            const code=String(point.code || '').trim() || '-';
+            const text=[point.machine,point.code,point.sector,point.point,point.lubricant,point.quantity,point.responsible].join(' ').toLowerCase();
+            if (filters.search && !text.includes(filters.search)) return;
+            if (filters.machine!=='all' && machine!==filters.machine) return;
+            if (filters.sector!=='all' && String(point.sector || '')!==filters.sector) return;
+            if (filters.lubricant!=='all' && String(point.lubricant || '')!==filters.lubricant) return;
+            const key=`${machine}||${code}`;
+            if(!groups.has(key)) groups.set(key,{machine,code,points:[],executedKeys:new Set()});
+            groups.get(key).points.push(point);
+        });
+
+        visibleHist.forEach(item => {
+            if (!historyItemMatchesFilters(item, filters, now)) return;
+            const machine=String(item.machine || '').trim() || 'Sem máquina';
+            const code=String(item.code || '').trim() || '-';
+            const key=`${machine}||${code}`;
+            if(!groups.has(key)) groups.set(key,{machine,code,points:[],executedKeys:new Set()});
+        });
+
+        groups.forEach(group => {
+            visibleHist.forEach(item => {
+                if (!historyItemMatchesFilters(item, filters, now)) return;
+                if (String(item.machine || '').trim()===group.machine && String(item.code || '').trim()===group.code) group.executedKeys.add(historyPointKey(item));
+            });
+        });
+
+        return Array.from(groups.values()).map(group => {
+            const total=group.points.length;
+            const executed=group.points.filter(point=>group.executedKeys.has(pointKey(point))).length;
+            return {...group,total,executed,pending:Math.max(total-executed,0),percent:total?Math.round(executed/total*100):0};
+        }).sort((a,b)=>a.machine.localeCompare(b.machine,'pt-BR',{sensitivity:'base'}) || a.code.localeCompare(b.code,'pt-BR',{numeric:true,sensitivity:'base'}));
+    }
+
+    function renderHistorySummary(filters) {
+        const tbody=document.getElementById('historySummaryBody'), empty=document.getElementById('historySummaryEmpty'), info=document.getElementById('historySummaryInfo');
+        if(!tbody||!empty)return;
+        const summary=getHistoryMachineSummary(filters);
+        window.__historyMachineSummary=summary;
+        if(info){const total=summary.reduce((s,x)=>s+x.total,0), done=summary.reduce((s,x)=>s+x.executed,0); info.textContent=`${summary.length} máquina${summary.length!==1?'s':''} • ${done}/${total} pontos realizados`; }
+        if(!summary.length){tbody.innerHTML='';empty.classList.remove('hidden');return;}
+        empty.classList.add('hidden');
+        tbody.innerHTML=summary.map((item,index)=>`
+            <tr class="history-summary-row" onclick="openHistoryMachineModal(${index})">
+                <td><div class="font-black text-slate-900">${escapeHtml(item.machine)}</div><div class="text-[10px] text-blue-600 mt-1 font-bold">Clique para ver os pontos</div></td>
+                <td><span class="font-bold">${escapeHtml(item.code)}</span></td>
+                <td><span class="font-black text-slate-700">${item.total}</span></td>
+                <td><span class="font-black text-green-600">${item.executed}</span></td>
+                <td><span class="font-black text-red-600">${item.pending}</span></td>
+                <td><div class="min-w-[110px]"><div class="text-xs font-black mb-1 ${item.percent>=80?'text-green-600':item.percent>=50?'text-amber-600':'text-red-600'}">${item.percent}%</div><div class="progress-track" style="height:7px"><div class="progress-bar ${item.percent>=80?'bg-green-500':item.percent>=50?'bg-amber-500':'bg-red-500'}" style="width:${item.percent}%"></div></div></div></td>
+            </tr>`).join('');
+    }
+
+    function renderHistory() {
+        const tbody=document.getElementById('historyTableBody'), empty=document.getElementById('historyEmpty');
+        if(!tbody||!empty)return;
+        const filters=historyFilterValues();
+        const filtered=visibleHistoryForFilters(filters).sort((a,b)=>new Date(b.performed_at||0)-new Date(a.performed_at||0));
+        renderHistorySummary(filters);
+        if(!filtered.length){tbody.innerHTML='';empty.classList.remove('hidden');return;}
+        empty.classList.add('hidden');
+        tbody.innerHTML=filtered.map(item=>{const responsible=item.responsible_name||item.responsible||'Não informado';return `
+            <tr><td><div class="font-bold">${formatDateTime(item.performed_at)}</div></td><td>${escapeHtml(item.machine||'-')}</td><td><span class="font-bold">${escapeHtml(item.code||'-')}</span></td><td>${escapeHtml(item.sector||'-')}</td><td>${escapeHtml(item.point||'-')}</td><td>${escapeHtml(item.lubricant||'-')}</td><td>${escapeHtml(item.quantity||'-')}</td><td><span class="font-semibold">${escapeHtml(responsible)}</span></td></tr>`;}).join('');
+    }
+
+    function openHistoryMachineModal(index) {
+        const item=(window.__historyMachineSummary||[])[index]; if(!item)return;
+        const filters=historyFilterValues(), now=new Date();
+        const machinePoints=item.points.slice().sort((a,b)=>String(a.point||'').localeCompare(String(b.point||''),'pt-BR',{numeric:true,sensitivity:'base'}));
+        const machineHistory=visibleHistory().filter(h=>String(h.machine||'').trim()===item.machine && String(h.code||'').trim()===item.code && historyItemMatchesFilters(h,filters,now));
+        const lastByPoint=new Map();
+        machineHistory.forEach(h=>{const key=historyPointKey(h), prev=lastByPoint.get(key);if(!prev||new Date(h.performed_at||0)>new Date(prev.performed_at||0))lastByPoint.set(key,h);});
+        const content=document.getElementById('historyMachineModalContent'),title=document.getElementById('historyMachineModalTitle'),subtitle=document.getElementById('historyMachineModalSubtitle');
+        if(!content||!title||!subtitle)return;
+        title.textContent=item.machine; subtitle.textContent=`${item.code} • ${item.executed} de ${item.total} ponto${item.total!==1?'s':''} realizado${item.executed!==1?'s':''} no período selecionado`;
+        if(!machinePoints.length){content.innerHTML='<div class="empty-state"><i class="fa-solid fa-circle-info text-3xl mb-3"></i><p class="font-bold">Não há pontos cadastrados para esta máquina.</p></div>';}
+        else {content.innerHTML=`
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                <div class="dashboard-item text-center"><div class="text-2xl font-black text-slate-900">${item.total}</div><div class="text-[10px] text-slate-500 font-bold uppercase">Pontos</div></div>
+                <div class="dashboard-item text-center"><div class="text-2xl font-black text-green-600">${item.executed}</div><div class="text-[10px] text-slate-500 font-bold uppercase">Realizados</div></div>
+                <div class="dashboard-item text-center"><div class="text-2xl font-black text-red-600">${item.pending}</div><div class="text-[10px] text-slate-500 font-bold uppercase">Não realizados</div></div>
+                <div class="dashboard-item text-center"><div class="text-2xl font-black ${item.percent>=80?'text-green-600':item.percent>=50?'text-amber-600':'text-red-600'}">${item.percent}%</div><div class="text-[10px] text-slate-500 font-bold uppercase">Execução</div></div>
+            </div>
+            <div class="table-wrap"><table><thead><tr><th>Ponto</th><th>Setor</th><th>Lubrificante</th><th>Responsável</th><th>Última no período</th><th>Status no período</th></tr></thead><tbody>
+            ${machinePoints.map(point=>{const execution=lastByPoint.get(pointKey(point));const responsible=execution?.responsible_name||execution?.responsible||point.responsible||'Sem responsável';return `<tr><td><div class="font-bold text-slate-900">${escapeHtml(point.point||'-')}</div><div class="text-[10px] text-slate-400 mt-1">${escapeHtml(point.code||item.code)}</div></td><td>${escapeHtml(point.sector||'-')}</td><td>${escapeHtml(point.lubricant||'-')}</td><td>${escapeHtml(responsible)}</td><td>${execution?formatDateTime(execution.performed_at):'-'}</td><td>${execution?'<span class="status-badge status-ok"><i class="fa-solid fa-check"></i>Realizado</span>':'<span class="status-badge status-late"><i class="fa-solid fa-clock"></i>Não realizado</span>'}</td></tr>`;}).join('')}
+            </tbody></table></div>`;}
+        document.getElementById('historyMachineModal').classList.remove('hidden');
+    }
+
+    function closeHistoryMachineModal(){document.getElementById('historyMachineModal')?.classList.add('hidden');}
 
 
     /* =====================================================
@@ -4207,6 +4150,12 @@
 
         updateNav(tab);
 
+        if (tab === 'history') {
+            updateHistoryFilters();
+            updateHistoryResponsibleFilter();
+            renderHistory();
+        }
+
     }
 
 
@@ -4298,6 +4247,7 @@
 
                 closePointModal();
                 closeEmployeeModal();
+                closeHistoryMachineModal();
 
             }
 
