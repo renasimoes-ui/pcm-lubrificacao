@@ -268,8 +268,9 @@ async function loadData() {
         localStorage.setItem('pcm_points', JSON.stringify(points));
         localStorage.setItem('pcm_history', JSON.stringify(historyData));
 
-        renderDashboard();
-        renderHistory();
+        updateDashboardStats();
+renderPoints();
+renderHistory();
     } catch (error) {
         console.error('Erro ao carregar dados:', error);
     }
