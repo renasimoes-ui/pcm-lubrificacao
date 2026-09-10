@@ -64,15 +64,12 @@ function safePart(value) {
         .slice(0, 80) || 'sem-dado';
 }
 
-async function uploadPhoto(dataUrl, point, performedAt) {
-
+async function uploadPhoto(dataUrl, pt, performedAt) {
     if (
         typeof dataUrl !== 'string' ||
         !dataUrl.startsWith('data:image/')
     ) {
-        throw new Error(
-            'A foto da lubrificação é obrigatória.'
-        );
+        throw new Error('A foto da lubrificação é obrigatória.');
     }
 
     const match = dataUrl.match(
@@ -80,27 +77,18 @@ async function uploadPhoto(dataUrl, point, performedAt) {
     );
 
     if (!match) {
-        throw new Error(
-            'Formato de foto não suportado.'
-        );
+        throw new Error('Formato de foto não suportado.');
     }
 
-    const mimeOriginal = match[1].toLowerCase();
-
     const mime =
-        mimeOriginal === 'image/jpg'
+        match[1].toLowerCase() === 'image/jpg'
             ? 'image/jpeg'
-            : mimeOriginal;
+            : match[1].toLowerCase();
 
-    const buffer = Buffer.from(
-        match[2],
-        'base64'
-    );
+    const buffer = Buffer.from(match[2], 'base64');
 
     if (!buffer.length) {
-        throw new Error(
-            'A foto está vazia.'
-        );
+        throw new Error('A foto está vazia.');
     }
 
     if (buffer.length > 4 * 1024 * 1024) {
@@ -110,34 +98,25 @@ async function uploadPhoto(dataUrl, point, performedAt) {
     }
 
     const path = [
-        safePart(point.sector),
-        safePart(point.code),
-        `${Date.now()}-${safePart(point.id)}.jpg`
+        safePart(pt.sector),
+        safePart(pt.code),
+        `${Date.now()}-${safePart(pt.id)}.jpg`
     ].join('/');
 
-    const encodedPath = path
-        .split('/')
-        .map(encodeURIComponent)
-        .join('/');
-
     const response = await fetch(
-        `${storageBase()}/object/lubrication-photos/${encodedPath}`,
+        `${storageBase()}/object/lubrication-photos/${path
+            .split('/')
+            .map(encodeURIComponent)
+            .join('/')}`,
         {
             method: 'POST',
-
             headers: {
-                'apikey':
-                    process.env.SUPABASE_SERVICE_ROLE_KEY,
-
+                'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
                 'Authorization':
-                    'Bearer ' +
-                    process.env.SUPABASE_SERVICE_ROLE_KEY,
-
+                    'Bearer ' + process.env.SUPABASE_SERVICE_ROLE_KEY,
                 'Content-Type': mime,
-
                 'x-upsert': 'false'
             },
-
             body: buffer
         }
     );
@@ -145,7 +124,6 @@ async function uploadPhoto(dataUrl, point, performedAt) {
     const text = await response.text();
 
     if (!response.ok) {
-
         let data;
 
         try {
@@ -172,33 +150,23 @@ async function uploadPhoto(dataUrl, point, performedAt) {
 }
 
 async function sendEmail(data) {
-
-    const apiKey =
-        process.env.RESEND_API_KEY;
+    const apiKey = process.env.RESEND_API_KEY;
 
     if (!apiKey) {
-        console.log(
-            'RESEND_API_KEY não configurada. E-mail não enviado.'
+        throw new Error(
+            'RESEND_API_KEY não configurada no Vercel.'
         );
-
-        return null;
     }
 
     const response = await fetch(
         'https://api.resend.com/emails',
         {
             method: 'POST',
-
             headers: {
-                'Authorization':
-                    `Bearer ${apiKey}`,
-
-                'Content-Type':
-                    'application/json'
+                'Authorization': `Bearer ${apiKey}`,
+                'Content-Type': 'application/json'
             },
-
             body: JSON.stringify({
-
                 from:
                     'PCM • Lubrificação <pcm@abmadeiras.com.br>',
 
@@ -211,18 +179,9 @@ async function sendEmail(data) {
                     `Lubrificação realizada - ${data.code}`,
 
                 html: `
-                    <div
-                        style="
-                            font-family:Arial,sans-serif;
-                            max-width:700px;
-                            margin:0 auto;
-                            padding:20px
-                        "
-                    >
+                    <div style="font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:20px">
 
-                        <h2>
-                            PCM • Lubrificação
-                        </h2>
+                        <h2>PCM • Lubrificação</h2>
 
                         <p>
                             <strong>
@@ -248,9 +207,7 @@ async function sendEmail(data) {
                         </p>
 
                         <p>
-                            <strong>
-                                Ponto de lubrificação:
-                            </strong>
+                            <strong>Ponto de lubrificação:</strong>
                             ${data.point}
                         </p>
 
@@ -275,20 +232,13 @@ async function sendEmail(data) {
                         </p>
 
                         <p>
-                            <strong>
-                                Próxima lubrificação:
-                            </strong>
+                            <strong>Próxima lubrificação:</strong>
                             ${data.nextDate}
                         </p>
 
                         <hr>
 
-                        <p
-                            style="
-                                color:#64748b;
-                                font-size:12px
-                            "
-                        >
+                        <p style="color:#64748b;font-size:12px">
                             E-mail automático enviado pelo sistema
                             PCM • Lubrificação.
                         </p>
@@ -299,29 +249,22 @@ async function sendEmail(data) {
         }
     );
 
-    const text =
-        await response.text();
+    const text = await response.text();
 
     let result;
 
     try {
-        result =
-            text
-                ? JSON.parse(text)
-                : {};
+        result = text ? JSON.parse(text) : {};
     } catch {
-        result = {
-            message: text
-        };
+        result = { message: text };
     }
 
     if (!response.ok) {
-
         throw new Error(
             result?.message ||
             result?.error ||
             text ||
-            'Erro ao enviar e-mail.'
+            'Erro ao enviar e-mail pelo Resend.'
         );
     }
 
@@ -333,13 +276,9 @@ export default async function handler(req, res) {
     try {
 
         if (req.method !== 'POST') {
-
-            return res
-                .status(405)
-                .json({
-                    error:
-                        'Método não permitido.'
-                });
+            return res.status(405).json({
+                error: 'Método não permitido.'
+            });
         }
 
         const {
@@ -350,184 +289,181 @@ export default async function handler(req, res) {
         } = req.body || {};
 
         if (!id) {
-
-            return res
-                .status(400)
-                .json({
-                    error:
-                        'ID obrigatório.'
-                });
+            return res.status(400).json({
+                error: 'ID obrigatório.'
+            });
         }
 
         if (!photoData) {
-
-            return res
-                .status(400)
-                .json({
-                    error:
-                        'Tire a foto da lubrificação antes de concluir.'
-                });
+            return res.status(400).json({
+                error:
+                    'Tire a foto da lubrificação antes de concluir.'
+            });
         }
-
-        const rows =
-            await sb(
-                `/lubrication_points?id=eq.${encodeURIComponent(id)}&select=*`
-            );
-
-        const point =
-            rows?.[0];
-
-        if (!point) {
-
-            return res
-                .status(404)
-                .json({
-                    error:
-                        'Ponto de lubrificação não encontrado.'
-                });
-        }
-
-        const performedAt =
-            new Date().toISOString();
-
-        const nextDate =
-            addDays(
-                performedAt,
-                point.frequency_days
-            );
 
         /*
-         * PRIMEIRO SALVA A FOTO.
+         * Busca o ponto.
+         */
+        const rows = await sb(
+            `/lubrication_points?id=eq.${encodeURIComponent(id)}&select=*`
+        );
+
+        const pt = rows?.[0];
+
+        if (!pt) {
+            return res.status(404).json({
+                error: 'Ponto não encontrado.'
+            });
+        }
+
+        /*
+         * PROTEÇÃO CONTRA DUPLICIDADE
          *
-         * Se a foto não for salva,
-         * a lubrificação não será concluída.
+         * O ponto precisa estar liberado para receber uma nova
+         * lubrificação.
+         *
+         * A alteração abaixo é feita diretamente no banco com:
+         *
+         * completion_locked = false
+         *
+         * Somente UMA requisição consegue alterar false -> true.
+         *
+         * Se o funcionário clicar várias vezes rapidamente,
+         * as próximas requisições não conseguem reservar o ponto
+         * e são encerradas antes de criar histórico.
          */
 
-        const photo =
-            await uploadPhoto(
+        const performedAt = new Date().toISOString();
+
+        const claimRows = await sb(
+            `/lubrication_points?id=eq.${encodeURIComponent(id)}&completion_locked=eq.false`,
+            {
+                method: 'PATCH',
+                body: JSON.stringify({
+                    completion_locked: true
+                })
+            }
+        );
+
+        /*
+         * Se não retornou nenhuma linha, outra requisição já
+         * processou esse ponto.
+         */
+        if (!claimRows?.length) {
+            return res.status(409).json({
+                error:
+                    'Este ponto já foi concluído ou está sendo processado.'
+            });
+        }
+
+        const nextDate = addDays(
+            performedAt,
+            pt.frequency_days
+        );
+
+        try {
+
+            /*
+             * 1. Salva a foto.
+             */
+            const photo = await uploadPhoto(
                 photoData,
-                point,
+                pt,
                 performedAt
             );
 
-        /*
-         * Atualiza a última lubrificação
-         * e a próxima data.
-         */
-
-        const updated =
-            await sb(
+            /*
+             * 2. Atualiza o ponto.
+             */
+            const updated = await sb(
                 `/lubrication_points?id=eq.${encodeURIComponent(id)}`,
                 {
                     method: 'PATCH',
-
                     body: JSON.stringify({
-                        last_lubricated_at:
-                            performedAt,
-
-                        next_date:
-                            nextDate
+                        last_lubricated_at: performedAt,
+                        next_date: nextDate,
+                        completion_locked: true
                     })
                 }
             );
 
-        /*
-         * Salva histórico.
-         */
+            /*
+             * 3. Cria UMA única entrada no histórico.
+             */
+            const history = {
+                machine: pt.machine,
+                code: pt.code,
+                sector: pt.sector,
+                point: pt.point,
+                lubricant: pt.lubricant,
+                quantity: pt.quantity,
 
-        const history = {
+                responsible_name:
+                    responsible ||
+                    pt.responsible ||
+                    'Não informado',
 
-            machine:
-                point.machine,
+                responsible_id:
+                    responsible_id ||
+                    pt.responsible_id ||
+                    null,
 
-            code:
-                point.code,
+                performed_at: performedAt,
 
-            sector:
-                point.sector,
+                photo_path: photo.path,
 
-            point:
-                point.point,
+                photo_uploaded_at:
+                    photo.uploaded_at
+            };
 
-            lubricant:
-                point.lubricant,
-
-            quantity:
-                point.quantity,
-
-            responsible_name:
-                responsible ||
-                point.responsible ||
-                'Não informado',
-
-            responsible_id:
-                responsible_id ||
-                point.responsible_id ||
-                null,
-
-            performed_at:
-                performedAt,
-
-            photo_path:
-                photo.path,
-
-            photo_uploaded_at:
-                photo.uploaded_at
-        };
-
-        const saved =
-            await sb(
+            const saved = await sb(
                 '/lubrication_history',
                 {
                     method: 'POST',
-
-                    body:
-                        JSON.stringify(history)
+                    body: JSON.stringify(history)
                 }
             );
 
-        /*
-         * E-mail.
-         *
-         * Se o e-mail der erro,
-         * a lubrificação continua registrada.
-         */
+            /*
+             * 4. Envia o e-mail.
+             *
+             * Se o e-mail falhar, a lubrificação continua
+             * registrada normalmente.
+             */
+            let emailResult = null;
+            let emailError = null;
 
-        let emailResult = null;
-        let emailError = null;
+            try {
 
-        try {
-
-            emailResult =
-                await sendEmail({
+                emailResult = await sendEmail({
 
                     machine:
-                        point.machine ||
+                        pt.machine ||
                         'Não informado',
 
                     code:
-                        point.code ||
+                        pt.code ||
                         'Não informado',
 
                     sector:
-                        point.sector ||
+                        pt.sector ||
                         'Não informado',
 
                     point:
-                        point.point ||
+                        pt.point ||
                         'Não informado',
 
                     lubricant:
-                        point.lubricant ||
+                        pt.lubricant ||
                         'Não informado',
 
                     quantity:
-                        point.quantity ||
+                        pt.quantity ||
                         'Não informado',
 
                     responsible:
                         responsible ||
-                        point.responsible ||
+                        pt.responsible ||
                         'Não informado',
 
                     performedAt:
@@ -549,24 +485,24 @@ export default async function handler(req, res) {
                         )
                 });
 
-        } catch (emailErr) {
+            } catch (emailErr) {
 
-            console.error(
-                'Erro ao enviar e-mail:',
-                emailErr
-            );
+                console.error(
+                    'Erro ao enviar e-mail:',
+                    emailErr
+                );
 
-            emailError =
-                emailErr.message ||
-                'Erro ao enviar e-mail.';
-        }
+                emailError =
+                    emailErr.message ||
+                    'Erro ao enviar e-mail.';
+            }
 
-        return res
-            .status(200)
-            .json({
+            /*
+             * Resposta final.
+             */
+            return res.status(200).json({
 
-                success:
-                    true,
+                success: true,
 
                 point:
                     updated?.[0] ||
@@ -589,6 +525,35 @@ export default async function handler(req, res) {
                     emailError
             });
 
+        } catch (processingError) {
+
+            /*
+             * Se alguma etapa falhar antes da conclusão,
+             * libera o ponto novamente.
+             */
+            try {
+
+                await sb(
+                    `/lubrication_points?id=eq.${encodeURIComponent(id)}`,
+                    {
+                        method: 'PATCH',
+                        body: JSON.stringify({
+                            completion_locked: false
+                        })
+                    }
+                );
+
+            } catch (unlockError) {
+
+                console.error(
+                    'Erro ao liberar ponto após falha:',
+                    unlockError
+                );
+            }
+
+            throw processingError;
+        }
+
     } catch (error) {
 
         console.error(
@@ -596,12 +561,10 @@ export default async function handler(req, res) {
             error
         );
 
-        return res
-            .status(500)
-            .json({
-                error:
-                    error.message ||
-                    'Erro interno ao registrar lubrificação.'
-            });
+        return res.status(500).json({
+            error:
+                error.message ||
+                'Erro interno ao registrar lubrificação.'
+        });
     }
 }
