@@ -89,8 +89,7 @@ async function sendEmail(data) {
 
                 to: [
                     'rena.simoes@abmaderias.com.br',
-                    'ery.soares@abmadeiras.com.br',
-                    'alcedir.rocha@abmadeiras.com.br'
+                    'ery.soares@abmadeiras.com.br'
                 ],
 
                 subject:
@@ -177,11 +176,25 @@ async function sendEmail(data) {
         }
     );
 
-    const result = await response.json();
+    const responseText = await response.text();
+
+    let result;
+
+    try {
+        result = responseText
+            ? JSON.parse(responseText)
+            : {};
+    } catch {
+        result = {
+            message: responseText
+        };
+    }
 
     if (!response.ok) {
         throw new Error(
             result?.message ||
+            result?.error ||
+            responseText ||
             'Erro ao enviar e-mail pelo Resend.'
         );
     }
