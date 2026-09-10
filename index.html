@@ -1024,7 +1024,17 @@ main.max-w-7xl{max-width:1320px!important;}
                     </p>
                 </div>
 
-                <div class="admin-only hidden">
+                <div class="flex flex-wrap gap-2 items-center">
+                    <button
+                        onclick="refreshPoints(this)"
+                        class="btn btn-secondary"
+                        title="Buscar novos pontos e atualizações"
+                    >
+                        <i class="fa-solid fa-rotate mr-1"></i>
+                        Atualizar
+                    </button>
+
+                    <div class="admin-only hidden">
 
                     <button
                         onclick="openPointModal()"
@@ -1034,6 +1044,7 @@ main.max-w-7xl{max-width:1320px!important;}
                         Novo ponto
                     </button>
 
+                    </div>
                 </div>
 
             </div>
@@ -1922,6 +1933,12 @@ main.max-w-7xl{max-width:1320px!important;}
             return true;
         }
 
+        // Depois de concluído, o ponto sai da tela do funcionário
+        // até que o administrador o libere novamente.
+        if (point?.completion_locked) {
+            return false;
+        }
+
         if (!currentUser) {
             return false;
         }
@@ -2219,6 +2236,16 @@ main.max-w-7xl{max-width:1320px!important;}
     /* =====================================================
        CARREGAR DADOS
     ===================================================== */
+
+    async function refreshPoints(button) {
+        if (button) button.disabled = true;
+        try {
+            await loadData();
+            showToast('Dados atualizados.');
+        } finally {
+            if (button) button.disabled = false;
+        }
+    }
 
     async function loadData() {
 
@@ -3258,13 +3285,22 @@ main.max-w-7xl{max-width:1320px!important;}
 
                             <div class="flex gap-2">
 
-                                <button
-                                    onclick="handleLubricate('${escapeHtml(point.id)}')"
-                                    class="btn btn-success action-btn action-lubricate"
-                                    title="Registrar lubrificação"
-                                >
-                                    <i class="fa-solid fa-check"></i><span>Lubrificado</span>
-                                </button>
+                                ${point.completion_locked ? '' : `
+                                    <button
+                                        onclick="handleLubricate('${escapeHtml(point.id)}')"
+                                        class="btn btn-success action-btn action-lubricate"
+                                        title="Registrar lubrificação"
+                                    >
+                                        <i class="fa-solid fa-check"></i><span>Lubrificado</span>
+                                    </button>`}
+                                ${isAdmin() && point.completion_locked ? `
+                                    <button
+                                        onclick="releasePoint('${escapeHtml(point.id)}')"
+                                        class="btn btn-primary action-btn"
+                                        title="Liberar novamente para o responsável"
+                                    >
+                                        <i class="fa-solid fa-unlock"></i><span>Liberar</span>
+                                    </button>` : ''}
 
                                 ${
                                     isAdmin()
@@ -3338,7 +3374,7 @@ main.max-w-7xl{max-width:1320px!important;}
                         <input id="photoInput_${escapeHtml(point.id)}" type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoSelected(event, '${escapeHtml(point.id)}')">
                         <button type="button" class="mobile-photo-btn" onclick="triggerPhoto('${escapeHtml(point.id)}')"><i class="fa-solid fa-camera"></i>${photo ? 'Tirar outra foto' : 'Tirar foto da lubrificação'}</button>
                         ${photo ? `<img class="mobile-photo-preview" src="${photo}" alt="Foto da lubrificação"><div class="mobile-photo-ok"><i class="fa-solid fa-circle-check"></i> Foto registrada</div>` : ''}
-                        <button type="button" class="mobile-lub-btn" ${canLubricate ? '' : 'disabled'} onclick="handleLubricate('${escapeHtml(point.id)}')"><i class="fa-solid fa-check"></i>LUBRIFICADO</button>
+                        ${point.completion_locked ? (isAdmin() ? `<button type="button" class="mobile-lub-btn" onclick="releasePoint('${escapeHtml(point.id)}')"><i class="fa-solid fa-unlock"></i>LIBERAR PARA EXECUÇÃO</button>` : '') : `<button type="button" class="mobile-lub-btn" ${canLubricate ? '' : 'disabled'} onclick="handleLubricate('${escapeHtml(point.id)}')"><i class="fa-solid fa-check"></i>LUBRIFICADO</button>`}
                     </div>
                 </article>`;
         }).join('');
@@ -3798,6 +3834,13 @@ main.max-w-7xl{max-width:1320px!important;}
 
     async function handleLubricate(id) {
 
+        // Evita cliques duplos enquanto a gravação está em andamento.
+        if (window.lubricatingNow && window.lubricatingNow[id]) {
+            return;
+        }
+        window.lubricatingNow = window.lubricatingNow || {};
+        window.lubricatingNow[id] = true;
+
         const point =
             points.find(
                 item =>
@@ -3899,10 +3942,42 @@ main.max-w-7xl{max-width:1320px!important;}
                 'error'
             );
 
+        } finally {
+            delete window.lubricatingNow[id];
         }
 
     }
 
+
+    async function releasePoint(id) {
+        if (!isAdmin()) return;
+        const point = points.find(item => String(item.id) === String(id));
+        if (!point) return;
+
+        try {
+            const today = new Date().toISOString().slice(0, 10);
+            const response = await fetch('/api/items', {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    id: point.id,
+                    data: {
+                        completion_locked: false,
+                        last_lubricated_at: null,
+                        next_date: today
+                    }
+                })
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data?.error || 'Não foi possível liberar o ponto.');
+            delete pendingPhotos[id];
+            await loadData();
+            showToast('Ponto liberado novamente para o responsável.');
+        } catch (error) {
+            console.error(error);
+            showToast(error.message || 'Erro ao liberar o ponto.', 'error');
+        }
+    }
 
     /* =====================================================
        HISTÓRICO
