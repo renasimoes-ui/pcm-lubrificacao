@@ -1,4 +1,3 @@
-```javascript
 export default async function handler(req, res) {
     try {
         const supabaseUrl = process.env.SUPABASE_URL;
@@ -10,13 +9,7 @@ export default async function handler(req, res) {
             });
         }
 
-        if (req.method !== "GET") {
-            return res.status(405).json({
-                error: "Método não permitido"
-            });
-        }
-
-        const pin = req.query?.pin;
+        const pin = req.query.pin;
 
         if (!pin) {
             return res.status(400).json({
@@ -24,55 +17,42 @@ export default async function handler(req, res) {
             });
         }
 
-        const url =
-            `${supabaseUrl}/rest/v1/users` +
-            `?pin=eq.${encodeURIComponent(pin)}` +
-            `&active=eq.true` +
-            `&select=id,name,function_name,role,active`;
+        const url = `${supabaseUrl}/rest/v1/users?pin=eq.${encodeURIComponent(pin)}&select=id,name,function_name,role,active`;
 
         const response = await fetch(url, {
-            method: "GET",
             headers: {
-                "apikey": supabaseKey,
-                "Authorization": `Bearer ${supabaseKey}`,
-                "Content-Type": "application/json"
+                apikey: supabaseKey,
+                Authorization: `Bearer ${supabaseKey}`
             }
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            console.error("Erro Supabase:", data);
-
             return res.status(500).json({
-                error: "Erro ao consultar Supabase",
+                error: "Erro Supabase",
                 details: data
             });
         }
 
-        if (!data || data.length === 0) {
+        if (!data.length) {
             return res.status(401).json({
                 error: "PIN inválido"
             });
         }
 
-        const user = data[0];
-
         return res.status(200).json({
-            id: user.id,
-            name: user.name,
-            function: user.function_name,
-            role: user.role,
-            active: user.active
+            id: data[0].id,
+            name: data[0].name,
+            function: data[0].function_name,
+            role: data[0].role,
+            active: data[0].active
         });
 
     } catch (error) {
-        console.error("Erro interno:", error);
-
         return res.status(500).json({
-            error: "Erro interno do servidor",
+            error: "Erro interno",
             details: error.message
         });
     }
 }
-```
