@@ -5,303 +5,647 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PCM • Controle de Lubrificação</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icons CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+```
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#0f172a">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="PCM Lubrificação">
+```
+
 </head>
+
 <body class="bg-slate-100 text-slate-800 antialiased min-h-screen flex flex-col font-sans select-none">
+
+<!-- LOGIN -->
+
 <div id="loginScreen" class="fixed inset-0 bg-slate-900 z-[9999] flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
 
-        <div class="text-center mb-6">
-            <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                <i class="fa-solid fa-oil-can text-2xl"></i>
-            </div>
+```
+<div class="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
 
-            <h2 class="text-xl font-black text-slate-800">
-                PCM • Lubrificação
-            </h2>
+    <div class="text-center mb-6">
 
-            <p class="text-sm text-slate-500 mt-1">
-                Acesso da Manutenção
-            </p>
+        <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
+            <i class="fa-solid fa-oil-can text-2xl"></i>
         </div>
 
-        <label class="block text-sm font-bold text-slate-700 mb-2">
-            Digite seu PIN
-        </label>
+        <h2 class="text-xl font-black text-slate-800">
+            PCM • Lubrificação
+        </h2>
 
-        <input
-            id="loginPIN"
-            type="password"
-            inputmode="numeric"
-            maxlength="4"
-            placeholder="••••"
-            class="w-full text-center text-2xl tracking-[0.5em] font-black border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-        >
-
-        <button
-            onclick="submitLogin()"
-            class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl"
-        >
-            <i class="fa-solid fa-right-to-bracket mr-2"></i>
-            Entrar
-        </button>
-
-        <p id="loginError" class="text-red-500 text-sm text-center font-bold mt-3 hidden">
-            PIN inválido
+        <p class="text-sm text-slate-500 mt-1">
+            Acesso da Manutenção
         </p>
 
     </div>
+
+    <label class="block text-sm font-bold text-slate-700 mb-2">
+        Digite seu PIN
+    </label>
+
+    <input
+        id="loginPIN"
+        type="password"
+        inputmode="numeric"
+        maxlength="4"
+        placeholder="••••"
+        class="w-full text-center text-2xl tracking-[0.5em] font-black border border-slate-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+    >
+
+    <button
+        onclick="submitLogin()"
+        class="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl"
+    >
+        <i class="fa-solid fa-right-to-bracket mr-2"></i>
+        Entrar
+    </button>
+
+    <p id="loginError" class="text-red-500 text-sm text-center font-bold mt-3 hidden">
+        PIN inválido
+    </p>
+
 </div>
-<!-- Notificação Toast Simulação -->
-<div id="toast" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300 max-w-sm bg-slate-900 text-white p-4 rounded-xl shadow-2xl border-l-4 border-emerald-500 flex items-start gap-3 hidden">
-    <i class="fa-solid fa-circle-check text-emerald-400 text-xl mt-0.5"></i>
-    <div>
-        <h4 id="toastTitle" class="font-bold text-sm">Sucesso!</h4>
-        <p id="toastMessage" class="text-xs text-slate-300 mt-0.5">Operação realizada com sucesso.</p>
-    </div>
+```
+
 </div>
 
-<!-- Header Principal -->
+<!-- TOAST -->
+
+<div id="toast" class="fixed top-4 right-4 z-50 transform translate-x-full transition-transform duration-300 max-w-sm bg-slate-900 text-white p-4 rounded-xl shadow-2xl border-l-4 border-emerald-500 flex items-start gap-3 hidden">
+
+```
+<i class="fa-solid fa-circle-check text-emerald-400 text-xl mt-0.5"></i>
+
+<div>
+    <h4 id="toastTitle" class="font-bold text-sm">
+        Sucesso!
+    </h4>
+
+    <p id="toastMessage" class="text-xs text-slate-300 mt-0.5">
+        Operação realizada com sucesso.
+    </p>
+</div>
+```
+
+</div>
+
+<!-- HEADER -->
+
 <header class="bg-slate-900 text-white sticky top-0 z-40 shadow-md">
-    <div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
-        <div class="flex items-center gap-2">
-            <i class="fa-solid fa-oil-can text-blue-400 text-xl"></i>
-            <div>
-                <h1 class="font-black text-base tracking-tight leading-none">PCM • Lubrificação</h1>
-                <span class="text-[10px] text-slate-400">Controle Industrial</span>
-            </div>
+
+```
+<div class="max-w-4xl mx-auto px-4 py-3 flex justify-between items-center">
+
+    <div class="flex items-center gap-2">
+
+        <i class="fa-solid fa-oil-can text-blue-400 text-xl"></i>
+
+        <div>
+
+            <h1 class="font-black text-base tracking-tight leading-none">
+                PCM • Lubrificação
+            </h1>
+
+            <span class="text-[10px] text-slate-400">
+                Controle Industrial
+            </span>
+
         </div>
-        <!-- Seleção de Perfil para Testes -->
-        <div class="flex items-center gap-2 bg-slate-800 p-1 rounded-lg text-xs">
-            <span class="text-[10px] text-slate-400 pl-1">Perfil:</span>
-            <select id="userRole" onchange="changeRole()" class="bg-slate-900 text-blue-400 font-bold rounded px-2 py-1 border border-slate-700 outline-none text-xs">
-                <option value="admin">Administrador</option>
-                <option value="manutencao">Manutenção</option>
-            </select>
-        </div>
+
     </div>
-    <!-- Navegação por Abas -->
-    <nav class="flex border-t border-slate-800 bg-slate-950/50">
-        <button onclick="switchTab('dashboard')" id="tabBtnDashboard" class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500">
-            <i class="fa-solid fa-chart-pie mr-1"></i> Dashboard
-        </button>
-        <button onclick="switchTab('history')" id="tabBtnHistory" class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent">
-            <i class="fa-solid fa-clock-rotate-left mr-1"></i> Histórico
-        </button>
-    </nav>
+
+    <!-- USUÁRIO LOGADO -->
+    <div class="flex items-center gap-2 bg-slate-800 p-1 rounded-lg text-xs">
+
+        <span class="text-[10px] text-slate-400 pl-1">
+            Usuário:
+        </span>
+
+        <span id="loggedUserName" class="text-blue-400 font-bold px-2">
+            Não identificado
+        </span>
+
+    </div>
+
+</div>
+
+<!-- NAVEGAÇÃO -->
+<nav class="flex border-t border-slate-800 bg-slate-950/50">
+
+    <button
+        onclick="switchTab('dashboard')"
+        id="tabBtnDashboard"
+        class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500"
+    >
+        <i class="fa-solid fa-chart-pie mr-1"></i>
+        Dashboard
+    </button>
+
+    <button
+        onclick="switchTab('history')"
+        id="tabBtnHistory"
+        class="flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent"
+    >
+        <i class="fa-solid fa-clock-rotate-left mr-1"></i>
+        Histórico
+    </button>
+
+</nav>
+```
+
 </header>
 
-<!-- ABA 1: DASHBOARD E PONTOS -->
+<!-- DASHBOARD -->
+
 <main id="dashboardTab" class="flex-1 max-w-4xl w-full mx-auto p-4 space-y-4">
-    
-    <!-- Dashboard - Cards Principais -->
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-        <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
-            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Total de Pontos</p>
-            <p id="statTotal" class="text-2xl font-black text-slate-800 mt-0.5">0</p>
-        </div>
-        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-emerald-500 border-y border-r border-slate-200">
-            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">🟢 Em Dia</p>
-            <p id="statEmDia" class="text-2xl font-black text-emerald-600 mt-0.5">0</p>
-        </div>
-        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-amber-500 border-y border-r border-slate-200">
-            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">🟡 Próximas</p>
-            <p id="statProximas" class="text-2xl font-black text-amber-600 mt-0.5">0</p>
-        </div>
-        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-red-500 border-y border-r border-slate-200">
-            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">🔴 Atrasadas</p>
-            <p id="statAtrasadas" class="text-2xl font-black text-red-600 mt-0.5">0</p>
-        </div>
-        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-blue-500 border-y border-r border-slate-200">
-            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Realizadas Hoje</p>
-            <p id="statHoje" class="text-2xl font-black text-blue-600 mt-0.5">0</p>
-        </div>
-        <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-purple-500 border-y border-r border-slate-200">
-            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Pendências Hoje</p>
-            <p id="statPendencias" class="text-2xl font-black text-purple-600 mt-0.5">0</p>
-        </div>
+
+```
+<!-- CARDS -->
+<div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+
+    <div class="bg-white p-3.5 rounded-xl shadow-sm border border-slate-200">
+        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+            Total de Pontos
+        </p>
+
+        <p id="statTotal" class="text-2xl font-black text-slate-800 mt-0.5">
+            0
+        </p>
     </div>
 
-    <!-- Barra de Pesquisa e Filtros -->
-    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-3">
-        <div class="relative">
-            <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
-            <input type="text" id="searchInput" oninput="renderPoints()" placeholder="Pesquisar máquina, código, setor, ponto..." class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
-        <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
-            <button onclick="setFilter('TODOS')" id="filterBtnTODOS" class="px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap">Todos</button>
-            <button onclick="setFilter('EM_DIA')" id="filterBtnEM_DIA" class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap">🟢 Em dia</button>
-            <button onclick="setFilter('PROXIMAS')" id="filterBtnPROXIMAS" class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap">🟡 Próximas</button>
-            <button onclick="setFilter('ATRASADAS')" id="filterBtnATRASADAS" class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap">🔴 Atrasadas</button>
-            <button onclick="setFilter('HOJE')" id="filterBtnHOJE" class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap">Realizadas Hoje</button>
-        </div>
+    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-emerald-500 border-y border-r border-slate-200">
+        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+            🟢 Em Dia
+        </p>
+
+        <p id="statEmDia" class="text-2xl font-black text-emerald-600 mt-0.5">
+            0
+        </p>
     </div>
 
-    <!-- Barra de Ações do Administrador -->
-    <div id="adminControls" class="flex justify-between items-center">
-        <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs">Pontos Cadastrados</h2>
-        <button onclick="openFormModal()" class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1 transition-all">
-            <i class="fa-solid fa-plus"></i> Novo Ponto
-        </button>
+    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-amber-500 border-y border-r border-slate-200">
+        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+            🟡 Próximas
+        </p>
+
+        <p id="statProximas" class="text-2xl font-black text-amber-600 mt-0.5">
+            0
+        </p>
     </div>
 
-    <!-- Container da Lista de Pontos (Cards) -->
-    <div id="pointsList" class="space-y-3"></div>
-</main>
+    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-red-500 border-y border-r border-slate-200">
+        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+            🔴 Atrasadas
+        </p>
 
-<!-- ABA 2: HISTÓRICO -->
-<main id="historyTab" class="hidden flex-1 max-w-4xl w-full mx-auto p-4 space-y-4">
-    <div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-2">
-        <h2 class="font-black text-slate-800 text-sm uppercase">Pesquisar Histórico</h2>
-        <input type="text" id="historySearchInput" oninput="renderHistory()" placeholder="Filtrar por máquina, código, setor ou responsável..." class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+        <p id="statAtrasadas" class="text-2xl font-black text-red-600 mt-0.5">
+            0
+        </p>
     </div>
-    <div id="historyList" class="space-y-3"></div>
-</main>
 
-<!-- MODAL: CADASTRAR / EDITAR PONTO -->
-<div id="formModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
-    <div class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto">
-        <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
-            <h3 id="modalTitle" class="font-black text-slate-800 text-base">Cadastrar Ponto</h3>
-            <button onclick="closeFormModal()" class="text-slate-400 text-lg hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <form id="pointForm" onsubmit="handleSavePoint(event)" class="space-y-3 text-xs">
-            <input type="hidden" id="pointId">
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="font-bold text-slate-600">Máquina *</label>
-                    <input type="text" id="formMachine" required placeholder="Ex: Prensa Hidráulica" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <label class="font-bold text-slate-600">Código *</label>
-                    <input type="text" id="formCode" required placeholder="Ex: PR-01" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="font-bold text-slate-600">Setor *</label>
-                    <input type="text" id="formSector" required placeholder="Ex: Estamparia" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <label class="font-bold text-slate-600">Ponto de Lubrificação *</label>
-                    <input type="text" id="formPoint" required placeholder="Ex: Mancal Principal" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="font-bold text-slate-600">Lubrificante *</label>
-                    <input type="text" id="formLubricant" required placeholder="Ex: Graxa EP-2" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-                <div>
-                    <label class="font-bold text-slate-600">Quantidade *</label>
-                    <input type="text" id="formQuantity" required placeholder="Ex: 50g, 2L" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-                <div>
-                    <label class="font-bold text-slate-600">Frequência *</label>
-                    <select id="formFrequency" onchange="calculateFormNextDate()" required class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-                        <option value="1|Diário">Diário</option>
-                        <option value="7|Semanal">Semanal</option>
-                        <option value="15|Quinzenal">Quinzenal</option>
-                        <option value="30|Mensal">Mensal</option>
-                        <option value="60|Bimestral">Bimestral</option>
-                        <option value="90|Trimestral">Trimestral</option>
-                        <option value="180|Semestral">Semestral</option>
-                        <option value="365|Anual">Anual</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="font-bold text-slate-600">Próxima Lubrificação *</label>
-                    <input type="date" id="formNextDate" required class="w-full p-2.5 border rounded-lg mt-1 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none">
-                </div>
-            </div>
-            <div>
-                <label class="font-bold text-slate-600">Responsável Padrão</label>
-                <input type="text" id="formResponsible" placeholder="Ex: João Silva" class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none">
-            </div>
-            <div>
-                <label class="font-bold text-slate-600">Observações</label>
-                <textarea id="formNotes" rows="2" placeholder="Observações técnicas..." class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-            </div>
-            <div class="flex gap-2 pt-2">
-                <button type="button" onclick="closeFormModal()" class="flex-1 bg-slate-200 hover:bg-slate-300 font-bold py-3 rounded-xl transition-all">Cancelar</button>
-                <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition-all">Salvar Ponto</button>
-            </div>
-        </form>
+    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-blue-500 border-y border-r border-slate-200">
+        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+            Realizadas Hoje
+        </p>
+
+        <p id="statHoje" class="text-2xl font-black text-blue-600 mt-0.5">
+            0
+        </p>
     </div>
+
+    <div class="bg-white p-3.5 rounded-xl shadow-sm border-l-4 border-purple-500 border-y border-r border-slate-200">
+        <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">
+            Pendências Hoje
+        </p>
+
+        <p id="statPendencias" class="text-2xl font-black text-purple-600 mt-0.5">
+            0
+        </p>
+    </div>
+
 </div>
 
-<!-- SCRIPT DO SISTEMA (SIMULADOR STANDALONE) -->
-<script>
-    // Dados de Exemplo para Teste Inicial
-    const defaultPoints = [
-        {
-            id: "1",
-            machine: "Compressor de Ar",
-            code: "CP-01",
-            sector: "Utilidades",
-            point: "Mancal do Motor",
-            lubricant: "Óleo ISO VG 68",
-            quantity: "1.5L",
-            frequency_days: 7,
-            frequency_label: "Semanal",
-            last_lubricated_at: new Date(Date.now() - 86400000 * 8).toISOString(), // 8 dias atrás
-            next_date: new Date(Date.now() - 86400000).toISOString().split('T')[0], // Ontem (Atrasado)
-            responsible: "Carlos Santos",
-            notes: "Verificar vazamentos na carcaça."
-        },
-        {
-            id: "2",
-            machine: "Prensa Hidráulica",
-            code: "PR-02",
-            sector: "Estamparia",
-            point: "Guias de Deslizamento",
-            lubricant: "Graxa Lithium EP-2",
-            quantity: "100g",
-            frequency_days: 1,
-            frequency_label: "Diário",
-            last_lubricated_at: null,
-            next_date: new Date().toISOString().split('T')[0], // Hoje (Próxima)
-            responsible: "João Silva",
-            notes: "Aplicar graxa até sair pelo selo."
-        },
-        {
-            id: "3",
-            machine: "Torno CNC",
-            code: "TC-01",
-            sector: "Usinagem",
-            point: "Fuso de Esferas Axis-Z",
-            lubricant: "Óleo Sintético 32",
-            quantity: "250ml",
-            frequency_days: 30,
-            frequency_label: "Mensal",
-            last_lubricated_at: new Date().toISOString(),
-            next_date: new Date(Date.now() + 86400000 * 25).toISOString().split('T')[0], // Em dia
-            responsible: "Mariana Souza",
-            notes: ""
-        }
-    ];
+<!-- PESQUISA -->
+<div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-3">
 
-    // Estado da Aplicação
-    let points = [];
+    <div class="relative">
+
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3 text-slate-400 text-sm"></i>
+
+        <input
+            type="text"
+            id="searchInput"
+            oninput="renderPoints()"
+            placeholder="Pesquisar máquina, código, setor, ponto..."
+            class="w-full pl-9 pr-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+
+    </div>
+
+    <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
+
+        <button
+            onclick="setFilter('TODOS')"
+            id="filterBtnTODOS"
+            class="px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap"
+        >
+            Todos
+        </button>
+
+        <button
+            onclick="setFilter('EM_DIA')"
+            id="filterBtnEM_DIA"
+            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+        >
+            🟢 Em dia
+        </button>
+
+        <button
+            onclick="setFilter('PROXIMAS')"
+            id="filterBtnPROXIMAS"
+            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+        >
+            🟡 Próximas
+        </button>
+
+        <button
+            onclick="setFilter('ATRASADAS')"
+            id="filterBtnATRASADAS"
+            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+        >
+            🔴 Atrasadas
+        </button>
+
+        <button
+            onclick="setFilter('HOJE')"
+            id="filterBtnHOJE"
+            class="px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap"
+        >
+            Realizadas Hoje
+        </button>
+
+    </div>
+
+</div>
+
+<!-- CONTROLES ADMIN -->
+<div id="adminControls" class="flex justify-between items-center">
+
+    <h2 class="font-black text-slate-700 uppercase tracking-wide text-xs">
+        Pontos Cadastrados
+    </h2>
+
+    <button
+        onclick="openFormModal()"
+        class="bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold px-3 py-2 rounded-lg shadow flex items-center gap-1 transition-all"
+    >
+        <i class="fa-solid fa-plus"></i>
+        Novo Ponto
+    </button>
+
+</div>
+
+<!-- LISTA -->
+<div id="pointsList" class="space-y-3"></div>
+```
+
+</main>
+
+<!-- HISTÓRICO -->
+
+<main id="historyTab" class="hidden flex-1 max-w-4xl w-full mx-auto p-4 space-y-4">
+
+```
+<div class="bg-white p-3 rounded-xl shadow-sm border border-slate-200 space-y-2">
+
+    <h2 class="font-black text-slate-800 text-sm uppercase">
+        Pesquisar Histórico
+    </h2>
+
+    <input
+        type="text"
+        id="historySearchInput"
+        oninput="renderHistory()"
+        placeholder="Filtrar por máquina, código, setor ou responsável..."
+        class="w-full p-2 bg-slate-50 border border-slate-200 rounded-lg text-sm"
+    >
+
+</div>
+
+<div id="historyList" class="space-y-3"></div>
+```
+
+</main>
+
+<!-- MODAL -->
+
+<div id="formModal" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+
+```
+<div class="bg-white w-full max-w-lg rounded-2xl p-5 shadow-2xl max-h-[90vh] overflow-y-auto">
+
+    <div class="flex justify-between items-center mb-4 border-b border-slate-100 pb-2">
+
+        <h3 id="modalTitle" class="font-black text-slate-800 text-base">
+            Cadastrar Ponto
+        </h3>
+
+        <button
+            onclick="closeFormModal()"
+            class="text-slate-400 text-lg hover:text-slate-600"
+        >
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+    </div>
+
+    <form id="pointForm" onsubmit="handleSavePoint(event)" class="space-y-3 text-xs">
+
+        <input type="hidden" id="pointId">
+
+        <div class="grid grid-cols-2 gap-2">
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Máquina *
+                </label>
+
+                <input
+                    type="text"
+                    id="formMachine"
+                    required
+                    placeholder="Ex: Prensa Hidráulica"
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+
+            </div>
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Código *
+                </label>
+
+                <input
+                    type="text"
+                    id="formCode"
+                    required
+                    placeholder="Ex: PR-01"
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Setor *
+                </label>
+
+                <input
+                    type="text"
+                    id="formSector"
+                    required
+                    placeholder="Ex: Estamparia"
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+
+            </div>
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Ponto de Lubrificação *
+                </label>
+
+                <input
+                    type="text"
+                    id="formPoint"
+                    required
+                    placeholder="Ex: Mancal Principal"
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Lubrificante *
+                </label>
+
+                <input
+                    type="text"
+                    id="formLubricant"
+                    required
+                    placeholder="Ex: Graxa EP-2"
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+
+            </div>
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Quantidade *
+                </label>
+
+                <input
+                    type="text"
+                    id="formQuantity"
+                    required
+                    placeholder="Ex: 50g, 2L"
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+
+            </div>
+
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Frequência *
+                </label>
+
+                <select
+                    id="formFrequency"
+                    onchange="calculateFormNextDate()"
+                    required
+                    class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                    <option value="1|Diário">Diário</option>
+                    <option value="7|Semanal">Semanal</option>
+                    <option value="15|Quinzenal">Quinzenal</option>
+                    <option value="30|Mensal">Mensal</option>
+                    <option value="60|Bimestral">Bimestral</option>
+                    <option value="90|Trimestral">Trimestral</option>
+                    <option value="180|Semestral">Semestral</option>
+                    <option value="365|Anual">Anual</option>
+                </select>
+
+            </div>
+
+            <div>
+
+                <label class="font-bold text-slate-600">
+                    Próxima Lubrificação *
+                </label>
+
+                <input
+                    type="date"
+                    id="formNextDate"
+                    required
+                    class="w-full p-2.5 border rounded-lg mt-1 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+
+            </div>
+
+        </div>
+
+        <div>
+
+            <label class="font-bold text-slate-600">
+                Responsável Padrão
+            </label>
+
+            <input
+                type="text"
+                id="formResponsible"
+                placeholder="Ex: João Silva"
+                class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+            >
+
+        </div>
+
+        <div>
+
+            <label class="font-bold text-slate-600">
+                Observações
+            </label>
+
+            <textarea
+                id="formNotes"
+                rows="2"
+                placeholder="Observações técnicas..."
+                class="w-full p-2.5 border rounded-lg mt-1 focus:ring-2 focus:ring-blue-500 outline-none"
+            ></textarea>
+
+        </div>
+
+        <div class="flex gap-2 pt-2">
+
+            <button
+                type="button"
+                onclick="closeFormModal()"
+                class="flex-1 bg-slate-200 hover:bg-slate-300 font-bold py-3 rounded-xl transition-all"
+            >
+                Cancelar
+            </button>
+
+            <button
+                type="submit"
+                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow transition-all"
+            >
+                Salvar Ponto
+            </button>
+
+        </div>
+
+    </form>
+
+</div>
+```
+
+</div>
+
+<!-- SCRIPT -->
+
+<script>
+
+const defaultPoints = [
+    {
+        id: "1",
+        machine: "Compressor de Ar",
+        code: "CP-01",
+        sector: "Utilidades",
+        point: "Mancal do Motor",
+        lubricant: "Óleo ISO VG 68",
+        quantity: "1.5L",
+        frequency_days: 7,
+        frequency_label: "Semanal",
+        last_lubricated_at: new Date(Date.now() - 86400000 * 8).toISOString(),
+        next_date: new Date(Date.now() - 86400000).toISOString().split('T')[0],
+        responsible: "Carlos Santos",
+        notes: "Verificar vazamentos na carcaça."
+    },
+    {
+        id: "2",
+        machine: "Prensa Hidráulica",
+        code: "PR-02",
+        sector: "Estamparia",
+        point: "Guias de Deslizamento",
+        lubricant: "Graxa Lithium EP-2",
+        quantity: "100g",
+        frequency_days: 1,
+        frequency_label: "Diário",
+        last_lubricated_at: null,
+        next_date: new Date().toISOString().split('T')[0],
+        responsible: "João Silva",
+        notes: "Aplicar graxa até sair pelo selo."
+    },
+    {
+        id: "3",
+        machine: "Torno CNC",
+        code: "TC-01",
+        sector: "Usinagem",
+        point: "Fuso de Esferas Axis-Z",
+        lubricant: "Óleo Sintético 32",
+        quantity: "250ml",
+        frequency_days: 30,
+        frequency_label: "Mensal",
+        last_lubricated_at: new Date().toISOString(),
+        next_date: new Date(Date.now() + 86400000 * 25).toISOString().split('T')[0],
+        responsible: "Mariana Souza",
+        notes: ""
+    }
+];
+
+let points = [];
 let historyData = [];
 let activeFilter = 'TODOS';
+
 let currentRole = 'admin';
 let currentUser = null;
 
+
+/* LOGIN */
+
 async function loginWithPIN(pin) {
+
     try {
-        const response = await fetch(`/api/users?pin=${encodeURIComponent(pin)}`);
+
+        const response = await fetch(
+            `/api/users?pin=${encodeURIComponent(pin)}`
+        );
 
         if (!response.ok) {
             throw new Error('PIN inválido');
@@ -310,432 +654,1412 @@ async function loginWithPIN(pin) {
         const user = await response.json();
 
         currentUser = user;
-currentRole = user.role === 'maintenance' ? 'manutencao' : 'admin';
-        localStorage.setItem('pcm_current_user', JSON.stringify(user));
 
-        console.log('Usuário conectado:', user.name);
+        currentRole =
+            user.role === 'maintenance'
+                ? 'manutencao'
+                : 'admin';
+
+        localStorage.setItem(
+            'pcm_current_user',
+            JSON.stringify(user)
+        );
+
+        console.log(
+            'Usuário conectado:',
+            user.name
+        );
 
         return true;
 
     } catch (error) {
-        console.error('Erro no login:', error);
+
+        console.error(
+            'Erro no login:',
+            error
+        );
+
         return false;
     }
 }
-    function submitLogin() {
-    const pin = document.getElementById('loginPIN').value;
-    const error = document.getElementById('loginError');
+
+
+/* ENTRAR */
+
+function submitLogin() {
+
+    const pin =
+        document.getElementById('loginPIN').value;
+
+    const error =
+        document.getElementById('loginError');
 
     if (pin.length !== 4) {
-        error.textContent = 'Digite um PIN de 4 números';
+
+        error.textContent =
+            'Digite um PIN de 4 números';
+
         error.classList.remove('hidden');
+
         return;
     }
 
     loginWithPIN(pin).then(success => {
+
         if (success) {
-            document.getElementById('loginScreen').style.display = 'none';
+
+            document
+                .getElementById('loginScreen')
+                .style.display = 'none';
+
             error.classList.add('hidden');
+
+            const nameElement =
+                document.getElementById('loggedUserName');
+
+            if (nameElement && currentUser) {
+
+                nameElement.textContent =
+                    currentUser.name;
+
+            }
+
+            const adminControls =
+                document.getElementById('adminControls');
+
+            if (adminControls) {
+
+                if (currentRole === 'admin') {
+
+                    adminControls.style.display =
+                        'flex';
+
+                } else {
+
+                    adminControls.style.display =
+                        'none';
+                }
+            }
+
+            renderPoints();
+
         } else {
-            error.textContent = 'PIN inválido';
+
+            error.textContent =
+                'PIN inválido';
+
             error.classList.remove('hidden');
         }
+
     });
 }
+
+
+/* CARREGAR DADOS */
+
 async function loadData() {
+
     try {
-        const response = await fetch('/api/items');
-        if (!response.ok) throw new Error('Erro ao carregar dados');
 
-        const data = await response.json();
+        const response =
+            await fetch('/api/items');
 
-        points = data.points || [];
-        historyData = data.history || [];
+        if (!response.ok) {
 
-        localStorage.setItem('pcm_points', JSON.stringify(points));
-        localStorage.setItem('pcm_history', JSON.stringify(historyData));
+            throw new Error(
+                'Erro ao carregar dados'
+            );
+        }
+
+        const data =
+            await response.json();
+
+        points =
+            data.points || [];
+
+        historyData =
+            data.history || [];
+
+        localStorage.setItem(
+            'pcm_points',
+            JSON.stringify(points)
+        );
+
+        localStorage.setItem(
+            'pcm_history',
+            JSON.stringify(historyData)
+        );
 
         updateDashboardStats();
-renderPoints();
-renderHistory();
+
+        renderPoints();
+
+        renderHistory();
+
     } catch (error) {
-        console.error('Erro ao carregar dados:', error);
+
+        console.error(
+            'Erro ao carregar dados:',
+            error
+        );
     }
 }
 
-    // Inicialização
-  document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-});
-    function saveState() {
-        localStorage.setItem('pcm_points', JSON.stringify(points));
-        localStorage.setItem('pcm_history', JSON.stringify(historyData));
-    }
 
-    function changeRole() {
-        currentRole = document.getElementById('userRole').value;
-        const adminControls = document.getElementById('adminControls');
-        if (currentRole === 'admin') {
-            adminControls.style.display = 'flex';
-        } else {
-            adminControls.style.display = 'none';
+/* INICIALIZAÇÃO */
+
+document.addEventListener(
+    'DOMContentLoaded',
+    () => {
+
+        loadData();
+
+        const savedUser =
+            localStorage.getItem(
+                'pcm_current_user'
+            );
+
+        if (savedUser) {
+
+            try {
+
+                currentUser =
+                    JSON.parse(savedUser);
+
+                currentRole =
+                    currentUser.role === 'maintenance'
+                        ? 'manutencao'
+                        : 'admin';
+
+                const nameElement =
+                    document.getElementById(
+                        'loggedUserName'
+                    );
+
+                if (
+                    nameElement &&
+                    currentUser.name
+                ) {
+
+                    nameElement.textContent =
+                        currentUser.name;
+                }
+
+                document
+                    .getElementById('loginScreen')
+                    .style.display = 'none';
+
+                const adminControls =
+                    document.getElementById(
+                        'adminControls'
+                    );
+
+                if (adminControls) {
+
+                    adminControls.style.display =
+                        currentRole === 'admin'
+                            ? 'flex'
+                            : 'none';
+                }
+
+            } catch (error) {
+
+                console.error(
+                    'Erro ao recuperar usuário:',
+                    error
+                );
+            }
         }
-        renderPoints();
+    }
+);
+
+
+/* SALVAR ESTADO */
+
+function saveState() {
+
+    localStorage.setItem(
+        'pcm_points',
+        JSON.stringify(points)
+    );
+
+    localStorage.setItem(
+        'pcm_history',
+        JSON.stringify(historyData)
+    );
+}
+
+
+/* REGRA DE STATUS */
+
+function getItemStatus(nextDateStr) {
+
+    const todayStr =
+        new Date()
+            .toISOString()
+            .split('T')[0];
+
+    const today =
+        new Date(todayStr);
+
+    const nextDate =
+        new Date(nextDateStr);
+
+    const diffDays =
+        Math.round(
+            (nextDate - today) /
+            (1000 * 60 * 60 * 24)
+        );
+
+    if (diffDays < 0) {
+
+        return {
+            code: 'ATRASADA',
+            label: '🔴 ATRASADA',
+            color:
+                'bg-red-100 text-red-800 border-red-300'
+        };
     }
 
-    function switchTab(tab) {
-        const dashTab = document.getElementById('dashboardTab');
-        const histTab = document.getElementById('historyTab');
-        const btnDash = document.getElementById('tabBtnDashboard');
-        const btnHist = document.getElementById('tabBtnHistory');
+    if (diffDays <= 2) {
 
-        if (tab === 'dashboard') {
-            dashTab.classList.remove('hidden');
-            histTab.classList.add('hidden');
-            btnDash.className = "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
-            btnHist.className = "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
-        } else {
-            dashTab.classList.add('hidden');
-            histTab.classList.remove('hidden');
-            btnHist.className = "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
-            btnDash.className = "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
-        }
+        return {
+            code: 'PROXIMA',
+            label: '🟡 PRÓXIMA',
+            color:
+                'bg-amber-100 text-amber-800 border-amber-300'
+        };
     }
 
-    // Regra de Cálculo de Status Automático
-    function getItemStatus(nextDateStr) {
-        const todayStr = new Date().toISOString().split('T')[0];
-        const today = new Date(todayStr);
-        const nextDate = new Date(nextDateStr);
-        
-        const diffDays = Math.round((nextDate - today) / (1000 * 60 * 60 * 24));
+    return {
+        code: 'EM_DIA',
+        label: '🟢 EM DIA',
+        color:
+            'bg-emerald-100 text-emerald-800 border-emerald-300'
+    };
+}
 
-        if (diffDays < 0) return { code: 'ATRASADA', label: '🔴 ATRASADA', color: 'bg-red-100 text-red-800 border-red-300' };
-        if (diffDays <= 2) return { code: 'PROXIMA', label: '🟡 PRÓXIMA', color: 'bg-amber-100 text-amber-800 border-amber-300' };
-        return { code: 'EM_DIA', label: '🟢 EM DIA', color: 'bg-emerald-100 text-emerald-800 border-emerald-300' };
-    }
 
-    function updateDashboardStats() {
-        const todayStr = new Date().toISOString().split('T')[0];
-        let emDia = 0, proximas = 0, atrasadas = 0, pendenciasHoje = 0;
+/* DASHBOARD */
 
-        points.forEach(pt => {
-            const status = getItemStatus(pt.next_date);
-            if (status.code === 'EM_DIA') emDia++;
-            if (status.code === 'PROXIMA') proximas++;
-            if (status.code === 'ATRASADA') atrasadas++;
-            if (pt.next_date <= todayStr) pendenciasHoje++;
-        });
+function updateDashboardStats() {
 
-        const hojeRealizadas = historyData.filter(h => {
-            const perfDate = new Date(h.performed_at).toISOString().split('T')[0];
+    const todayStr =
+        new Date()
+            .toISOString()
+            .split('T')[0];
+
+    let emDia = 0;
+    let proximas = 0;
+    let atrasadas = 0;
+    let pendenciasHoje = 0;
+
+    points.forEach(pt => {
+
+        const status =
+            getItemStatus(pt.next_date);
+
+        if (status.code === 'EM_DIA')
+            emDia++;
+
+        if (status.code === 'PROXIMA')
+            proximas++;
+
+        if (status.code === 'ATRASADA')
+            atrasadas++;
+
+        if (pt.next_date <= todayStr)
+            pendenciasHoje++;
+    });
+
+    const hojeRealizadas =
+        historyData.filter(h => {
+
+            const perfDate =
+                new Date(h.performed_at)
+                    .toISOString()
+                    .split('T')[0];
+
             return perfDate === todayStr;
+
         }).length;
 
-        document.getElementById('statTotal').innerText = points.length;
-        document.getElementById('statEmDia').innerText = emDia;
-        document.getElementById('statProximas').innerText = proximas;
-        document.getElementById('statAtrasadas').innerText = atrasadas;
-        document.getElementById('statHoje').innerText = hojeRealizadas;
-        document.getElementById('statPendencias').innerText = pendenciasHoje;
-    }
+    document.getElementById(
+        'statTotal'
+    ).innerText = points.length;
 
-    function setFilter(filter) {
-        activeFilter = filter;
-        ['TODOS', 'EM_DIA', 'PROXIMAS', 'ATRASADAS', 'HOJE'].forEach(f => {
-            const btn = document.getElementById(`filterBtn${f}`);
-            if (f === filter) {
-                btn.className = "px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap";
-            } else {
-                btn.className = "px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap";
-            }
-        });
-        renderPoints();
-    }
+    document.getElementById(
+        'statEmDia'
+    ).innerText = emDia;
 
-    function renderPoints() {
-        const search = document.getElementById('searchInput').value.toLowerCase();
-        const container = document.getElementById('pointsList');
-        const todayStr = new Date().toISOString().split('T')[0];
-        container.innerHTML = '';
+    document.getElementById(
+        'statProximas'
+    ).innerText = proximas;
 
-        const filtered = points.filter(pt => {
-            const matchesSearch = 
-                pt.machine.toLowerCase().includes(search) ||
-                pt.code.toLowerCase().includes(search) ||
-                pt.sector.toLowerCase().includes(search) ||
-                pt.point.toLowerCase().includes(search);
+    document.getElementById(
+        'statAtrasadas'
+    ).innerText = atrasadas;
 
-            if (!matchesSearch) return false;
+    document.getElementById(
+        'statHoje'
+    ).innerText = hojeRealizadas;
 
-            const status = getItemStatus(pt.next_date);
-            if (activeFilter === 'EM_DIA') return status.code === 'EM_DIA';
-            if (activeFilter === 'PROXIMAS') return status.code === 'PROXIMA';
-            if (activeFilter === 'ATRASADAS') return status.code === 'ATRASADA';
-            if (activeFilter === 'HOJE') {
-                return pt.last_lubricated_at && pt.last_lubricated_at.startsWith(todayStr);
+    document.getElementById(
+        'statPendencias'
+    ).innerText = pendenciasHoje;
+}
+
+
+/* FILTRO */
+
+function setFilter(filter) {
+
+    activeFilter = filter;
+
+    [
+        'TODOS',
+        'EM_DIA',
+        'PROXIMAS',
+        'ATRASADAS',
+        'HOJE'
+    ].forEach(f => {
+
+        const btn =
+            document.getElementById(
+                `filterBtn${f}`
+            );
+
+        if (!btn) return;
+
+        if (f === filter) {
+
+            btn.className =
+                "px-3 py-1.5 rounded-lg font-bold bg-blue-600 text-white whitespace-nowrap";
+
+        } else {
+
+            btn.className =
+                "px-3 py-1.5 rounded-lg font-bold bg-slate-100 text-slate-600 whitespace-nowrap";
+        }
+    });
+
+    renderPoints();
+}
+
+
+/* RENDERIZAR PONTOS */
+
+function renderPoints() {
+
+    const search =
+        document
+            .getElementById('searchInput')
+            .value
+            .toLowerCase();
+
+    const container =
+        document.getElementById(
+            'pointsList'
+        );
+
+    const todayStr =
+        new Date()
+            .toISOString()
+            .split('T')[0];
+
+    container.innerHTML = '';
+
+    const filtered =
+        points.filter(pt => {
+
+            const matchesSearch =
+
+                pt.machine
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                pt.code
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                pt.sector
+                    .toLowerCase()
+                    .includes(search)
+
+                ||
+
+                pt.point
+                    .toLowerCase()
+                    .includes(search);
+
+            if (!matchesSearch)
+                return false;
+
+            const status =
+                getItemStatus(
+                    pt.next_date
+                );
+
+            if (
+                activeFilter === 'EM_DIA'
+            )
+                return status.code === 'EM_DIA';
+
+            if (
+                activeFilter === 'PROXIMAS'
+            )
+                return status.code === 'PROXIMA';
+
+            if (
+                activeFilter === 'ATRASADAS'
+            )
+                return status.code === 'ATRASADA';
+
+            if (
+                activeFilter === 'HOJE'
+            ) {
+
+                return (
+                    pt.last_lubricated_at &&
+                    pt.last_lubricated_at
+                        .startsWith(todayStr)
+                );
             }
 
             return true;
         });
 
-        if (filtered.length === 0) {
-            container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">Nenhum ponto de lubrificação encontrado.</div>`;
-            return;
-        }
+    if (filtered.length === 0) {
 
-        filtered.forEach(pt => {
-            const status = getItemStatus(pt.next_date);
-            const lastDate = pt.last_lubricated_at 
-                ? new Date(pt.last_lubricated_at).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+        container.innerHTML = `
+            <div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">
+                Nenhum ponto de lubrificação encontrado.
+            </div>
+        `;
+
+        return;
+    }
+
+    filtered.forEach(pt => {
+
+        const status =
+            getItemStatus(
+                pt.next_date
+            );
+
+        const lastDate =
+            pt.last_lubricated_at
+
+                ? new Date(
+                    pt.last_lubricated_at
+                ).toLocaleString(
+                    'pt-BR',
+                    {
+                        dateStyle: 'short',
+                        timeStyle: 'short'
+                    }
+                )
+
                 : 'Nunca registrado';
-            const nextDateFormatted = pt.next_date.split('-').reverse().join('/');
 
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3 relative";
-            card.innerHTML = `
-                <div class="flex justify-between items-start">
-                    <div>
-                        <span class="text-[10px] font-black uppercase bg-slate-100 text-slate-600 px-2 py-0.5 rounded">${pt.sector}</span>
-                        <h3 class="text-base font-black text-slate-800 mt-1">${pt.machine} <span class="text-xs text-slate-400 font-mono font-normal">(${pt.code})</span></h3>
-                    </div>
-                    <span class="text-[10px] font-bold px-2 py-1 rounded-full border ${status.color}">${status.label}</span>
+        const nextDateFormatted =
+            pt.next_date
+                .split('-')
+                .reverse()
+                .join('/');
+
+        const card =
+            document.createElement('div');
+
+        card.className =
+            "bg-white rounded-2xl shadow-sm border border-slate-200 p-4 space-y-3 relative";
+
+        card.innerHTML = `
+
+            <div class="flex justify-between items-start">
+
+                <div>
+
+                    <span class="text-[10px] font-black uppercase bg-slate-100 text-slate-600 px-2 py-0.5 rounded">
+                        ${pt.sector}
+                    </span>
+
+                    <h3 class="text-base font-black text-slate-800 mt-1">
+                        ${pt.machine}
+
+                        <span class="text-xs text-slate-400 font-mono font-normal">
+                            (${pt.code})
+                        </span>
+                    </h3>
+
                 </div>
 
-                <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 grid grid-cols-2 gap-2 text-xs">
-                    <div>
-                        <p class="text-slate-400 font-bold uppercase text-[9px]">Ponto</p>
-                        <p class="font-bold text-slate-700">${pt.point}</p>
-                    </div>
-                    <div>
-                        <p class="text-slate-400 font-bold uppercase text-[9px]">Lubrificante / Qtd</p>
-                        <p class="font-bold text-slate-700">${pt.lubricant} (${pt.quantity})</p>
-                    </div>
-                    <div>
-                        <p class="text-slate-400 font-bold uppercase text-[9px]">Última Execução</p>
-                        <p class="font-bold text-slate-700">${lastDate}</p>
-                    </div>
-                    <div>
-                        <p class="text-slate-400 font-bold uppercase text-[9px]">Próxima Data</p>
-                        <p class="font-bold text-blue-600">${nextDateFormatted} <span class="text-[9px] text-slate-400">(${pt.frequency_label})</span></p>
-                    </div>
+                <span class="text-[10px] font-bold px-2 py-1 rounded-full border ${status.color}">
+                    ${status.label}
+                </span>
+
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 grid grid-cols-2 gap-2 text-xs">
+
+                <div>
+
+                    <p class="text-slate-400 font-bold uppercase text-[9px]">
+                        Ponto
+                    </p>
+
+                    <p class="font-bold text-slate-700">
+                        ${pt.point}
+                    </p>
+
                 </div>
 
-                ${pt.notes ? `<p class="text-xs text-slate-500 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100"><i class="fa-solid fa-circle-info text-amber-500 mr-1"></i>${pt.notes}</p>` : ''}
+                <div>
 
-                <button onclick="handleLubricate('${pt.id}')" class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-black py-3.5 rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all">
-                    <i class="fa-solid fa-check text-base"></i> ✓ LUBRIFICADO
-                </button>
+                    <p class="text-slate-400 font-bold uppercase text-[9px]">
+                        Lubrificante / Qtd
+                    </p>
 
-                ${currentRole === 'admin' ? `
-                    <div class="flex justify-end gap-3 pt-1 border-t border-slate-100">
-                        <button onclick="editPoint('${pt.id}')" class="text-xs font-bold text-slate-500 hover:text-blue-600"><i class="fa-solid fa-pen"></i> Editar</button>
-                        <button onclick="deletePoint('${pt.id}')" class="text-xs font-bold text-slate-500 hover:text-red-600"><i class="fa-solid fa-trash"></i> Excluir</button>
-                    </div>
-                ` : ''}
-            `;
-            container.appendChild(card);
-        });
-    }
+                    <p class="font-bold text-slate-700">
+                        ${pt.lubricant} (${pt.quantity})
+                    </p>
 
-    // AÇÃO PRINCIPAL: BOTÃO LUBRIFICADO
-    function handleLubricate(id) {
-        const pt = points.find(p => p.id === id);
-        if (!pt) return;
+                </div>
 
-        if (!confirm(`Confirmar lubrificação da máquina ${pt.machine} (${pt.code})?`)) return;
+                <div>
 
-        const now = new Date();
-        const timeZoneNow = now.toISOString();
+                    <p class="text-slate-400 font-bold uppercase text-[9px]">
+                        Última Execução
+                    </p>
 
-        // Recalcular próxima data
-        const nextDateObj = new Date(now);
-        nextDateObj.setDate(nextDateObj.getDate() + pt.frequency_days);
-        const nextDateStr = nextDateObj.toISOString().split('T')[0];
+                    <p class="font-bold text-slate-700">
+                        ${lastDate}
+                    </p>
 
-        const responsibleUser = pt.responsible || (currentRole === 'admin' ? 'Administrador' : 'Técnico de Manutenção');
+                </div>
 
-        // Atualizar Ponto
-        pt.last_lubricated_at = timeZoneNow;
-        pt.next_date = nextDateStr;
+                <div>
 
-        // Adicionar ao Histórico
-        historyData.unshift({
-            id: Date.now().toString(),
-            point_id: pt.id,
-            machine: pt.machine,
-            code: pt.code,
-            sector: pt.sector,
-            point: pt.point,
-            responsible: responsibleUser,
-            performed_at: timeZoneNow,
-            lubricant: pt.lubricant,
-            quantity: pt.quantity
-        });
+                    <p class="text-slate-400 font-bold uppercase text-[9px]">
+                        Próxima Data
+                    </p>
 
-        saveState();
-        updateDashboardStats();
-        renderPoints();
-        renderHistory();
+                    <p class="font-bold text-blue-600">
 
-        showToast('✅ Lubrificação Registrada!', `E-mail de confirmação enviado para o responsável por ${pt.code}.`);
-    }
+                        ${nextDateFormatted}
 
-    // Formulário e CRUD
-    function openFormModal() {
-        document.getElementById('pointId').value = '';
-        document.getElementById('pointForm').reset();
-        document.getElementById('modalTitle').innerText = 'Cadastrar Ponto';
-        calculateFormNextDate();
-        document.getElementById('formModal').classList.remove('hidden');
-    }
+                        <span class="text-[9px] text-slate-400">
+                            (${pt.frequency_label})
+                        </span>
 
-    function closeFormModal() {
-        document.getElementById('formModal').classList.add('hidden');
-    }
+                    </p>
 
-    function calculateFormNextDate() {
-        const freqVal = document.getElementById('formFrequency').value;
-        const days = parseInt(freqVal.split('|')[0]);
-        const target = new Date();
-        target.setDate(target.getDate() + days);
-        document.getElementById('formNextDate').value = target.toISOString().split('T')[0];
-    }
+                </div>
 
-    function editPoint(id) {
-        const pt = points.find(p => p.id === id);
-        if (!pt) return;
+            </div>
 
-        document.getElementById('pointId').value = pt.id;
-        document.getElementById('formMachine').value = pt.machine;
-        document.getElementById('formCode').value = pt.code;
-        document.getElementById('formSector').value = pt.sector;
-        document.getElementById('formPoint').value = pt.point;
-        document.getElementById('formLubricant').value = pt.lubricant;
-        document.getElementById('formQuantity').value = pt.quantity;
-        document.getElementById('formFrequency').value = `${pt.frequency_days}|${pt.frequency_label}`;
-        document.getElementById('formNextDate').value = pt.next_date;
-        document.getElementById('formResponsible').value = pt.responsible || '';
-        document.getElementById('formNotes').value = pt.notes || '';
+            ${
+                pt.notes
+                    ? `
+                        <p class="text-xs text-slate-500 italic bg-amber-50/50 p-2 rounded-lg border border-amber-100">
 
-        document.getElementById('modalTitle').innerText = 'Editar Ponto';
-        document.getElementById('formModal').classList.remove('hidden');
-    }
+                            <i class="fa-solid fa-circle-info text-amber-500 mr-1"></i>
 
-    function handleSavePoint(e) {
-        e.preventDefault();
-        const id = document.getElementById('pointId').value;
-        const [freqDays, freqLabel] = document.getElementById('formFrequency').value.split('|');
+                            ${pt.notes}
 
-        if (id) {
-            // Editar existente
-            const pt = points.find(p => p.id === id);
-            if (pt) {
-                pt.machine = document.getElementById('formMachine').value;
-                pt.code = document.getElementById('formCode').value;
-                pt.sector = document.getElementById('formSector').value;
-                pt.point = document.getElementById('formPoint').value;
-                pt.lubricant = document.getElementById('formLubricant').value;
-                pt.quantity = document.getElementById('formQuantity').value;
-                pt.frequency_days = parseInt(freqDays);
-                pt.frequency_label = freqLabel;
-                pt.next_date = document.getElementById('formNextDate').value;
-                pt.responsible = document.getElementById('formResponsible').value;
-                pt.notes = document.getElementById('formNotes').value;
+                        </p>
+                    `
+                    : ''
             }
-        } else {
-            // Criar Novo
-            const newPoint = {
-                id: Date.now().toString(),
-                machine: document.getElementById('formMachine').value,
-                code: document.getElementById('formCode').value,
-                sector: document.getElementById('formSector').value,
-                point: document.getElementById('formPoint').value,
-                lubricant: document.getElementById('formLubricant').value,
-                quantity: document.getElementById('formQuantity').value,
-                frequency_days: parseInt(freqDays),
-                frequency_label: freqLabel,
-                last_lubricated_at: null,
-                next_date: document.getElementById('formNextDate').value,
-                responsible: document.getElementById('formResponsible').value,
-                notes: document.getElementById('formNotes').value
-            };
-            points.push(newPoint);
-        }
 
-        saveState();
-        closeFormModal();
-        updateDashboardStats();
-        renderPoints();
-        showToast('Sucesso!', 'Dados do ponto salvos com sucesso.');
-    }
+            <button
+                onclick="handleLubricate('${pt.id}')"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 active:scale-98 text-white font-black py-3.5 rounded-xl text-sm shadow-md flex items-center justify-center gap-2 transition-all"
+            >
 
-    function deletePoint(id) {
-        if (!confirm('Deseja realmente excluir este ponto de lubrificação?')) return;
-        points = points.filter(p => p.id !== id);
-        saveState();
-        updateDashboardStats();
-        renderPoints();
-        showToast('Excluído', 'Ponto de lubrificação removido.');
-    }
+                <i class="fa-solid fa-check text-base"></i>
 
-    function renderHistory() {
-        const search = document.getElementById('historySearchInput').value.toLowerCase();
-        const container = document.getElementById('historyList');
-        container.innerHTML = '';
+                ✓ LUBRIFICADO
 
-        const filtered = historyData.filter(h => 
-            h.machine.toLowerCase().includes(search) ||
-            h.code.toLowerCase().includes(search) ||
-            h.sector.toLowerCase().includes(search) ||
-            h.responsible.toLowerCase().includes(search)
-        );
+            </button>
 
-        if (filtered.length === 0) {
-            container.innerHTML = `<div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">Nenhum registro de histórico encontrado.</div>`;
-            return;
-        }
+            ${
+                currentRole === 'admin'
+                    ? `
 
-        filtered.forEach(h => {
-            const dateStr = new Date(h.performed_at).toLocaleString('pt-BR');
-            const card = document.createElement('div');
-            card.className = "bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-1 text-xs";
-            card.innerHTML = `
-                <div class="flex justify-between items-center font-bold text-slate-800">
-                    <span>${h.machine} (${h.code})</span>
-                    <span class="text-emerald-600 font-mono">${dateStr}</span>
-                </div>
-                <p class="text-slate-600"><strong>Setor / Ponto:</strong> ${h.sector} - ${h.point}</p>
-                <p class="text-slate-600"><strong>Lubrificante:</strong> ${h.lubricant} (${h.quantity})</p>
-                <p class="text-slate-500 font-semibold"><strong>Responsável:</strong> ${h.responsible}</p>
-            `;
-            container.appendChild(card);
-        });
-    }
+                        <div class="flex justify-end gap-3 pt-1 border-t border-slate-100">
 
-    function showToast(title, message) {
-        const toast = document.getElementById('toast');
-        document.getElementById('toastTitle').innerText = title;
-        document.getElementById('toastMessage').innerText = message;
-        toast.classList.remove('hidden', 'translate-x-full');
-        setTimeout(() => {
-            toast.classList.add('translate-x-full');
-            setTimeout(() => toast.classList.add('hidden'), 300);
-        }, 4000);
-    }
-</script>
-<script>
-if ("serviceWorker" in navigator) {
-    window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js")
-            .then(() => {
-                console.log("PCM Lubrificação: aplicativo pronto.");
-            })
-            .catch(error => {
-                console.error("Erro ao ativar o aplicativo:", error);
-            });
+                            <button
+                                onclick="editPoint('${pt.id}')"
+                                class="text-xs font-bold text-slate-500 hover:text-blue-600"
+                            >
+
+                                <i class="fa-solid fa-pen"></i>
+                                Editar
+
+                            </button>
+
+                            <button
+                                onclick="deletePoint('${pt.id}')"
+                                class="text-xs font-bold text-slate-500 hover:text-red-600"
+                            >
+
+                                <i class="fa-solid fa-trash"></i>
+                                Excluir
+
+                            </button>
+
+                        </div>
+
+                    `
+                    : ''
+            }
+
+        `;
+
+        container.appendChild(card);
+
     });
 }
+
+
+/* LUBRIFICAR */
+
+function handleLubricate(id) {
+
+    const pt =
+        points.find(
+            p => p.id === id
+        );
+
+    if (!pt) return;
+
+    if (
+        !confirm(
+            `Confirmar lubrificação da máquina ${pt.machine} (${pt.code})?`
+        )
+    )
+        return;
+
+    const now =
+        new Date();
+
+    const timeZoneNow =
+        now.toISOString();
+
+    const nextDateObj =
+        new Date(now);
+
+    nextDateObj.setDate(
+        nextDateObj.getDate() +
+        pt.frequency_days
+    );
+
+    const nextDateStr =
+        nextDateObj
+            .toISOString()
+            .split('T')[0];
+
+    const responsibleUser =
+        pt.responsible ||
+        (
+            currentUser
+                ? currentUser.name
+                : (
+                    currentRole === 'admin'
+                        ? 'Administrador'
+                        : 'Técnico de Manutenção'
+                )
+        );
+
+    pt.last_lubricated_at =
+        timeZoneNow;
+
+    pt.next_date =
+        nextDateStr;
+
+    historyData.unshift({
+
+        id:
+            Date.now().toString(),
+
+        point_id:
+            pt.id,
+
+        machine:
+            pt.machine,
+
+        code:
+            pt.code,
+
+        sector:
+            pt.sector,
+
+        point:
+            pt.point,
+
+        responsible:
+            responsibleUser,
+
+        performed_at:
+            timeZoneNow,
+
+        lubricant:
+            pt.lubricant,
+
+        quantity:
+            pt.quantity
+
+    });
+
+    saveState();
+
+    updateDashboardStats();
+
+    renderPoints();
+
+    renderHistory();
+
+    showToast(
+        '✅ Lubrificação Registrada!',
+        `E-mail de confirmação enviado para o responsável por ${pt.code}.`
+    );
+}
+
+
+/* MODAL */
+
+function openFormModal() {
+
+    document.getElementById(
+        'pointId'
+    ).value = '';
+
+    document.getElementById(
+        'pointForm'
+    ).reset();
+
+    document.getElementById(
+        'modalTitle'
+    ).innerText =
+        'Cadastrar Ponto';
+
+    calculateFormNextDate();
+
+    document.getElementById(
+        'formModal'
+    ).classList.remove(
+        'hidden'
+    );
+}
+
+
+function closeFormModal() {
+
+    document.getElementById(
+        'formModal'
+    ).classList.add(
+        'hidden'
+    );
+}
+
+
+/* PRÓXIMA DATA */
+
+function calculateFormNextDate() {
+
+    const freqVal =
+        document.getElementById(
+            'formFrequency'
+        ).value;
+
+    const days =
+        parseInt(
+            freqVal.split('|')[0]
+        );
+
+    const target =
+        new Date();
+
+    target.setDate(
+        target.getDate() +
+        days
+    );
+
+    document.getElementById(
+        'formNextDate'
+    ).value =
+        target
+            .toISOString()
+            .split('T')[0];
+}
+
+
+/* EDITAR */
+
+function editPoint(id) {
+
+    const pt =
+        points.find(
+            p => p.id === id
+        );
+
+    if (!pt) return;
+
+    document.getElementById(
+        'pointId'
+    ).value =
+        pt.id;
+
+    document.getElementById(
+        'formMachine'
+    ).value =
+        pt.machine;
+
+    document.getElementById(
+        'formCode'
+    ).value =
+        pt.code;
+
+    document.getElementById(
+        'formSector'
+    ).value =
+        pt.sector;
+
+    document.getElementById(
+        'formPoint'
+    ).value =
+        pt.point;
+
+    document.getElementById(
+        'formLubricant'
+    ).value =
+        pt.lubricant;
+
+    document.getElementById(
+        'formQuantity'
+    ).value =
+        pt.quantity;
+
+    document.getElementById(
+        'formFrequency'
+    ).value =
+        `${pt.frequency_days}|${pt.frequency_label}`;
+
+    document.getElementById(
+        'formNextDate'
+    ).value =
+        pt.next_date;
+
+    document.getElementById(
+        'formResponsible'
+    ).value =
+        pt.responsible || '';
+
+    document.getElementById(
+        'formNotes'
+    ).value =
+        pt.notes || '';
+
+    document.getElementById(
+        'modalTitle'
+    ).innerText =
+        'Editar Ponto';
+
+    document.getElementById(
+        'formModal'
+    ).classList.remove(
+        'hidden'
+    );
+}
+
+
+/* SALVAR PONTO */
+
+function handleSavePoint(e) {
+
+    e.preventDefault();
+
+    const id =
+        document.getElementById(
+            'pointId'
+        ).value;
+
+    const [
+        freqDays,
+        freqLabel
+    ] =
+        document
+            .getElementById(
+                'formFrequency'
+            )
+            .value
+            .split('|');
+
+    if (id) {
+
+        const pt =
+            points.find(
+                p => p.id === id
+            );
+
+        if (pt) {
+
+            pt.machine =
+                document.getElementById(
+                    'formMachine'
+                ).value;
+
+            pt.code =
+                document.getElementById(
+                    'formCode'
+                ).value;
+
+            pt.sector =
+                document.getElementById(
+                    'formSector'
+                ).value;
+
+            pt.point =
+                document.getElementById(
+                    'formPoint'
+                ).value;
+
+            pt.lubricant =
+                document.getElementById(
+                    'formLubricant'
+                ).value;
+
+            pt.quantity =
+                document.getElementById(
+                    'formQuantity'
+                ).value;
+
+            pt.frequency_days =
+                parseInt(freqDays);
+
+            pt.frequency_label =
+                freqLabel;
+
+            pt.next_date =
+                document.getElementById(
+                    'formNextDate'
+                ).value;
+
+            pt.responsible =
+                document.getElementById(
+                    'formResponsible'
+                ).value;
+
+            pt.notes =
+                document.getElementById(
+                    'formNotes'
+                ).value;
+        }
+
+    } else {
+
+        const newPoint = {
+
+            id:
+                Date.now().toString(),
+
+            machine:
+                document.getElementById(
+                    'formMachine'
+                ).value,
+
+            code:
+                document.getElementById(
+                    'formCode'
+                ).value,
+
+            sector:
+                document.getElementById(
+                    'formSector'
+                ).value,
+
+            point:
+                document.getElementById(
+                    'formPoint'
+                ).value,
+
+            lubricant:
+                document.getElementById(
+                    'formLubricant'
+                ).value,
+
+            quantity:
+                document.getElementById(
+                    'formQuantity'
+                ).value,
+
+            frequency_days:
+                parseInt(freqDays),
+
+            frequency_label:
+                freqLabel,
+
+            last_lubricated_at:
+                null,
+
+            next_date:
+                document.getElementById(
+                    'formNextDate'
+                ).value,
+
+            responsible:
+                document.getElementById(
+                    'formResponsible'
+                ).value,
+
+            notes:
+                document.getElementById(
+                    'formNotes'
+                ).value
+        };
+
+        points.push(
+            newPoint
+        );
+    }
+
+    saveState();
+
+    closeFormModal();
+
+    updateDashboardStats();
+
+    renderPoints();
+
+    showToast(
+        'Sucesso!',
+        'Dados do ponto salvos com sucesso.'
+    );
+}
+
+
+/* EXCLUIR */
+
+function deletePoint(id) {
+
+    if (
+        !confirm(
+            'Deseja realmente excluir este ponto de lubrificação?'
+        )
+    )
+        return;
+
+    points =
+        points.filter(
+            p => p.id !== id
+        );
+
+    saveState();
+
+    updateDashboardStats();
+
+    renderPoints();
+
+    showToast(
+        'Excluído',
+        'Ponto de lubrificação removido.'
+    );
+}
+
+
+/* HISTÓRICO */
+
+function renderHistory() {
+
+    const search =
+        document
+            .getElementById(
+                'historySearchInput'
+            )
+            .value
+            .toLowerCase();
+
+    const container =
+        document.getElementById(
+            'historyList'
+        );
+
+    container.innerHTML = '';
+
+    const filtered =
+        historyData.filter(h =>
+
+            h.machine
+                .toLowerCase()
+                .includes(search)
+
+            ||
+
+            h.code
+                .toLowerCase()
+                .includes(search)
+
+            ||
+
+            h.sector
+                .toLowerCase()
+                .includes(search)
+
+            ||
+
+            h.responsible
+                .toLowerCase()
+                .includes(search)
+        );
+
+    if (filtered.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="bg-white p-8 rounded-2xl text-center text-slate-400 font-medium text-sm">
+
+                Nenhum registro de histórico encontrado.
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    filtered.forEach(h => {
+
+        const dateStr =
+            new Date(
+                h.performed_at
+            ).toLocaleString(
+                'pt-BR'
+            );
+
+        const card =
+            document.createElement(
+                'div'
+            );
+
+        card.className =
+            "bg-white rounded-xl p-3.5 border border-slate-200 shadow-sm space-y-1 text-xs";
+
+        card.innerHTML = `
+
+            <div class="flex justify-between items-center font-bold text-slate-800">
+
+                <span>
+                    ${h.machine}
+                    (${h.code})
+                </span>
+
+                <span class="text-emerald-600 font-mono">
+                    ${dateStr}
+                </span>
+
+            </div>
+
+            <p class="text-slate-600">
+
+                <strong>
+                    Setor / Ponto:
+                </strong>
+
+                ${h.sector} -
+                ${h.point}
+
+            </p>
+
+            <p class="text-slate-600">
+
+                <strong>
+                    Lubrificante:
+                </strong>
+
+                ${h.lubricant}
+                (${h.quantity})
+
+            </p>
+
+            <p class="text-slate-500 font-semibold">
+
+                <strong>
+                    Responsável:
+                </strong>
+
+                ${h.responsible}
+
+            </p>
+
+        `;
+
+        container.appendChild(
+            card
+        );
+
+    });
+}
+
+
+/* ABAS */
+
+function switchTab(tab) {
+
+    const dashTab =
+        document.getElementById(
+            'dashboardTab'
+        );
+
+    const histTab =
+        document.getElementById(
+            'historyTab'
+        );
+
+    const btnDash =
+        document.getElementById(
+            'tabBtnDashboard'
+        );
+
+    const btnHist =
+        document.getElementById(
+            'tabBtnHistory'
+        );
+
+    if (tab === 'dashboard') {
+
+        dashTab.classList.remove(
+            'hidden'
+        );
+
+        histTab.classList.add(
+            'hidden'
+        );
+
+        btnDash.className =
+            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
+
+        btnHist.className =
+            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
+
+    } else {
+
+        dashTab.classList.add(
+            'hidden'
+        );
+
+        histTab.classList.remove(
+            'hidden'
+        );
+
+        btnHist.className =
+            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-blue-400 border-b-2 border-blue-500";
+
+        btnDash.className =
+            "flex-1 py-3 text-center font-bold text-xs uppercase tracking-wider text-slate-400 border-b-2 border-transparent";
+    }
+}
+
+
+/* TOAST */
+
+function showToast(
+    title,
+    message
+) {
+
+    const toast =
+        document.getElementById(
+            'toast'
+        );
+
+    document.getElementById(
+        'toastTitle'
+    ).innerText =
+        title;
+
+    document.getElementById(
+        'toastMessage'
+    ).innerText =
+        message;
+
+    toast.classList.remove(
+        'hidden',
+        'translate-x-full'
+    );
+
+    setTimeout(
+        () => {
+
+            toast.classList.add(
+                'translate-x-full'
+            );
+
+            setTimeout(
+                () => {
+
+                    toast.classList.add(
+                        'hidden'
+                    );
+
+                },
+                300
+            );
+
+        },
+        4000
+    );
+}
+
+</script>
+
+<!-- SERVICE WORKER -->
+
+<script>
+
+if (
+    "serviceWorker"
+    in navigator
+) {
+
+    window.addEventListener(
+        "load",
+        () => {
+
+            navigator.serviceWorker
+                .register(
+                    "./service-worker.js"
+                )
+
+                .then(
+                    () => {
+
+                        console.log(
+                            "PCM Lubrificação: aplicativo pronto."
+                        );
+
+                    }
+                )
+
+                .catch(
+                    error => {
+
+                        console.error(
+                            "Erro ao ativar o aplicativo:",
+                            error
+                        );
+
+                    }
+                );
+
+        }
+    );
+}
+
 </script>
 
 </body>
