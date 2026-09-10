@@ -2,18 +2,22 @@ function headers() {
     return {
         'Content-Type': 'application/json',
         'apikey': process.env.SUPABASE_SERVICE_ROLE_KEY,
-        'Authorization': 'Bearer ' + process.env.SUPABASE_SERVICE_ROLE_KEY,
+        'Authorization':
+            'Bearer ' + process.env.SUPABASE_SERVICE_ROLE_KEY,
         'Prefer': 'return=representation'
     };
 }
 
 function base() {
-    return process.env.SUPABASE_URL.replace(/\/$/, '') + '/rest/v1';
+    return (
+        process.env.SUPABASE_URL.replace(/\/$/, '') +
+        '/rest/v1'
+    );
 }
 
 async function sb(path, opts = {}) {
 
-    const r = await fetch(
+    const response = await fetch(
         base() + path,
         {
             ...opts,
@@ -25,7 +29,7 @@ async function sb(path, opts = {}) {
         }
     );
 
-    const text = await r.text();
+    const text = await response.text();
 
     let data;
 
@@ -37,7 +41,7 @@ async function sb(path, opts = {}) {
         data = text;
     }
 
-    if (!r.ok) {
+    if (!response.ok) {
 
         throw new Error(
             typeof data === 'string'
@@ -46,14 +50,19 @@ async function sb(path, opts = {}) {
                     data?.message ||
                     data?.hint ||
                     data?.details ||
-                    'Supabase error'
+                    'Erro no Supabase.'
                 )
         );
+
     }
 
     return data;
 }
 
+
+/* =========================================================
+   SOMAR DIAS
+========================================================= */
 
 function addDays(date, days) {
 
@@ -64,198 +73,15 @@ function addDays(date, days) {
         Number(days || 0)
     );
 
-    return d.toISOString().slice(0, 10);
+    return d
+        .toISOString()
+        .slice(0, 10);
 }
 
 
 /* =========================================================
-   ENVIO DE E-MAIL PELO RESEND
-   ========================================================= */
-
-async function sendEmail(data) {
-
-    const apiKey =
-        process.env.RESEND_API_KEY;
-
-    if (!apiKey) {
-
-        throw new Error(
-            'RESEND_API_KEY não configurada no Vercel.'
-        );
-    }
-
-
-    const response =
-        await fetch(
-            'https://api.resend.com/emails',
-            {
-                method: 'POST',
-
-                headers: {
-                    'Authorization':
-                        'Bearer ' + apiKey,
-
-                    'Content-Type':
-                        'application/json'
-                },
-
-                body: JSON.stringify({
-
-                    from:
-                        'PCM • Lubrificação <pcm@abmadeiras.com.br>',
-
-                    to: [
-                        'rena.simoes@abmadeiras.com.br',
-                        'ery.soares@abmadeiras.com.br'
-                    ],
-
-                    subject:
-                        'Lubrificação realizada - ' + data.code,
-
-                    html: `
-                        <div style="
-                            font-family: Arial, sans-serif;
-                            max-width: 700px;
-                            margin: 0 auto;
-                            padding: 20px;
-                        ">
-
-                            <h2 style="
-                                margin-bottom: 5px;
-                            ">
-                                PCM • Lubrificação
-                            </h2>
-
-                            <p>
-                                <strong>
-                                    Lubrificação realizada com sucesso.
-                                </strong>
-                            </p>
-
-                            <hr>
-
-                            <p>
-                                <strong>Máquina:</strong>
-                                ${data.machine}
-                            </p>
-
-                            <p>
-                                <strong>Código:</strong>
-                                ${data.code}
-                            </p>
-
-                            <p>
-                                <strong>Setor:</strong>
-                                ${data.sector}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Ponto de lubrificação:
-                                </strong>
-
-                                ${data.point}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Lubrificante:
-                                </strong>
-
-                                ${data.lubricant}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Quantidade:
-                                </strong>
-
-                                ${data.quantity}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Responsável:
-                                </strong>
-
-                                ${data.responsible}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Data/hora:
-                                </strong>
-
-                                ${data.performedAt}
-                            </p>
-
-                            <p>
-                                <strong>
-                                    Próxima lubrificação:
-                                </strong>
-
-                                ${data.nextDate}
-                            </p>
-
-                            <hr>
-
-                            <p style="
-                                color: #64748b;
-                                font-size: 12px;
-                            ">
-
-                                E-mail automático enviado pelo sistema
-                                PCM • Lubrificação.
-
-                            </p>
-
-                        </div>
-                    `
-                })
-            }
-        );
-
-
-    const responseText =
-        await response.text();
-
-
-    let result;
-
-
-    try {
-
-        result =
-            responseText
-                ? JSON.parse(responseText)
-                : {};
-
-    } catch {
-
-        result = {
-            message: responseText
-        };
-    }
-
-
-    if (!response.ok) {
-
-        throw new Error(
-            result?.message ||
-            result?.error ||
-            responseText ||
-            'Erro ao enviar e-mail pelo Resend.'
-        );
-    }
-
-
-    return result;
-}
-
-
-/* =========================================================
-   API PRINCIPAL
-   ========================================================= */
+   API
+========================================================= */
 
 export default async function handler(req, res) {
 
@@ -264,9 +90,9 @@ export default async function handler(req, res) {
         if (req.method !== 'POST') {
 
             return res.status(405).json({
-                error:
-                    'Método não permitido.'
+                error: 'Método não permitido.'
             });
+
         }
 
 
@@ -280,46 +106,44 @@ export default async function handler(req, res) {
         if (!id) {
 
             return res.status(400).json({
-                error:
-                    'ID obrigatório.'
+                error: 'ID obrigatório.'
             });
+
         }
 
 
         /* =====================================================
-           BUSCA O PONTO
-           ===================================================== */
+           BUSCAR PONTO
+        ===================================================== */
 
-        const rows =
-            await sb(
-                `/lubrication_points?id=eq.${encodeURIComponent(id)}&select=*`
-            );
+        const rows = await sb(
+            `/lubrication_points?id=eq.${encodeURIComponent(id)}&select=*`
+        );
 
 
-        const pt =
-            rows?.[0];
+        const pt = rows?.[0];
 
 
         if (!pt) {
 
             return res.status(404).json({
-                error:
-                    'Ponto não encontrado.'
+                error: 'Ponto de lubrificação não encontrado.'
             });
+
         }
 
 
         /* =====================================================
-           DATA DA LUBRIFICAÇÃO
-           ===================================================== */
+           DATA/HORA ATUAL
+        ===================================================== */
 
         const performedAt =
             new Date().toISOString();
 
 
         /* =====================================================
-           PRÓXIMA DATA
-           ===================================================== */
+           PRÓXIMA LUBRIFICAÇÃO
+        ===================================================== */
 
         const nextDate =
             addDays(
@@ -329,30 +153,30 @@ export default async function handler(req, res) {
 
 
         /* =====================================================
-           ATUALIZA O PONTO
-           ===================================================== */
+           ATUALIZAR PONTO
+        ===================================================== */
 
-        const updated =
-            await sb(
-                `/lubrication_points?id=eq.${encodeURIComponent(id)}`,
-                {
-                    method: 'PATCH',
+        const updated = await sb(
+            `/lubrication_points?id=eq.${encodeURIComponent(id)}`,
+            {
+                method: 'PATCH',
 
-                    body: JSON.stringify({
+                body: JSON.stringify({
 
-                        last_lubricated_at:
-                            performedAt,
+                    last_lubricated_at:
+                        performedAt,
 
-                        next_date:
-                            nextDate
-                    })
-                }
-            );
+                    next_date:
+                        nextDate
+
+                })
+            }
+        );
 
 
         /* =====================================================
-           REGISTRA NO HISTÓRICO
-           ===================================================== */
+           HISTÓRICO
+        ===================================================== */
 
         const history = {
 
@@ -386,105 +210,28 @@ export default async function handler(req, res) {
 
             performed_at:
                 performedAt
+
         };
 
 
-        const saved =
-            await sb(
-                '/lubrication_history',
-                {
-                    method: 'POST',
+        const saved = await sb(
+            '/lubrication_history',
+            {
+                method: 'POST',
 
-                    body:
-                        JSON.stringify(history)
-                }
-            );
-
-
-        /* =====================================================
-           ENVIA O E-MAIL
-           ===================================================== */
-
-        let emailResult =
-            null;
-
-        let emailError =
-            null;
-
-
-        try {
-
-            emailResult =
-                await sendEmail({
-
-                    machine:
-                        pt.machine ||
-                        'Não informado',
-
-                    code:
-                        pt.code ||
-                        'Não informado',
-
-                    sector:
-                        pt.sector ||
-                        'Não informado',
-
-                    point:
-                        pt.point ||
-                        'Não informado',
-
-                    lubricant:
-                        pt.lubricant ||
-                        'Não informado',
-
-                    quantity:
-                        pt.quantity ||
-                        'Não informado',
-
-                    responsible:
-                        responsible ||
-                        pt.responsible ||
-                        'Não informado',
-
-                    performedAt:
-                        new Date(
-                            performedAt
-                        ).toLocaleString(
-                            'pt-BR',
-                            {
-                                timeZone:
-                                    'America/Sao_Paulo'
-                            }
-                        ),
-
-                    nextDate:
-                        new Date(
-                            `${nextDate}T12:00:00`
-                        ).toLocaleDateString(
-                            'pt-BR'
-                        )
-                });
-
-
-        } catch (emailErr) {
-
-            console.error(
-                'Erro ao enviar e-mail:',
-                emailErr
-            );
-
-
-            emailError =
-                emailErr.message ||
-                'Erro ao enviar e-mail.';
-        }
+                body:
+                    JSON.stringify(history)
+            }
+        );
 
 
         /* =====================================================
            RETORNO
-           ===================================================== */
+        ===================================================== */
 
         return res.status(200).json({
+
+            success: true,
 
             point:
                 updated?.[0] ||
@@ -495,27 +242,27 @@ export default async function handler(req, res) {
                 saved,
 
             next_date:
-                nextDate,
-
-            email_sent:
-                !!emailResult,
-
-            email_error:
-                emailError
+                nextDate
 
         });
 
 
-    } catch (e) {
+    } catch (error) {
 
-        console.error(e);
+        console.error(
+            'Erro na API de lubrificação:',
+            error
+        );
 
 
         return res.status(500).json({
 
             error:
-                e.message ||
-                'Erro interno.'
+                error.message ||
+                'Erro interno ao registrar lubrificação.'
+
         });
+
     }
+
 }
