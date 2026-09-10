@@ -457,6 +457,33 @@ main.max-w-7xl{max-width:1320px!important;}
     .brand-subtitle{max-width:190px;}
 }
 
+    
+/* ===== TELA DE LUBRIFICAÇÃO MOBILE ===== */
+#pointsMobileList{display:none;}
+.mobile-point-card{background:#fff;border:1px solid #e8ebef;border-radius:18px;padding:18px;box-shadow:0 6px 18px rgba(37,48,68,.06);margin-bottom:14px;}
+.mobile-point-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding-bottom:14px;border-bottom:1px solid #eee7dc;margin-bottom:14px;}
+.mobile-point-machine{font-size:17px;font-weight:900;color:#253044;line-height:1.2;}
+.mobile-point-code{font-size:11px;font-weight:800;color:#8f744d;margin-top:4px;}
+.mobile-point-status{font-size:10px;font-weight:900;padding:6px 9px;border-radius:999px;white-space:nowrap;}
+.mobile-point-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+.mobile-point-field{background:#faf9f6;border:1px solid #eee7dc;border-radius:12px;padding:10px;}
+.mobile-point-field.full{grid-column:1/-1;}
+.mobile-point-label{font-size:9px;text-transform:uppercase;letter-spacing:.06em;font-weight:900;color:#8b7a64;margin-bottom:4px;}
+.mobile-point-value{font-size:13px;font-weight:700;color:#253044;line-height:1.35;white-space:normal;word-break:break-word;}
+.mobile-point-countdown{font-size:12px;font-weight:900;margin-top:3px;}
+.mobile-photo-area{margin-top:12px;border-top:1px solid #eee7dc;padding-top:14px;}
+.mobile-photo-preview{width:100%;height:180px;object-fit:cover;border-radius:14px;border:1px solid #ddd5c8;margin-top:10px;background:#f7f5f1;}
+.mobile-photo-btn,.mobile-lub-btn{width:100%;min-height:50px;border-radius:13px;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;gap:9px;border:0;cursor:pointer;}
+.mobile-photo-btn{background:#f5efe6;color:#8f744d;border:1px solid #d9ccb8;}
+.mobile-lub-btn{background:#2f855a;color:#fff;box-shadow:0 5px 12px rgba(47,133,90,.18);margin-top:10px;}
+.mobile-lub-btn:disabled{background:#cbd5e1;color:#64748b;box-shadow:none;cursor:not-allowed;}
+.mobile-photo-ok{font-size:11px;font-weight:800;color:#2f855a;margin-top:7px;text-align:center;}
+@media(max-width:767px){
+  #pointsTableDesktop{display:none!important;}
+  #pointsMobileList{display:block;}
+  #tabPoints .page-title{font-size:1.45rem;}
+}
+
     </style>
 </head>
 
@@ -1093,7 +1120,7 @@ main.max-w-7xl{max-width:1320px!important;}
             <!-- LISTA -->
             <div class="card">
 
-                <div class="table-wrap">
+                <div id="pointsTableDesktop" class="table-wrap">
 
                     <table>
 
@@ -1116,6 +1143,8 @@ main.max-w-7xl{max-width:1320px!important;}
                     </table>
 
                 </div>
+
+                <div id="pointsMobileList"></div>
 
                 <div id="pointsEmpty" class="empty-state hidden">
                     <i class="fa-solid fa-droplet text-3xl mb-3"></i>
@@ -1213,7 +1242,7 @@ main.max-w-7xl{max-width:1320px!important;}
                 </div>
                 <div class="table-wrap">
                     <table>
-                        <thead><tr><th>Data/Hora</th><th>Máquina</th><th>Código</th><th>Setor</th><th>Ponto</th><th>Lubrificante</th><th>Quantidade</th><th>Responsável</th></tr></thead>
+                        <thead><tr><th>Data/Hora</th><th>Máquina</th><th>Código</th><th>Setor</th><th>Ponto</th><th>Lubrificante</th><th>Quantidade</th><th>Responsável</th><th>Foto</th></tr></thead>
                         <tbody id="historyTableBody"></tbody>
                     </table>
                 </div>
@@ -1664,6 +1693,7 @@ main.max-w-7xl{max-width:1320px!important;}
 
     let editingPointId = null;
     let editingEmployeeId = null;
+    const pendingPhotos = {};
 
 
     /* =====================================================
@@ -1681,6 +1711,52 @@ main.max-w-7xl{max-width:1320px!important;}
             .replace(/'/g, '&#039;');
     }
 
+
+    async function compressPhoto(file) {
+        if (!file || !file.type.startsWith('image/')) throw new Error('Selecione uma foto válida.');
+        const dataUrl = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => reject(new Error('Não foi possível ler a foto.'));
+            reader.readAsDataURL(file);
+        });
+        const img = await new Promise((resolve, reject) => {
+            const image = new Image();
+            image.onload = () => resolve(image);
+            image.onerror = () => reject(new Error('Não foi possível preparar a foto.'));
+            image.src = dataUrl;
+        });
+        const max = 1280;
+        const scale = Math.min(1, max / Math.max(img.naturalWidth || img.width, img.naturalHeight || img.height));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round((img.naturalWidth || img.width) * scale));
+        canvas.height = Math.max(1, Math.round((img.naturalHeight || img.height) * scale));
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        return canvas.toDataURL('image/jpeg', 0.78);
+    }
+
+    function triggerPhoto(id) {
+        const input = document.getElementById(`photoInput_${id}`);
+        if (input) input.click();
+    }
+
+    async function handlePhotoSelected(event, id) {
+        const file = event.target.files?.[0];
+        if (!file) return;
+        try {
+            pendingPhotos[id] = await compressPhoto(file);
+            renderPoints();
+            showToast('Foto registrada. Agora você pode concluir a lubrificação.');
+        } catch (error) {
+            console.error(error);
+            showToast(error.message || 'Erro ao preparar a foto.', 'error');
+        }
+    }
+
+    function clearPendingPhoto(id) {
+        delete pendingPhotos[id];
+        renderPoints();
+    }
 
     function formatDate(dateValue) {
 
@@ -3085,9 +3161,9 @@ main.max-w-7xl{max-width:1320px!important;}
         if (!filtered.length) {
 
             tbody.innerHTML = '';
-
+            const mobileList = document.getElementById('pointsMobileList');
+            if (mobileList) mobileList.innerHTML = '';
             empty.classList.remove('hidden');
-
             return;
         }
 
@@ -3222,8 +3298,51 @@ main.max-w-7xl{max-width:1320px!important;}
             })
             .join('');
 
+        renderMobilePoints(filtered);
+
     }
 
+    function statusLabel(status) {
+        if (status === 'ATRASADA') return 'Atrasada';
+        if (status === 'PROXIMA') return 'Próxima';
+        if (status === 'EM_DIA') return 'Em dia';
+        return 'Sem data';
+    }
+
+    function renderMobilePoints(filtered) {
+        const container = document.getElementById('pointsMobileList');
+        if (!container) return;
+        container.innerHTML = filtered.map(point => {
+            const status = getItemStatus(point);
+            const days = getDaysDifference(point.next_date);
+            const statusClass = days !== null && days < 0 ? 'bg-red-100 text-red-700' : (days !== null && days <= 7 ? 'bg-amber-100 text-amber-700' : 'bg-green-100 text-green-700');
+            const photo = pendingPhotos[point.id];
+            const canLubricate = !!photo;
+            const countdown = getCountdownText(point.next_date);
+            const responsible = point.responsible || (point.responsible_id ? users.find(u => String(u.id) === String(point.responsible_id))?.name : null) || 'Sem responsável';
+            return `
+                <article class="mobile-point-card">
+                    <div class="mobile-point-head">
+                        <div><div class="mobile-point-machine">${escapeHtml(point.machine || '-')}</div><div class="mobile-point-code">${escapeHtml(point.code || '-')} • ${escapeHtml(point.sector || '-')}</div></div>
+                        <span class="mobile-point-status ${statusClass}">${escapeHtml(statusLabel(status))}</span>
+                    </div>
+                    <div class="mobile-point-grid">
+                        <div class="mobile-point-field full"><div class="mobile-point-label">Ponto de lubrificação</div><div class="mobile-point-value">${escapeHtml(point.point || '-')}</div></div>
+                        <div class="mobile-point-field"><div class="mobile-point-label">Lubrificante</div><div class="mobile-point-value">${escapeHtml(point.lubricant || '-')}</div></div>
+                        <div class="mobile-point-field"><div class="mobile-point-label">Quantidade</div><div class="mobile-point-value">${escapeHtml(point.quantity || '-')}</div></div>
+                        <div class="mobile-point-field"><div class="mobile-point-label">Próxima</div><div class="mobile-point-value">${formatDate(point.next_date)}<div class="mobile-point-countdown ${days !== null && days < 0 ? 'text-red-600' : 'text-amber-600'}">${escapeHtml(countdown)}</div></div></div>
+                        <div class="mobile-point-field"><div class="mobile-point-label">Responsável</div><div class="mobile-point-value">${escapeHtml(responsible)}</div></div>
+                        ${point.observation ? `<div class="mobile-point-field full"><div class="mobile-point-label">Observação</div><div class="mobile-point-value">${escapeHtml(point.observation)}</div></div>` : ''}
+                    </div>
+                    <div class="mobile-photo-area">
+                        <input id="photoInput_${escapeHtml(point.id)}" type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoSelected(event, '${escapeHtml(point.id)}')">
+                        <button type="button" class="mobile-photo-btn" onclick="triggerPhoto('${escapeHtml(point.id)}')"><i class="fa-solid fa-camera"></i>${photo ? 'Tirar outra foto' : 'Tirar foto da lubrificação'}</button>
+                        ${photo ? `<img class="mobile-photo-preview" src="${photo}" alt="Foto da lubrificação"><div class="mobile-photo-ok"><i class="fa-solid fa-circle-check"></i> Foto registrada</div>` : ''}
+                        <button type="button" class="mobile-lub-btn" ${canLubricate ? '' : 'disabled'} onclick="handleLubricate('${escapeHtml(point.id)}')"><i class="fa-solid fa-check"></i>LUBRIFICADO</button>
+                    </div>
+                </article>`;
+        }).join('');
+    }
 
     /* =====================================================
        MODAL PONTO
@@ -3318,11 +3437,7 @@ main.max-w-7xl{max-width:1320px!important;}
         const frequencyPreset = document.getElementById('pointFrequencyPreset');
         const customFrequency = document.getElementById('pointFrequencyCustom');
         const frequencyMap = ['7','15','30','60','90','182','365'];
-        if (frequencyPreset) {
-            frequencyPreset.value = point?.frequency_type && point.frequency_type !== 'custom'
-                ? String(point.frequency_type)
-                : (frequencyMap.includes(String(frequencyDays)) ? String(frequencyDays) : (frequencyDays ? 'custom' : ''));
-        }
+        if (frequencyPreset) frequencyPreset.value = frequencyMap.includes(String(frequencyDays)) ? String(frequencyDays) : (frequencyDays ? 'custom' : '');
         if (customFrequency) customFrequency.value = frequencyMap.includes(String(frequencyDays)) ? '' : (frequencyDays || '');
         handleFrequencyPreset();
 
@@ -3387,15 +3502,6 @@ main.max-w-7xl{max-width:1320px!important;}
 
         editingPointId = null;
 
-    }
-
-
-    function calculateNextDate(baseDate, days) {
-        const date = new Date(baseDate || new Date());
-        const amount = Number(days || 0);
-        if (isNaN(date.getTime()) || !amount) return null;
-        date.setDate(date.getDate() + amount);
-        return date.toISOString().slice(0, 10);
     }
 
 
@@ -3482,23 +3588,10 @@ main.max-w-7xl{max-width:1320px!important;}
             frequency_days:
                 frequencyDays,
 
-            frequency_type:
-                document.getElementById(
-                    'pointFrequencyPreset'
-                ).value || 'custom',
-
             frequency_label:
                 document.getElementById(
                     'pointFrequencyLabel'
                 ).value.trim(),
-
-            next_date:
-                calculateNextDate(
-                    editingPointId
-                        ? (points.find(p => String(p.id) === String(editingPointId))?.last_lubricated_at || new Date().toISOString())
-                        : new Date().toISOString(),
-                    frequencyDays
-                ),
 
             observation:
                 document.getElementById(
@@ -3740,6 +3833,11 @@ main.max-w-7xl{max-width:1320px!important;}
             point.responsible ||
             'Não informado';
 
+        const photoData = pendingPhotos[id];
+        if (!photoData) {
+            showToast('Tire a foto da lubrificação antes de concluir.', 'error');
+            return;
+        }
 
         try {
 
@@ -3758,7 +3856,8 @@ main.max-w-7xl{max-width:1320px!important;}
                             responsible_id:
                                 currentUser?.id ||
                                 point.responsible_id ||
-                                null
+                                null,
+                            photoData: photoData
                         })
                     }
                 );
@@ -3778,6 +3877,7 @@ main.max-w-7xl{max-width:1320px!important;}
             }
 
 
+            delete pendingPhotos[id];
             await loadData();
 
             showToast(
@@ -3942,8 +4042,8 @@ main.max-w-7xl{max-width:1320px!important;}
         renderHistorySummary(filters);
         if(!filtered.length){tbody.innerHTML='';empty.classList.remove('hidden');return;}
         empty.classList.add('hidden');
-        tbody.innerHTML=filtered.map(item=>{const responsible=item.responsible_name||item.responsible||'Não informado';return `
-            <tr><td><div class="font-bold">${formatDateTime(item.performed_at)}</div></td><td>${escapeHtml(item.machine||'-')}</td><td><span class="font-bold">${escapeHtml(item.code||'-')}</span></td><td>${escapeHtml(item.sector||'-')}</td><td>${escapeHtml(item.point||'-')}</td><td>${escapeHtml(item.lubricant||'-')}</td><td>${escapeHtml(item.quantity||'-')}</td><td><span class="font-semibold">${escapeHtml(responsible)}</span></td></tr>`;}).join('');
+        tbody.innerHTML=filtered.map(item=>{const responsible=item.responsible_name||item.responsible||'Não informado';const photo=item.photo_url?`<a href="${escapeHtml(item.photo_url)}" target="_blank" rel="noopener" class="text-amber-700 font-black hover:underline"><i class="fa-solid fa-camera"></i> Ver foto</a>`:'<span class="text-slate-400">Sem foto</span>';return `
+            <tr><td><div class="font-bold">${formatDateTime(item.performed_at)}</div></td><td>${escapeHtml(item.machine||'-')}</td><td><span class="font-bold">${escapeHtml(item.code||'-')}</span></td><td>${escapeHtml(item.sector||'-')}</td><td>${escapeHtml(item.point||'-')}</td><td>${escapeHtml(item.lubricant||'-')}</td><td>${escapeHtml(item.quantity||'-')}</td><td><span class="font-semibold">${escapeHtml(responsible)}</span></td><td>${photo}</td></tr>`;}).join('');
     }
 
     function openHistoryMachineModal(index) {
