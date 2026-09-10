@@ -9,7 +9,7 @@
 
     <link rel="manifest" href="/manifest.json">
 
-    <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=sepHiy2beNj5PrXHGw-O4cwq63ZvQpgaBhFEvobLBjDCQAaHzRfDwyocBrUQ4N1rpLMzGxtPsk4B-BA7MPeMnN639zli_WVPmyA1JaKsRVnuOY4nEMhNgLKfNSLsBws9Ue-DbrUJUpHIO0Tjab6XIo0rJl69ckKqIfl_fBWSXLrf_S__F7OL5dc5KFd5WK6ObgzKY1ti_qUyixiq5Ot8gSHzZib1x54AqGvn0HaElTOftbKukYaAJ6bnAf_5WTcUQVEfzKZIbfHvcfIdY-Fq9c5GtGbKoqWHpXcrwwegjLpTrECoQ7ZI-A5_2-Ci14Vg" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <link
         rel="stylesheet"
@@ -623,7 +623,7 @@ main.max-w-7xl{max-width:1320px!important;}
         <!-- =========================
              DASHBOARD
         ========================= -->
-        <section id="tabDashboard">
+        <section id="tabDashboard" class="hidden">
 
             <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
 
@@ -2048,6 +2048,9 @@ main.max-w-7xl{max-width:1320px!important;}
 
         document.getElementById('loginPin').value = '';
 
+        const welcomeName = document.getElementById('maintenanceWelcomeName');
+        if (welcomeName) welcomeName.textContent = '';
+
         showTab('dashboard');
 
     }
@@ -2077,6 +2080,7 @@ main.max-w-7xl{max-width:1320px!important;}
 
         const welcome = document.getElementById('maintenanceWelcome');
         const welcomeName = document.getElementById('maintenanceWelcomeName');
+        const dashboard = document.getElementById('tabDashboard');
 
         if (!isAdmin()) {
 
@@ -2086,6 +2090,8 @@ main.max-w-7xl{max-width:1320px!important;}
             document.getElementById('pointsSubtitle').textContent =
                 'Somente as suas demandas de lubrificação';
 
+            // Funcionário: não mostra Dashboard e mostra apenas o próprio acolhimento.
+            if (dashboard) dashboard.classList.add('hidden');
             if (welcome) welcome.classList.remove('hidden');
             if (welcomeName) welcomeName.textContent = currentUser?.name || '';
 
@@ -2096,6 +2102,11 @@ main.max-w-7xl{max-width:1320px!important;}
 
             document.getElementById('pointsSubtitle').textContent =
                 'Visão geral de todos os pontos cadastrados';
+
+            // Administrador: nunca mostra o acolhimento do funcionário.
+            if (dashboard) dashboard.classList.remove('hidden');
+            if (welcome) welcome.classList.add('hidden');
+            if (welcomeName) welcomeName.textContent = '';
 
         }
 
