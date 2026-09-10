@@ -323,6 +323,26 @@ async function loginWithPIN(pin) {
         return false;
     }
 }
+    function submitLogin() {
+    const pin = document.getElementById('loginPIN').value;
+    const error = document.getElementById('loginError');
+
+    if (pin.length !== 4) {
+        error.textContent = 'Digite um PIN de 4 números';
+        error.classList.remove('hidden');
+        return;
+    }
+
+    loginWithPIN(pin).then(success => {
+        if (success) {
+            document.getElementById('loginScreen').style.display = 'none';
+            error.classList.add('hidden');
+        } else {
+            error.textContent = 'PIN inválido';
+            error.classList.remove('hidden');
+        }
+    });
+}
 async function loadData() {
     try {
         const response = await fetch('/api/items');
