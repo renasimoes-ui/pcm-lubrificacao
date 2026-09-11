@@ -745,6 +745,34 @@ hr{border-color:#e7ebf0!important}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
 </style>
 
+
+<style id="pcm-welcome-interactive">
+.pcm-welcome-panel{position:relative;overflow:hidden;border-radius:24px!important;padding:0!important;background:linear-gradient(135deg,#fffdf9 0%,#f7f2e9 55%,#eee5d6 100%)!important;border:1px solid rgba(154,126,88,.25)!important;box-shadow:0 14px 36px rgba(69,52,31,.10)!important}
+.pcm-welcome-panel:before{content:"";position:absolute;right:-80px;top:-100px;width:250px;height:250px;border:1px solid rgba(154,126,88,.12);border-radius:50%;box-shadow:0 0 0 34px rgba(154,126,88,.035),0 0 0 70px rgba(154,126,88,.025);pointer-events:none}
+.pcm-welcome-top{position:relative;display:flex;align-items:center;gap:14px;padding:20px 20px 16px}
+.pcm-welcome-symbol{width:52px;height:52px;min-width:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:linear-gradient(145deg,#b59a70,#806845);color:#fffaf1;font-size:23px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 8px 18px rgba(110,86,52,.18)}
+.pcm-welcome-copy{min-width:0;flex:1}
+.pcm-welcome-eyebrow{font-size:10px;font-weight:900;letter-spacing:.16em;color:#947b57;margin-bottom:2px}
+.pcm-welcome-copy h2{margin:0;color:#253044;font-size:22px;line-height:1.15;font-weight:900}
+.pcm-welcome-copy h2 span{color:#8d7047}
+.pcm-welcome-copy p{margin:5px 0 0;color:#6e685f;font-size:13px;line-height:1.35}
+.pcm-welcome-date{display:flex;align-items:center;gap:6px;color:#8b7658;font-size:11px;font-weight:800;white-space:nowrap;padding-left:8px}
+.pcm-welcome-date i{font-size:13px}
+.pcm-welcome-stats{position:relative;display:grid;grid-template-columns:repeat(3,1fr);gap:9px;padding:0 16px 14px}
+.pcm-mini-stat{appearance:none;border:1px solid rgba(120,101,74,.14);border-radius:16px;padding:11px 9px;text-align:left;background:rgba(255,255,255,.70);box-shadow:0 4px 12px rgba(55,43,27,.045);cursor:pointer;transition:transform .18s ease,box-shadow .18s ease}
+.pcm-mini-stat:active{transform:scale(.98)}
+.pcm-mini-icon{width:27px;height:27px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:12px;margin-bottom:5px}
+.pcm-mini-value{display:block;font-size:21px;font-weight:900;line-height:1;color:#253044}
+.pcm-mini-label{display:block;margin-top:3px;font-size:10px;font-weight:800;color:#716b63}
+.pcm-mini-ok .pcm-mini-icon{background:#e2f6e9;color:#27844b}.pcm-mini-next .pcm-mini-icon{background:#f8ead2;color:#a36f24}.pcm-mini-late .pcm-mini-icon{background:#fae1df;color:#bd4d45}
+.pcm-welcome-progress{position:relative;margin:0 16px;padding:13px 14px 12px;border-radius:16px;background:rgba(255,255,255,.62);border:1px solid rgba(120,101,74,.12)}
+.pcm-progress-head{display:flex;justify-content:space-between;align-items:center;color:#5e574e;font-size:11px;font-weight:800}.pcm-progress-head strong{color:#8d7047;font-size:12px}
+.pcm-progress-track{height:8px;margin-top:8px;background:#e5dfd5;border-radius:99px;overflow:hidden}.pcm-progress-bar{height:100%;width:0%;border-radius:99px;background:linear-gradient(90deg,#a88a5e,#c2a878);transition:width .5s ease}
+.pcm-progress-caption{margin-top:6px;color:#817a71;font-size:10px}
+.pcm-welcome-attention{position:relative;display:flex;align-items:center;gap:8px;margin:10px 16px 16px;padding:10px 12px;border-radius:13px;background:rgba(141,112,71,.08);color:#6d6252;font-size:11px;font-weight:700}.pcm-welcome-attention i{color:#9a7a4f}
+@media(max-width:640px){.pcm-welcome-top{padding:17px 15px 14px;gap:11px}.pcm-welcome-symbol{width:46px;height:46px;min-width:46px;border-radius:14px;font-size:20px}.pcm-welcome-copy h2{font-size:19px}.pcm-welcome-copy p{font-size:12px}.pcm-welcome-date{font-size:0;padding-left:0}.pcm-welcome-date i{font-size:15px}.pcm-welcome-stats{padding:0 12px 12px;gap:7px}.pcm-mini-stat{padding:9px 8px;border-radius:14px}.pcm-mini-value{font-size:19px}.pcm-welcome-progress{margin:0 12px;padding:12px}.pcm-welcome-attention{margin:9px 12px 12px}}
+</style>
+
 </head>
 
 <body>
@@ -1267,15 +1295,52 @@ hr{border-color:#e7ebf0!important}
         ========================= -->
         <section id="tabPoints" class="hidden">
 
-            <div id="maintenanceWelcome" class="hidden card p-5 mb-5 welcome-card">
-                <div class="flex items-center gap-3">
-                    <div class="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
-                        <i class="fa-solid fa-hand-wave text-blue-600"></i>
+            <div id="maintenanceWelcome" class="hidden card mb-5 pcm-welcome-panel">
+                <div class="pcm-welcome-top">
+                    <div class="pcm-welcome-symbol">
+                        <i class="fa-solid fa-droplet"></i>
                     </div>
-                    <div>
-                        <h2 class="text-xl font-black text-slate-900">Bem-vindo, <span id="maintenanceWelcomeName"></span>!</h2>
-                        <p class="text-sm text-slate-500 mt-1">Aqui estão as suas demandas de lubrificação.</p>
+                    <div class="pcm-welcome-copy">
+                        <div class="pcm-welcome-eyebrow">PCM LUBRIFICAÇÃO</div>
+                        <h2>Olá, <span id="maintenanceWelcomeName"></span>!</h2>
+                        <p>Confira suas atividades de lubrificação e mantenha tudo em dia.</p>
                     </div>
+                    <div class="pcm-welcome-date">
+                        <i class="fa-regular fa-calendar"></i>
+                        <span id="maintenanceWelcomeDate">Hoje</span>
+                    </div>
+                </div>
+
+                <div class="pcm-welcome-stats">
+                    <button type="button" class="pcm-mini-stat pcm-mini-ok" onclick="filterMyWelcomeStatus('EM_DIA')">
+                        <span class="pcm-mini-icon"><i class="fa-solid fa-check"></i></span>
+                        <span class="pcm-mini-value" id="welcomeOkCount">0</span>
+                        <span class="pcm-mini-label">Em dia</span>
+                    </button>
+                    <button type="button" class="pcm-mini-stat pcm-mini-next" onclick="filterMyWelcomeStatus('PROXIMA')">
+                        <span class="pcm-mini-icon"><i class="fa-regular fa-clock"></i></span>
+                        <span class="pcm-mini-value" id="welcomeNextCount">0</span>
+                        <span class="pcm-mini-label">Próximas</span>
+                    </button>
+                    <button type="button" class="pcm-mini-stat pcm-mini-late" onclick="filterMyWelcomeStatus('ATRASADA')">
+                        <span class="pcm-mini-icon"><i class="fa-solid fa-triangle-exclamation"></i></span>
+                        <span class="pcm-mini-value" id="welcomeLateCount">0</span>
+                        <span class="pcm-mini-label">Atrasadas</span>
+                    </button>
+                </div>
+
+                <div class="pcm-welcome-progress">
+                    <div class="pcm-progress-head">
+                        <span>Suas atividades</span>
+                        <strong id="welcomeProgressText">0%</strong>
+                    </div>
+                    <div class="pcm-progress-track"><div id="welcomeProgressBar" class="pcm-progress-bar"></div></div>
+                    <div id="welcomeProgressCaption" class="pcm-progress-caption">Nenhuma atividade pendente.</div>
+                </div>
+
+                <div id="welcomeAttention" class="pcm-welcome-attention">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Carregando suas atividades...</span>
                 </div>
             </div>
 
@@ -2449,6 +2514,72 @@ hr{border-color:#e7ebf0!important}
     }
 
 
+    function updateMaintenanceWelcome() {
+        if (isAdmin() || !currentUser) return;
+
+        const myPoints = points.filter(userCanSeePoint);
+        const counts = { EM_DIA:0, PROXIMA:0, ATRASADA:0 };
+        myPoints.forEach(point => {
+            const status = getItemStatus(point);
+            counts[status] = (counts[status] || 0) + 1;
+        });
+
+        const ok = document.getElementById('welcomeOkCount');
+        const next = document.getElementById('welcomeNextCount');
+        const late = document.getElementById('welcomeLateCount');
+        if (ok) ok.textContent = counts.EM_DIA;
+        if (next) next.textContent = counts.PROXIMA;
+        if (late) late.textContent = counts.ATRASADA;
+
+        const total = myPoints.length;
+        const onTime = counts.EM_DIA + counts.PROXIMA;
+        const percent = total ? Math.round((onTime / total) * 100) : 0;
+        const progress = document.getElementById('welcomeProgressBar');
+        const progressText = document.getElementById('welcomeProgressText');
+        const caption = document.getElementById('welcomeProgressCaption');
+        if (progress) progress.style.width = `${percent}%`;
+        if (progressText) progressText.textContent = `${percent}%`;
+        if (caption) {
+            caption.textContent = total
+                ? `${onTime} de ${total} ${total === 1 ? 'atividade está' : 'atividades estão'} em dia ou próximas.`
+                : 'Nenhuma atividade pendente no momento.';
+        }
+
+        const attention = document.getElementById('welcomeAttention');
+        if (attention) {
+            if (counts.ATRASADA > 0) {
+                attention.className = 'pcm-welcome-attention';
+                attention.style.background = 'rgba(189,77,69,.09)';
+                attention.style.color = '#9d403a';
+                attention.innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i><span>Você possui ${counts.ATRASADA} ${counts.ATRASADA === 1 ? 'lubrificação atrasada' : 'lubrificações atrasadas'}.</span>`;
+            } else if (counts.PROXIMA > 0) {
+                attention.style.background = 'rgba(163,111,36,.09)';
+                attention.style.color = '#8d662c';
+                attention.innerHTML = `<i class="fa-regular fa-clock"></i><span>Você possui ${counts.PROXIMA} ${counts.PROXIMA === 1 ? 'atividade próxima' : 'atividades próximas'}.</span>`;
+            } else {
+                attention.style.background = 'rgba(39,132,75,.09)';
+                attention.style.color = '#2c7548';
+                attention.innerHTML = `<i class="fa-solid fa-circle-check"></i><span>Tudo em dia! Nenhuma atividade exige atenção agora.</span>`;
+            }
+        }
+
+        const date = document.getElementById('maintenanceWelcomeDate');
+        if (date) {
+            date.textContent = new Intl.DateTimeFormat('pt-BR',{day:'2-digit',month:'short'}).format(new Date()).replace('.', '');
+        }
+    }
+
+    function filterMyWelcomeStatus(status) {
+        const statusFilter = document.getElementById('pointStatusFilter');
+        if (!statusFilter || isAdmin()) return;
+        statusFilter.value = status;
+        const search = document.getElementById('pointSearch');
+        if (search) search.value = '';
+        renderPoints();
+        document.getElementById('tabPoints')?.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+
+
     /* =====================================================
        UI DE PERMISSÃO
     ===================================================== */
@@ -2487,6 +2618,7 @@ hr{border-color:#e7ebf0!important}
             if (dashboard) dashboard.classList.add('hidden');
             if (welcome) welcome.classList.remove('hidden');
             if (welcomeName) welcomeName.textContent = currentUser?.name || '';
+            updateMaintenanceWelcome();
 
         } else {
 
@@ -3369,6 +3501,7 @@ hr{border-color:#e7ebf0!important}
 
         if (!tbody || !empty) return;
 
+        updateMaintenanceWelcome();
 
         const search =
             String(
