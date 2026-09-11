@@ -1178,7 +1178,7 @@ main.max-w-7xl{max-width:1320px!important;}
                 </div>
                 <div class="flex flex-wrap gap-2 no-print">
                     <button onclick="printHistoryReport()" class="btn btn-primary report-btn flex items-center gap-2" title="Gerar relatório">
-                        <i class="fa-solid fa-file-lines"></i><span>Relatório</span>
+                        <i class="fa-solid fa-file-pdf"></i><span>Gerar PDF</span>
                     </button>
                     <button onclick="showTab('dashboard')" class="btn btn-secondary flex items-center gap-2" title="Voltar para o início">
                         <i class="fa-solid fa-arrow-left"></i><span>Início</span>
@@ -1933,10 +1933,15 @@ main.max-w-7xl{max-width:1320px!important;}
             return true;
         }
 
-        // Depois de concluído, o ponto sai da tela do funcionário
-        // até que o administrador o libere novamente.
+        // Depois de concluído, o ponto fica fora da tela do funcionário
+        // até chegar a próxima data. Quando a data chega (ou passa),
+        // ele volta automaticamente para execução.
         if (point?.completion_locked) {
-            return false;
+            const daysUntilNext = getDaysDifference(point.next_date);
+            if (daysUntilNext === null || daysUntilNext > 0) {
+                return false;
+            }
+            // Está vencido/é hoje: libera automaticamente para execução.
         }
 
         if (!currentUser) {
@@ -3285,7 +3290,7 @@ main.max-w-7xl{max-width:1320px!important;}
 
                             <div class="flex gap-2">
 
-                                ${point.completion_locked ? '' : `
+                                ${(point.completion_locked && getDaysDifference(point.next_date) > 0) ? '' : `
                                     <button
                                         onclick="handleLubricate('${escapeHtml(point.id)}')"
                                         class="btn btn-success action-btn action-lubricate"
@@ -3293,7 +3298,7 @@ main.max-w-7xl{max-width:1320px!important;}
                                     >
                                         <i class="fa-solid fa-check"></i><span>Lubrificado</span>
                                     </button>`}
-                                ${isAdmin() && point.completion_locked ? `
+                                ${isAdmin() && point.completion_locked && getDaysDifference(point.next_date) > 0 ? `
                                     <button
                                         onclick="releasePoint('${escapeHtml(point.id)}')"
                                         class="btn btn-primary action-btn"
@@ -3374,7 +3379,7 @@ main.max-w-7xl{max-width:1320px!important;}
                         <input id="photoInput_${escapeHtml(point.id)}" type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePhotoSelected(event, '${escapeHtml(point.id)}')">
                         <button type="button" class="mobile-photo-btn" onclick="triggerPhoto('${escapeHtml(point.id)}')"><i class="fa-solid fa-camera"></i>${photo ? 'Tirar outra foto' : 'Tirar foto da lubrificação'}</button>
                         ${photo ? `<img class="mobile-photo-preview" src="${photo}" alt="Foto da lubrificação"><div class="mobile-photo-ok"><i class="fa-solid fa-circle-check"></i> Foto registrada</div>` : ''}
-                        ${point.completion_locked ? (isAdmin() ? `<button type="button" class="mobile-lub-btn" onclick="releasePoint('${escapeHtml(point.id)}')"><i class="fa-solid fa-unlock"></i>LIBERAR PARA EXECUÇÃO</button>` : '') : `<button type="button" class="mobile-lub-btn" ${canLubricate ? '' : 'disabled'} onclick="handleLubricate('${escapeHtml(point.id)}')"><i class="fa-solid fa-check"></i>LUBRIFICADO</button>`}
+                        ${(point.completion_locked && getDaysDifference(point.next_date) > 0) ? (isAdmin() ? `<button type="button" class="mobile-lub-btn" onclick="releasePoint('${escapeHtml(point.id)}')"><i class="fa-solid fa-unlock"></i>LIBERAR PARA EXECUÇÃO</button>` : '') : `<button type="button" class="mobile-lub-btn" ${canLubricate ? '' : 'disabled'} onclick="handleLubricate('${escapeHtml(point.id)}')"><i class="fa-solid fa-check"></i>LUBRIFICADO</button>`}
                     </div>
                 </article>`;
         }).join('');
@@ -4648,42 +4653,64 @@ main.max-w-7xl{max-width:1320px!important;}
         }
 
         const filters = historyFilterValues();
-        const summary = getHistoryMachineSummary(filters);
-        const now = new Date();
+        const records = visibleHistoryForFilters(filters)
+            .slice()
+            .sort((a, b) => new Date(b.performed_at || 0) - new Date(a.performed_at || 0));
         const periodLabel = document.getElementById('historyPeriodFilter')?.selectedOptions?.[0]?.textContent || 'Todos';
+        const generatedAt = formatDateTime(new Date().toISOString());
 
-        const rows = summary.map(item => `
-            <tr>
-                <td>${escapeHtml(item.machine)}</td>
-                <td>${escapeHtml(item.code)}</td>
-                <td>${item.total}</td>
-                <td>${item.executed}</td>
-                <td>${item.pending}</td>
-                <td>${item.percent}%</td>
-            </tr>`).join('');
-
-        const total = summary.reduce((s, x) => s + x.total, 0);
-        const executed = summary.reduce((s, x) => s + x.executed, 0);
-        const pending = Math.max(total - executed, 0);
-        const percent = total ? Math.round(executed / total * 100) : 0;
+        const rows = records.map(item => {
+            const responsible = item.responsible_name || item.responsible || 'Não informado';
+            return `
+                <tr>
+                    <td>${escapeHtml(formatDateTime(item.performed_at))}</td>
+                    <td>${escapeHtml(item.machine || '-')}</td>
+                    <td>${escapeHtml(item.code || '-')}</td>
+                    <td>${escapeHtml(item.sector || '-')}</td>
+                    <td>${escapeHtml(item.point || '-')}</td>
+                    <td>${escapeHtml(item.lubricant || '-')}</td>
+                    <td>${escapeHtml(item.quantity || '-')}</td>
+                    <td>${escapeHtml(responsible)}</td>
+                </tr>`;
+        }).join('');
 
         const report = document.createElement('div');
         report.id = 'printReportTemp';
         report.innerHTML = `
             <div style="font-family:Arial,sans-serif;padding:24px;color:#0f172a">
-                <h1 style="font-size:24px;margin:0 0 4px">Relatório de Lubrificação</h1>
-                <p style="margin:0 0 18px;color:#64748b;font-size:13px">Período: ${escapeHtml(periodLabel)} • Gerado em ${formatDateTime(now.toISOString())}</p>
-                <div style="display:flex;gap:24px;margin-bottom:18px;font-size:14px;font-weight:bold">
-                    <span>Máquinas: ${summary.length}</span>
-                    <span>Pontos: ${total}</span>
-                    <span>Realizados: ${executed}</span>
-                    <span>Não realizados: ${pending}</span>
-                    <span>Execução: ${percent}%</span>
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:18px">
+                    <div>
+                        <h1 style="font-size:24px;margin:0 0 4px">Relatório de Lubrificações Realizadas</h1>
+                        <p style="margin:0;color:#64748b;font-size:13px">Histórico de execução • Período: ${escapeHtml(periodLabel)}</p>
+                    </div>
+                    <div style="text-align:right;color:#64748b;font-size:11px">Gerado em<br><strong style="color:#0f172a">${escapeHtml(generatedAt)}</strong></div>
                 </div>
-                <table style="width:100%;border-collapse:collapse;font-size:12px">
-                    <thead><tr><th style="text-align:left;border-bottom:2px solid #b79a70;padding:8px">Máquina</th><th style="text-align:left;border-bottom:2px solid #b79a70;padding:8px">Código</th><th style="text-align:left;border-bottom:2px solid #b79a70;padding:8px">Pontos</th><th style="text-align:left;border-bottom:2px solid #b79a70;padding:8px">Realizados</th><th style="text-align:left;border-bottom:2px solid #b79a70;padding:8px">Não realizados</th><th style="text-align:left;border-bottom:2px solid #b79a70;padding:8px">Execução</th></tr></thead>
-                    <tbody>${rows || '<tr><td colspan="6" style="padding:12px">Nenhuma máquina encontrada.</td></tr>'}</tbody>
+
+                <div style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px">
+                    <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px"><strong>${records.length}</strong><br><span style="font-size:10px;color:#64748b">LUBRIFICAÇÕES REALIZADAS</span></div>
+                    <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px"><strong>${new Set(records.map(r => `${r.machine || ''}||${r.code || ''}`)).size}</strong><br><span style="font-size:10px;color:#64748b">MÁQUINAS</span></div>
+                    <div style="border:1px solid #e2e8f0;border-radius:8px;padding:10px 14px"><strong>${new Set(records.map(r => String(r.responsible_name || r.responsible || '').trim()).filter(Boolean)).size}</strong><br><span style="font-size:10px;color:#64748b">RESPONSÁVEIS</span></div>
+                </div>
+
+                <table style="width:100%;border-collapse:collapse;font-size:10px">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Data/Hora</th>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Máquina</th>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Código</th>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Setor</th>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Ponto</th>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Lubrificante</th>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Quantidade</th>
+                            <th style="text-align:left;border-bottom:2px solid #b79a70;padding:7px">Responsável</th>
+                        </tr>
+                    </thead>
+                    <tbody>${rows || '<tr><td colspan="8" style="padding:14px;text-align:center">Nenhuma lubrificação encontrada para os filtros selecionados.</td></tr>'}</tbody>
                 </table>
+
+                <div style="margin-top:22px;padding-top:10px;border-top:1px solid #e2e8f0;color:#64748b;font-size:10px">
+                    PCM LUBRIFICAÇÃO • Relatório gerado pelo sistema
+                </div>
             </div>`;
 
         document.body.appendChild(report);
