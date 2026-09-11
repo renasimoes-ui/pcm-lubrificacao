@@ -320,10 +320,29 @@
         }
 
         @media print {
-            body > *:not(#app):not(#printReportTemp) { display:none !important; }
-            #app > *:not(#printReportTemp) { display:none !important; }
-            #printReportTemp { display:block !important; }
-            #printReportTemp table td, #printReportTemp table th { border-bottom:1px solid #e2e8f0; padding:8px; }
+            @page { margin: 10mm; size: A4 portrait; }
+            html, body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #fff !important;
+                min-height: 0 !important;
+            }
+            body > * { display: none !important; }
+            body > #printReportTemp {
+                display: block !important;
+                position: static !important;
+                width: 100% !important;
+                min-height: 0 !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                overflow: visible !important;
+            }
+            #app { display: none !important; }
+            #printReportTemp table { width: 100% !important; border-collapse: collapse !important; }
+            #printReportTemp thead { display: table-header-group !important; }
+            #printReportTemp tr { break-inside: avoid; page-break-inside: avoid; }
+            #printReportTemp table td, #printReportTemp table th { border-bottom: 1px solid #e2e8f0; padding: 8px; }
         }
     
 /* ===== IDENTIDADE VISUAL AB FLORESTAS ===== */
