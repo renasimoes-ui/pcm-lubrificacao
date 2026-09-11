@@ -8,7 +8,7 @@
     <title>PCM LUBRIFICAÇÃO</title>
 
     <link rel="manifest" href="/manifest.json">
-<script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=DT9_zxVX2vGTrV7UyHiGTBrjfuWkeQJFv8B7Vm1WHWc9Ff65FdjrJuJMRagzT6cZibethP1xxDUC_F4d0XKVMvagGcXgyPpJCmL64QSBdE0I_unWRF9vkwFsh6qXxnLuOUWMujoOZgtX7BJvGBLxqots7eUcl28Mw27_ncwBRKEQMgU4PY2e8AC-5usy9ArA6euV0NwifQjtt5Xn68ZloarK3AS1yYv2ZPkVnQsMmI2LtlMyHhZ2cCjpdTAfxAxo0itwjSNbhch79SLVN-7x-g" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
 
     <link
         rel="stylesheet"
@@ -850,6 +850,280 @@ body.pcm-app-open #app{
 </style>
 
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+
+<style id="pcm-premium-app-visual">
+/* =========================================================
+   PCM — VISUAL PREMIUM INDUSTRIAL
+   Apenas aparência: não altera a lógica do sistema.
+   ========================================================= */
+#app{
+  --pcm-green:#193a2b;
+  --pcm-green-2:#24513c;
+  --pcm-gold:#b79a70;
+  --pcm-gold-2:#d8bd8b;
+  --pcm-cream:#f5f1e9;
+  --pcm-ink:#18231d;
+  --pcm-muted:#68736d;
+  position:relative;
+  background:
+    radial-gradient(circle at 8% 12%,rgba(183,154,112,.14),transparent 28%),
+    radial-gradient(circle at 92% 18%,rgba(36,81,60,.10),transparent 30%),
+    linear-gradient(135deg,#f6f4ef 0%,#eef1ed 48%,#f7f5f0 100%) !important;
+  color:var(--pcm-ink);
+}
+
+#app::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  opacity:.28;
+  background-image:
+    linear-gradient(115deg,transparent 0 47%,rgba(25,58,43,.035) 48%,transparent 49% 100%),
+    linear-gradient(25deg,transparent 0 60%,rgba(183,154,112,.035) 61%,transparent 62% 100%);
+}
+
+#app > *{position:relative;z-index:1;}
+
+/* HEADER */
+#app .brand-header{
+  background:linear-gradient(135deg,#12251c 0%,#193a2b 56%,#254b38 100%) !important;
+  border-bottom:1px solid rgba(216,189,139,.34) !important;
+  box-shadow:0 12px 34px rgba(17,36,27,.20) !important;
+  color:#fff;
+}
+
+#app .brand-header::after{
+  content:"";
+  position:absolute;
+  left:0;right:0;bottom:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--pcm-gold-2),transparent);
+  opacity:.72;
+}
+
+#app .brand-header .brand-mark{
+  width:52px;height:52px;border-radius:15px;
+  background:rgba(255,255,255,.96) !important;
+  border:1px solid rgba(216,189,139,.52) !important;
+  box-shadow:0 8px 22px rgba(0,0,0,.18);
+}
+
+#app .brand-header .brand-title{
+  color:#fff !important;
+  letter-spacing:.015em;
+  text-shadow:0 2px 12px rgba(0,0,0,.18);
+}
+
+#app .brand-header .brand-subtitle{
+  color:rgba(255,255,255,.68) !important;
+}
+
+#app .brand-header #headerUserName{color:#fff !important;}
+#app .brand-header #headerUserFunction{color:rgba(255,255,255,.62) !important;}
+
+#app .brand-header .btn-secondary{
+  background:rgba(255,255,255,.09) !important;
+  color:#fff !important;
+  border:1px solid rgba(255,255,255,.16);
+  box-shadow:none;
+}
+#app .brand-header .btn-secondary:hover{
+  background:rgba(255,255,255,.16) !important;
+}
+
+/* NAV */
+#app .desktop-nav{
+  background:rgba(20,43,32,.97) !important;
+  border-bottom:1px solid rgba(216,189,139,.18) !important;
+  box-shadow:0 6px 20px rgba(17,36,27,.12) !important;
+  backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);
+}
+
+#app .nav-btn{
+  color:rgba(255,255,255,.72) !important;
+  border-radius:11px !important;
+  font-weight:800;
+}
+#app .nav-btn:hover{
+  background:rgba(255,255,255,.08) !important;
+  color:#fff !important;
+}
+#app .nav-btn.active{
+  background:linear-gradient(135deg,rgba(216,189,139,.20),rgba(183,154,112,.08)) !important;
+  color:#f3d9a7 !important;
+  border-color:rgba(216,189,139,.24) !important;
+  box-shadow:inset 0 -2px 0 var(--pcm-gold-2),0 4px 14px rgba(0,0,0,.10) !important;
+}
+
+/* MAIN */
+#app main.max-w-7xl{padding-top:28px !important;}
+#app .page-title{color:var(--pcm-ink) !important;}
+#app .section-icon{
+  background:linear-gradient(145deg,#e7ddca,#f6f1e8) !important;
+  color:var(--pcm-green) !important;
+  border:1px solid rgba(183,154,112,.45) !important;
+  box-shadow:0 7px 18px rgba(37,48,68,.08);
+}
+#app #dashboardSubtitle{color:var(--pcm-muted) !important;}
+
+/* DASHBOARD CARDS */
+#app #tabDashboard .card{
+  background:rgba(255,255,255,.86) !important;
+  border:1px solid rgba(205,197,183,.72) !important;
+  border-radius:18px !important;
+  box-shadow:0 12px 30px rgba(32,42,36,.065),inset 0 1px 0 rgba(255,255,255,.85) !important;
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+}
+
+#app #tabDashboard .stat-card{
+  position:relative;
+  overflow:hidden;
+  min-height:108px;
+}
+#app #tabDashboard .stat-card::before{
+  content:"";
+  position:absolute;
+  left:0;top:0;bottom:0;width:4px;
+  background:linear-gradient(180deg,var(--pcm-gold-2),var(--pcm-green));
+  opacity:.82;
+}
+#app #tabDashboard .stat-card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 18px 34px rgba(32,42,36,.11) !important;
+}
+#app #tabDashboard .stat-card p:first-child,
+#app #tabDashboard .card .text-xs.font-bold{
+  letter-spacing:.07em;
+}
+
+/* ícones dos indicadores */
+#app #tabDashboard .stat-card .rounded-xl{
+  border:1px solid rgba(183,154,112,.22);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.65);
+}
+
+/* execução */
+#app #tabDashboard .progress-track{
+  height:14px;
+  background:#e6e8e4 !important;
+  border:1px solid #dfe2dd;
+  box-shadow:inset 0 2px 4px rgba(0,0,0,.05);
+}
+#app #tabDashboard .progress-bar{
+  background:linear-gradient(90deg,#315d45,#b79a70) !important;
+  box-shadow:0 2px 9px rgba(49,93,69,.20);
+}
+
+/* títulos dos painéis */
+#app #tabDashboard .card h3{
+  color:var(--pcm-ink) !important;
+  letter-spacing:-.01em;
+}
+#app #tabDashboard .card .border-b{
+  border-color:#ece8df !important;
+}
+#app #tabDashboard .card button:not(.btn){
+  color:#725c3c !important;
+}
+#app #tabDashboard .card button:not(.btn):hover{
+  color:#193a2b !important;
+}
+
+/* WELCOME DO MECÂNICO */
+#app .welcome-card{
+  background:linear-gradient(135deg,rgba(255,255,255,.94),rgba(246,241,231,.92)) !important;
+  border:1px solid rgba(183,154,112,.42) !important;
+  border-left:4px solid var(--pcm-gold) !important;
+  box-shadow:0 12px 28px rgba(32,42,36,.08) !important;
+}
+
+/* FILTROS / PONTOS / HISTÓRICO / FUNCIONÁRIOS */
+#app .filter-panel,
+#app #tabPoints > .card,
+#app #tabHistory > .card,
+#app #tabEmployees > .card{
+  background:rgba(255,255,255,.90) !important;
+  border-color:rgba(205,197,183,.76) !important;
+  box-shadow:0 10px 26px rgba(32,42,36,.055) !important;
+}
+
+#app .filter-panel-head{border-color:#ece8df !important;}
+#app .filter-title{color:var(--pcm-ink) !important;}
+#app .filter-title i{color:#8c7049 !important;}
+#app .filter-panel .input,
+#app .input{
+  border-color:#d8d4ca;
+  background:rgba(255,255,255,.94);
+}
+#app .input:focus{
+  border-color:var(--pcm-gold) !important;
+  box-shadow:0 0 0 3px rgba(183,154,112,.14) !important;
+}
+
+/* botões */
+#app .btn-primary,
+#app .report-btn{
+  background:linear-gradient(135deg,#9e8156,#c3a675) !important;
+  color:#fff !important;
+  border:1px solid rgba(125,96,57,.22);
+  box-shadow:0 7px 16px rgba(122,94,56,.18) !important;
+}
+#app .btn-primary:hover,
+#app .report-btn:hover{filter:brightness(1.04);}
+#app .btn-success{
+  background:linear-gradient(135deg,#286247,#367b59) !important;
+  box-shadow:0 6px 15px rgba(40,98,71,.17) !important;
+}
+#app .btn-secondary,
+#app .btn-filter-reset{
+  background:#f7f5f0 !important;
+  color:#4d594f !important;
+  border:1px solid #dcd7cd !important;
+}
+
+/* tabelas */
+#app .table-wrap table thead{background:linear-gradient(90deg,#f4f0e8,#faf9f6) !important;}
+#app .table-wrap th{color:#705d40 !important;}
+#app .table-wrap td{color:#354139 !important;}
+#app .table-wrap tbody tr:hover td{background:#faf6ee !important;}
+
+/* barra mobile */
+#app .mobile-nav{
+  background:rgba(20,43,32,.98) !important;
+  border-top:1px solid rgba(216,189,139,.24) !important;
+  box-shadow:0 -10px 28px rgba(17,36,27,.20) !important;
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+}
+#app .mobile-nav-btn{color:rgba(255,255,255,.68) !important;}
+#app .mobile-nav-btn.active{
+  background:rgba(216,189,139,.16) !important;
+  color:#f1d39e !important;
+}
+
+/* status com aspecto mais sofisticado */
+#app .status-ok{background:#e4f2e9 !important;color:#23603f !important;border:1px solid #cde5d5;}
+#app .status-next{background:#f7eedc !important;color:#806033 !important;border:1px solid #eadbbd;}
+#app .status-late{background:#f8e5e2 !important;color:#8f4138 !important;border:1px solid #edcbc6;}
+
+/* modais seguem a identidade */
+#app .modal-bg{background:rgba(12,25,19,.72) !important;backdrop-filter:blur(5px);}
+#app .modal-bg .card{box-shadow:0 26px 70px rgba(0,0,0,.28) !important;}
+
+@media(max-width:767px){
+  #app main.max-w-7xl{padding-top:18px !important;}
+  #app .brand-header .brand-mark{width:44px;height:44px;border-radius:12px;}
+  #app .brand-header .brand-title{font-size:15px !important;}
+  #app .brand-header .brand-subtitle{font-size:9px !important;}
+  #app #tabDashboard .stat-card{min-height:96px;}
+  #app #tabDashboard .card{border-radius:16px !important;}
+}
+</style>
+
 </head>
 
 <body>
@@ -4357,181 +4631,121 @@ body.pcm-app-open #app{
        LUBRIFICAR
     ===================================================== */
 
-   async function handleLubricate(id) {
+    async function handleLubricate(id) {
 
-    // Evita cliques duplos enquanto a gravação está acontecendo
-    if (window.lubricatingNow && window.lubricatingNow[id]) {
-        return;
-    }
+        // Evita cliques duplos enquanto a gravação está em andamento.
+        if (window.lubricatingNow && window.lubricatingNow[id]) {
+            return;
+        }
+        window.lubricatingNow = window.lubricatingNow || {};
+        window.lubricatingNow[id] = true;
 
-    window.lubricatingNow = window.lubricatingNow || {};
-    window.lubricatingNow[id] = true;
+        const point =
+            points.find(
+                item =>
+                    String(item.id) ===
+                    String(id)
+            );
 
-    const point = points.find(
-        item => String(item.id) === String(id)
-    );
 
-    if (!point) {
-        showToast(
-            'Ponto não encontrado.',
-            'error'
-        );
+        if (!point) {
 
-        delete window.lubricatingNow[id];
-        return;
-    }
+            showToast(
+                'Ponto não encontrado.',
+                'error'
+            );
 
-    if (!userCanSeePoint(point)) {
-        showToast(
-            'Você não tem permissão para este ponto.',
-            'error'
-        );
+            return;
+        }
 
-        delete window.lubricatingNow[id];
-        return;
-    }
 
-    const responsible =
-        currentUser?.name ||
-        point.responsible ||
-        'Não informado';
+        if (!userCanSeePoint(point)) {
 
-    const photoData = pendingPhotos[id];
+            showToast(
+                'Você não tem permissão para este ponto.',
+                'error'
+            );
 
-    if (!photoData) {
-        showToast(
-            'Tire a foto da lubrificação antes de concluir.',
-            'error'
-        );
+            return;
+        }
 
-        delete window.lubricatingNow[id];
-        return;
-    }
 
-    try {
+        const responsible =
+            currentUser?.name ||
+            point.responsible ||
+            'Não informado';
 
-        const response = await fetch(
-            '/api/lubricate',
-            {
-                method: 'POST',
+        const photoData = pendingPhotos[id];
+        if (!photoData) {
+            showToast('Tire a foto da lubrificação antes de concluir.', 'error');
+            return;
+        }
 
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+        try {
 
-                body: JSON.stringify({
-                    id: point.id,
-                    responsible: responsible,
-                    responsible_id:
-                        currentUser?.id ||
-                        point.responsible_id ||
-                        null,
-                    photoData: photoData
-                })
+            const response =
+                await fetch(
+                    '/api/lubricate',
+                    {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            id: point.id,
+                            responsible:
+                                responsible,
+                            responsible_id:
+                                currentUser?.id ||
+                                point.responsible_id ||
+                                null,
+                            photoData: photoData
+                        })
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    data?.error ||
+                    'Erro ao registrar lubrificação.'
+                );
+
             }
-        );
 
-        const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(
-                data?.error ||
-                'Erro ao registrar lubrificação.'
-            );
-        }
+            delete pendingPhotos[id];
+            await loadData();
 
-        /*
-         * A gravação foi confirmada pelo servidor.
-         * Agora atualizamos somente o ponto atual,
-         * sem baixar novamente todo o sistema.
-         */
-
-        const now = new Date();
-
-        point.last_lubricated_at =
-            now.toISOString();
-
-        /*
-         * Calcula a próxima data de lubrificação.
-         */
-
-        const frequency =
-            Number(point.frequency_days || 0);
-
-        if (frequency > 0) {
-
-            const nextDate =
-                new Date(now);
-
-            nextDate.setDate(
-                nextDate.getDate() +
-                frequency
+            showToast(
+                'Lubrificação registrada com sucesso!'
             );
 
-            point.next_date =
-                nextDate
-                    .toISOString()
-                    .slice(0, 10);
+            if (isAdmin()) {
+                showTab('dashboard');
+            }
+
+
+        } catch (error) {
+
+            console.error(error);
+
+            showToast(
+                error.message ||
+                'Erro ao registrar lubrificação.',
+                'error'
+            );
+
+        } finally {
+            delete window.lubricatingNow[id];
         }
-
-        /*
-         * Marca o ponto como concluído.
-         */
-
-        point.completion_locked = true;
-
-        /*
-         * Remove a foto temporária da memória.
-         */
-
-        delete pendingPhotos[id];
-
-        /*
-         * Atualiza a tela sem chamar loadData().
-         */
-
-        renderPoints();
-
-        if (typeof updateDashboardStats === 'function') {
-            updateDashboardStats();
-        }
-
-        /*
-         * Feedback imediato.
-         */
-
-        showToast(
-            'Lubrificação registrada com sucesso!'
-        );
-
-        /*
-         * Se for administrador,
-         * continua mostrando o dashboard.
-         */
-
-        if (isAdmin()) {
-            showTab('dashboard');
-        }
-
-    } catch (error) {
-
-        console.error(
-            'Erro ao registrar lubrificação:',
-            error
-        );
-
-        showToast(
-            error.message ||
-            'Erro ao registrar lubrificação.',
-            'error'
-        );
-
-    } finally {
-
-        delete window.lubricatingNow[id];
 
     }
-}
 
 
     async function releasePoint(id) {
