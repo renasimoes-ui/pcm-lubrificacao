@@ -320,7 +320,7 @@
         }
 
         @media print {
-            body > *:not(#app) { display:none !important; }
+            body > *:not(#app):not(#printReportTemp) { display:none !important; }
             #app > *:not(#printReportTemp) { display:none !important; }
             #printReportTemp { display:block !important; }
             #printReportTemp table td, #printReportTemp table th { border-bottom:1px solid #e2e8f0; padding:8px; }
