@@ -8,7 +8,7 @@
     <title>PCM LUBRIFICAÇÃO</title>
 
     <link rel="manifest" href="/manifest.json">
-<script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=DT9_zxVX2vGTrV7UyHiGTBrjfuWkeQJFv8B7Vm1WHWc9Ff65FdjrJuJMRagzT6cZibethP1xxDUC_F4d0XKVMvagGcXgyPpJCmL64QSBdE0I_unWRF9vkwFsh6qXxnLuOUWMujoOZgtX7BJvGBLxqots7eUcl28Mw27_ncwBRKEQMgU4PY2e8AC-5usy9ArA6euV0NwifQjtt5Xn68ZloarK3AS1yYv2ZPkVnQsMmI2LtlMyHhZ2cCjpdTAfxAxo0itwjSNbhch79SLVN-7x-g" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+<script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=oXYyWBYvAx0gKwoRHXCtxMsr0f5oOs4lXVy7uWe03TedRdIb8ThD-0-ZoayFWdKK3hOcuHxLNpjlrwF4BXzkZtgSuvaPOyu-MXN1ulxOy17pANRCyj5V5jJlcpFWYA4qPJq-leYrka8lqS21qdnx06YKm95FwAAQ5C2ulQIh5hO4QQHec-d4I1WRaiHzMp8zdMnqW-tohb6N2V2pC8_4tFLCQIMIxBTuDmPsQEGs8tcBYIGV77XVSOOtX8_NtvJQx9SOKOvFJFrUOvCu8eQgMnQsXdQBV-6BtNivaUNwzsIhWXhr5ZLfhOhOYuD3VIu_l9DsVTeMH0h3khQQaW8ziyUAN8OClxeCHadHf9KU14A" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
 
     <link
         rel="stylesheet"
@@ -1127,6 +1127,25 @@ body.pcm-app-open #app{
 </head>
 
 <body>
+<script>
+// Recuperação de cache antigo: evita que uma versão quebrada do PWA fique presa no celular.
+(function(){
+  try {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        regs.forEach(function(reg){
+          reg.unregister().catch(function(){});
+        });
+      }).catch(function(){});
+    }
+    if (window.caches && caches.keys) {
+      caches.keys().then(function(keys){
+        keys.forEach(function(key){ caches.delete(key); });
+      }).catch(function(){});
+    }
+  } catch(e) {}
+})();
+</script>
 
 <!-- =========================
      LOGIN — INTERFACE PREMIUM AB
@@ -5728,24 +5747,14 @@ body.pcm-app-open #app{
        SERVICE WORKER
     ===================================================== */
 
+    // O app não depende do Service Worker para funcionar.
+    // Ele é registrado apenas para o modo PWA, depois que a página já carregou.
     if ('serviceWorker' in navigator) {
-
-        window.addEventListener(
-            'load',
-            () => {
-
-                navigator.serviceWorker
-                    .register('/service-worker.js')
-                    .catch(error =>
-                        console.log(
-                            'Service Worker:',
-                            error
-                        )
-                    );
-
-            }
-        );
-
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/service-worker.js?v=2', { updateViaCache: 'none' })
+                .then(reg => reg.update().catch(() => {}))
+                .catch(() => {});
+        });
     }
 
 </script>
