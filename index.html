@@ -4357,121 +4357,181 @@ body.pcm-app-open #app{
        LUBRIFICAR
     ===================================================== */
 
-    async function handleLubricate(id) {
+   async function handleLubricate(id) {
 
-        // Evita cliques duplos enquanto a gravação está em andamento.
-        if (window.lubricatingNow && window.lubricatingNow[id]) {
-            return;
-        }
-        window.lubricatingNow = window.lubricatingNow || {};
-        window.lubricatingNow[id] = true;
+    // Evita cliques duplos enquanto a gravação está acontecendo
+    if (window.lubricatingNow && window.lubricatingNow[id]) {
+        return;
+    }
 
-        const point =
-            points.find(
-                item =>
-                    String(item.id) ===
-                    String(id)
-            );
+    window.lubricatingNow = window.lubricatingNow || {};
+    window.lubricatingNow[id] = true;
 
+    const point = points.find(
+        item => String(item.id) === String(id)
+    );
 
-        if (!point) {
+    if (!point) {
+        showToast(
+            'Ponto não encontrado.',
+            'error'
+        );
 
-            showToast(
-                'Ponto não encontrado.',
-                'error'
-            );
+        delete window.lubricatingNow[id];
+        return;
+    }
 
-            return;
-        }
+    if (!userCanSeePoint(point)) {
+        showToast(
+            'Você não tem permissão para este ponto.',
+            'error'
+        );
 
+        delete window.lubricatingNow[id];
+        return;
+    }
 
-        if (!userCanSeePoint(point)) {
+    const responsible =
+        currentUser?.name ||
+        point.responsible ||
+        'Não informado';
 
-            showToast(
-                'Você não tem permissão para este ponto.',
-                'error'
-            );
+    const photoData = pendingPhotos[id];
 
-            return;
-        }
+    if (!photoData) {
+        showToast(
+            'Tire a foto da lubrificação antes de concluir.',
+            'error'
+        );
 
+        delete window.lubricatingNow[id];
+        return;
+    }
 
-        const responsible =
-            currentUser?.name ||
-            point.responsible ||
-            'Não informado';
+    try {
 
-        const photoData = pendingPhotos[id];
-        if (!photoData) {
-            showToast('Tire a foto da lubrificação antes de concluir.', 'error');
-            return;
-        }
+        const response = await fetch(
+            '/api/lubricate',
+            {
+                method: 'POST',
 
-        try {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
 
-            const response =
-                await fetch(
-                    '/api/lubricate',
-                    {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            id: point.id,
-                            responsible:
-                                responsible,
-                            responsible_id:
-                                currentUser?.id ||
-                                point.responsible_id ||
-                                null,
-                            photoData: photoData
-                        })
-                    }
-                );
-
-
-            const data =
-                await response.json();
-
-
-            if (!response.ok) {
-
-                throw new Error(
-                    data?.error ||
-                    'Erro ao registrar lubrificação.'
-                );
-
+                body: JSON.stringify({
+                    id: point.id,
+                    responsible: responsible,
+                    responsible_id:
+                        currentUser?.id ||
+                        point.responsible_id ||
+                        null,
+                    photoData: photoData
+                })
             }
+        );
 
+        const data = await response.json();
 
-            delete pendingPhotos[id];
-            await loadData();
-
-            showToast(
-                'Lubrificação registrada com sucesso!'
+        if (!response.ok) {
+            throw new Error(
+                data?.error ||
+                'Erro ao registrar lubrificação.'
             );
-
-            if (isAdmin()) {
-                showTab('dashboard');
-            }
-
-
-        } catch (error) {
-
-            console.error(error);
-
-            showToast(
-                error.message ||
-                'Erro ao registrar lubrificação.',
-                'error'
-            );
-
-        } finally {
-            delete window.lubricatingNow[id];
         }
+
+        /*
+         * A gravação foi confirmada pelo servidor.
+         * Agora atualizamos somente o ponto atual,
+         * sem baixar novamente todo o sistema.
+         */
+
+        const now = new Date();
+
+        point.last_lubricated_at =
+            now.toISOString();
+
+        /*
+         * Calcula a próxima data de lubrificação.
+         */
+
+        const frequency =
+            Number(point.frequency_days || 0);
+
+        if (frequency > 0) {
+
+            const nextDate =
+                new Date(now);
+
+            nextDate.setDate(
+                nextDate.getDate() +
+                frequency
+            );
+
+            point.next_date =
+                nextDate
+                    .toISOString()
+                    .slice(0, 10);
+        }
+
+        /*
+         * Marca o ponto como concluído.
+         */
+
+        point.completion_locked = true;
+
+        /*
+         * Remove a foto temporária da memória.
+         */
+
+        delete pendingPhotos[id];
+
+        /*
+         * Atualiza a tela sem chamar loadData().
+         */
+
+        renderPoints();
+
+        if (typeof updateDashboardStats === 'function') {
+            updateDashboardStats();
+        }
+
+        /*
+         * Feedback imediato.
+         */
+
+        showToast(
+            'Lubrificação registrada com sucesso!'
+        );
+
+        /*
+         * Se for administrador,
+         * continua mostrando o dashboard.
+         */
+
+        if (isAdmin()) {
+            showTab('dashboard');
+        }
+
+    } catch (error) {
+
+        console.error(
+            'Erro ao registrar lubrificação:',
+            error
+        );
+
+        showToast(
+            error.message ||
+            'Erro ao registrar lubrificação.',
+            'error'
+        );
+
+    } finally {
+
+        delete window.lubricatingNow[id];
 
     }
+}
 
 
     async function releasePoint(id) {
