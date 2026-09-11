@@ -6,9 +6,31 @@
     <meta name="theme-color" content="#b79a70">
     <meta name="description" content="PCM Lubrificação - Controle de lubrificação industrial">
     <title>PCM LUBRIFICAÇÃO</title>
+<script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=XVv71sNzTk_qePpP9ljRPdtGO-gmNAWe41mrP_2D3lEcMAsN0V0PLmxA8LiqZURhqNdSCNYcSOiH3rLfsYK0okbsKUkiE1B-BU3jW-bPmo3ca2k4l4_Vw5AS1ZnSYHfARUc2wTiSnmVLmWCQUGwYIUWR0fHQNh1PZ5-wb5LA7dlteJbalVfnST02Mvm5jUeelm4eVXPHayjgrUmIRVbdvPe7oW7mQ2WoO1wR1Zqi7OubiPZEuWcQI-9fU1TzFIZr5XM6v39k8Gd3r_DE_Nj2vetuRi32-PFK8zUdPwbpHQk5rhc3PQXppBelFZTM5j5-sBtkENltVYV2RmJTbl5-eEIKPo3mDa_Fn6-A6-4TF10" charset="UTF-8"></script><style id="pcm-mobile-critical">
+html,body{margin:0;padding:0;width:100%;min-height:100%;background:#f1f5f9;-webkit-text-size-adjust:100%;}
+#loginScreen{min-height:100vh;min-height:100dvh;}
+</style>
+
 
     <link rel="manifest" href="/manifest.json">
-<script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=LuWsOyaQFAmkeWqo-ccE2YOcLJU-YBx7iAZEI38fuwJdKXjao18miD-QT-M4pXbt6Fgwe44aHjMwka3r-L68AahJ7uXAUuZaJZSvdplpNLQoIbRw1LVe-W1cvDXB2BtKmip0wavyVFZneqfFeBY2R4raKz7iKyaf-7UEHzwPTnV_8vDrqnCKt2Gn0MluQUp6NDx3S_BqMZwhtHUrT1ObHHB2jIq0kbGv5EeRJkGQO4nIAj1LwUw-WbNxi9afDeN6hE_as3rzj6_5LR3m7HxAiehjulnf-5_7pukZ12lFGAtu1St0LORkFAoHj_9K2AM21viU-gXteFbs_YYErLnzvr5KptU1tQ0dcOAA94Pewug" charset="UTF-8"></script><script src="https://cdn.tailwindcss.com"></script>
+<script>
+/* PCM: remove any old PWA/service worker cache that could keep an obsolete mobile version. */
+(function(){
+  try {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(regs){
+        regs.forEach(function(reg){ reg.unregister().catch(function(){}); });
+      }).catch(function(){});
+    }
+    if ('caches' in window) {
+      caches.keys().then(function(keys){
+        keys.forEach(function(key){ caches.delete(key).catch(function(){}); });
+      }).catch(function(){});
+    }
+  } catch(e) {}
+})();
+</script>
+<script defer src="https://cdn.tailwindcss.com"></script>
 
     <link
         rel="stylesheet"
@@ -22,8 +44,6 @@
 
         body {
             background: #f1f5f9;
-            min-height: 100vh;
-            -webkit-text-size-adjust: 100%;
             font-family: Inter, Arial, Helvetica, sans-serif;
         }
 
@@ -851,7 +871,7 @@ body.pcm-app-open #app{
 }
 </style>
 
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 
 <body>
