@@ -12,7 +12,7 @@
 
     
 
-    <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=NmeMXvSWQmy8FY2AFC2Ue04okVQDURGu3Ixb8JawtbH_TaMoElw-zQmXujUYI5RiFvlzqUwLSmNfANJ9nPBPm5RMug-KpgoaXOM8T1LbZnifD1kV_0ESfAv3fF1Q_G0zhQ2lsnLKMnr4GRIW-TNaxL_gLPbSYwJP7xA_1TIr-zBIMtru9P6KvV0aFLM7dV_pUksoqOQfny53IUz-js6geiy_RsN3Lr2JcY6Ls117sjdP3IAARrm-lXV3SWOhQhsCO0YXiCGNTj5D_h2YmPSA1Op8ba66T0MZFcyavzfgcf57X91me0dYMPhPKPpvwOysL2ELPwMFyq3LElFsSjmJBcMnFjdje1T9JPH3dT29pJs" charset="UTF-8"></script><style>
+    <script type="text/javascript" src="https://gc.kes.v2.scr.kaspersky-labs.com/7EA5E9BB-55E1-4C31-9C21-4943DDFED2E4/main.js?attr=O3LxpWDkgSCGlp7vagBeRytf9n3gKXqcwcC61PgtNeSkBb4P-6wY_Cq-K_-D5cpDORRfwkT737B-Jg_oHWCbEkTo0ijT34uOZJg-6UEVtCUeEetFUdEx0ua9ugZXRguuGPPpdDFirhyPQMs4abU0PLppieB0NSXzTlZV0ED-uzw-jU9eFQ0w9kHVtkabFPC19I3HORa3AevkaKMhJOnyKp_SPjoKM5jpLQuw-8tDme7hBVGVrn8r2XKjkn-w-KiCQqhz0T-_9kRFh4jsSbWOB4VCNJxQKoQ4NvT2k5NDsmUzmjaZCoatakjLgNiR_1Tm" charset="UTF-8"></script><style>
         * {
             box-sizing: border-box;
         }
@@ -862,50 +862,6 @@ button,input,select,textarea{font:inherit;}
  .login-card-modern{width:100%!important;}
 }
 </style>
-
-<style id="pcm-safe-visual">
-/* VISUAL ONLY — não altera lógica, APIs, login ou carregamento */
-:root{
-  --pcm-green:#163b2a;
-  --pcm-green-2:#1f5138;
-  --pcm-gold:#c9a66b;
-  --pcm-ink:#17211b;
-  --pcm-soft:#f4f6f3;
-}
-body{background:linear-gradient(180deg,#f7f8f6 0%,#eef2ee 100%)!important;color:var(--pcm-ink)!important;}
-.brand-header{
-  background:linear-gradient(135deg,#10291e 0%,#183c2a 58%,#214b35 100%)!important;
-  border-bottom:2px solid rgba(201,166,107,.75)!important;
-  box-shadow:0 8px 28px rgba(12,35,23,.16)!important;
-}
-.brand-title{color:#fff!important;letter-spacing:.2px}
-.brand-subtitle{color:rgba(255,255,255,.72)!important}
-.brand-mark{box-shadow:0 8px 24px rgba(0,0,0,.18)!important;border:1px solid rgba(201,166,107,.45)!important}
-.btn{border-radius:11px!important;min-height:42px!important}
-.btn-primary{background:linear-gradient(135deg,#1b4a32,#286442)!important;border:1px solid rgba(201,166,107,.5)!important;box-shadow:0 7px 18px rgba(20,62,42,.16)!important}
-.btn-secondary{background:#fff!important;border:1px solid #d9dfd9!important;color:#24352b!important;box-shadow:0 4px 12px rgba(20,40,28,.06)!important}
-.card{border:1px solid #dfe5df!important;border-radius:18px!important;box-shadow:0 10px 30px rgba(25,45,32,.07)!important}
-.nav-btn.active,.mobile-nav-btn.active{background:rgba(201,166,107,.18)!important;color:#7b5b26!important}
-.welcome-card{background:linear-gradient(135deg,#ffffff 0%,#f7faf7 100%)!important;border-left:4px solid var(--pcm-gold)!important}
-.welcome-card h2{font-size:clamp(18px,2vw,23px)!important;letter-spacing:-.3px}
-.section-heading{gap:12px!important}
-.section-icon{background:linear-gradient(135deg,#183f2b,#286442)!important;color:#fff!important;box-shadow:0 7px 16px rgba(25,65,43,.16)!important}
-.page-title{letter-spacing:-.4px!important}
-.status-badge{border:1px solid rgba(0,0,0,.05)!important}
-@media(max-width:767px){
-  .brand-header .h-20{height:68px!important}
-  .brand-title{font-size:16px!important}
-  .brand-subtitle{font-size:10px!important}
-  .brand-mark{width:42px!important;height:42px!important}
-  .brand-header .btn{padding:9px 14px!important;min-width:58px!important;font-weight:800!important}
-  .welcome-card{margin-bottom:16px!important;padding:17px!important}
-  .welcome-card p{font-size:13px!important}
-  .card{border-radius:16px!important}
-  .page-title{font-size:21px!important}
-  .mobile-nav{box-shadow:0 -8px 24px rgba(20,40,28,.10)!important;border-top:1px solid #dfe5df!important}
-}
-</style>
-
 </head>
 
 <body>
@@ -1004,7 +960,8 @@ body{background:linear-gradient(180deg,#f7f8f6 0%,#eef2ee 100%)!important;color:
                         class="btn btn-secondary"
                         title="Sair"
                     >
-                        <span>Sair</span>
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span class="hidden sm:inline ml-1">Sair</span>
                     </button>
 
                 </div>
@@ -1421,7 +1378,10 @@ body{background:linear-gradient(180deg,#f7f8f6 0%,#eef2ee 100%)!important;color:
         <section id="tabPoints" class="hidden">
 
             <div id="maintenanceWelcome" class="hidden card p-5 mb-5 welcome-card">
-                <div>
+                <div class="flex items-center gap-3">
+                    <div class="w-11 h-11 rounded-xl bg-blue-100 flex items-center justify-center">
+                        <i class="fa-solid fa-hand-wave text-blue-600"></i>
+                    </div>
                     <div>
                         <h2 class="text-xl font-black text-slate-900">Bem-vindo, <span id="maintenanceWelcomeName"></span>!</h2>
                         <p class="text-sm text-slate-500 mt-1">Aqui estão as suas demandas de lubrificação.</p>
@@ -1599,7 +1559,7 @@ body{background:linear-gradient(180deg,#f7f8f6 0%,#eef2ee 100%)!important;color:
                         <i class="fa-solid fa-file-export"></i><span>Exportar relatório</span>
                     </button>
                     <button onclick="showTab('dashboard')" class="btn btn-secondary flex items-center gap-2" title="Voltar para o início">
-                        <span>Início</span>
+                        <i class="fa-solid fa-arrow-left"></i><span>Início</span>
                     </button>
                 </div>
             </div>
